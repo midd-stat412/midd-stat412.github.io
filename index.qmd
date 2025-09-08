@@ -1,0 +1,5 @@
+---
+title: "STAT 412: Bayesian Statistics"
+---
+
+Welcome!
