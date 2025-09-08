@@ -2,4 +2,22 @@
 title: "STAT 412: Bayesian Statistics"
 ---
 
-Welcome!
+Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this website you will find the course syllabus, schedule, and assignments. The website is frequently updated throughout the semester, so please make a habit of refreshing the page.
+
+## Announcements
+
+-   None1
+
+## Course details
+
+**Instructor**: Becky Tang (she/her)
+
+-   Office: WNS 214
+
+-   Email: btang\@middlebury.edu
+
+**Meeting times and location**: Mondays and Wednesdays 9:45-11am in WNS 011
+
+**Office hours**: Monday 3-4pm, Tuesday 3:30-4:30pm, Friday 11am-12pm
+
+**Syllabus** (most recent update 9/1/2025): outlines our course policies and a rough schedule. Once classes begin, you should follow the schedule and due dates found on this website.

@@ -3,12 +3,13 @@ project:
   output-dir: docs
 
 website:
-  title: "website-stat412"
+  title: "STAT 412"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: schedule.qmd
+        text: Schedule
 
 format:
   html:

@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "STAT 412: Bayesian Statistics",
     "section": "",
-    "text": "Welcome!"
+    "text": "Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this website you will find the course syllabus, schedule, and assignments. The website is frequently updated throughout the semester, so please make a habit of refreshing the page."
   },
   {
     "objectID": "about.html",
@@ -12,5 +12,26 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html#announcements",
+    "href": "index.html#announcements",
+    "title": "STAT 412: Bayesian Statistics",
+    "section": "Announcements",
+    "text": "Announcements\n\nNone1"
+  },
+  {
+    "objectID": "index.html#course-details",
+    "href": "index.html#course-details",
+    "title": "STAT 412: Bayesian Statistics",
+    "section": "Course details",
+    "text": "Course details\nInstructor: Becky Tang (she/her)\n\nOffice: WNS 214\nEmail: btang@middlebury.edu\n\nMeeting times and location: Mondays and Wednesdays 9:45-11am in WNS 011\nOffice hours: Monday 3-4pm, Tuesday 3:30-4:30pm, Friday 11am-12pm\nSyllabus (most recent update 9/1/2025): outlines our course policies and a rough schedule. Once classes begin, you should follow the schedule and due dates found on this website."
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "This page is frequently updated!"
   }
 ]
