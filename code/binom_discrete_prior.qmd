@@ -1,0 +1,108 @@
+---
+title: "Learning about a Binomial Probability"
+subtitle: "Discrete prior"
+date: "September 10, 2025"
+editor_options: 
+  chunk_output_type: console
+---
+```{r message = F}
+library(tidyverse)
+```
+
+## Tidyverse code
+
+```{r}
+theta <- seq(0.1, 0.9, by = 0.1)
+prior1 <- rep(1/9, 9)
+prior2 <- c(0.05, 0.05, 0.05, 0.2, 0.3, 0.2, 0.05, 0.05, 0.05)
+# prior2 <- c(1,1,1,3,4,3,1,1,1)
+# prior2 <- prior2/sum(prior2)
+
+# create data frame for visualization and wrangling
+bayes_table <- data.frame(theta, prior1, prior2) 
+
+# visualize different priors
+bayes_table |>
+  pivot_longer(cols = 2:3, names_to = "prior", values_to = "prior_probs") |>
+  mutate(theta = factor(theta)) |> # for prettier visualization
+  ggplot(aes(x = theta, y = prior_probs)) + 
+  geom_col() +
+  facet_wrap(~ prior) +
+  labs(x = expression(theta),
+      y = expression(f(theta)),
+      title = "Prior")
+
+
+# likelihood
+y <- 3
+like <- dbinom(y, size = 11, prob = theta)
+bayes_table <- bayes_table |>
+  add_column(likelihood = like) 
+
+# marginal likelihood
+bayes_table <- bayes_table |>
+  mutate(product = prior1 * likelihood)
+marg_like <- sum(bayes_table$product)
+
+# posterior
+bayes_table <- bayes_table |>
+  mutate(posterior = product / marg_like)
+
+# visualize prior vs posterior
+bayes_table |>
+  pivot_longer(cols = c("prior1", "posterior"), names_to = "dist", values_to = "probs") |>
+  mutate(theta = factor(theta),
+         dist = factor(dist, levels = c("prior1", "posterior"))) |> # for prettier visualization
+  ggplot(aes(x = theta, y = probs)) + 
+  geom_col() +
+  facet_wrap(~dist) +
+  labs(x = expression(theta),
+      y = "Probability",
+      title = expression("Comparison of " * f(theta) * " and " * f(theta * "| y")))
+
+```
+
+## Base `R` code
+
+
+```{r}
+theta <- seq(0.1, 0.9, by = 0.1)
+prior1 <- rep(1/9, 9)
+prior2 <- c(0.05, 0.05, 0.05, 0.2, 0.3, 0.2, 0.05, 0.05, 0.05)
+# prior2 <- c(1,1,1,3,4,3,1,1,1)
+# prior2 <- prior2/sum(prior2)
+bayes_table <- data.frame(theta, prior1, prior2)
+
+# Visualize prior 1
+barplot(bayes_table$prior1, names.arg = bayes_table$theta,
+        xlab = expression(theta),
+        ylab = expression(f(theta)),
+        ylim = c(0, max(prior1) + 0.05),
+        main = "Prior")
+
+# likelihood
+y <- 3
+like <- dbinom(y, size = 11, prob = theta)
+bayes_table$likelihood <- like
+# marginal likelihood
+bayes_table$product <- prior1 * like
+marg_like <- sum(bayes_table$product)
+# posterior
+bayes_table$posterior <-  bayes_table$product / marg_like
+
+
+par(mfrow = c(1,2))
+y_max <- max(c(prior1, bayes_table$posterior))
+barplot(bayes_table$prior1, names.arg = bayes_table$theta,
+        xlab = expression(theta),
+        ylab = expression(f(theta)),
+        ylim = c(0, y_max + 0.05),
+        main = "Prior")
+barplot(bayes_table$posterior, 
+        names.arg = theta,
+        beside = T,
+        xlab = expression(theta),
+        ylab = expression(f(theta * "| y")),
+        ylim = c(0, y_max + 0.05),
+        main = "Posterior")
+```

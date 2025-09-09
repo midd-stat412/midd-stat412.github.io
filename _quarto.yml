@@ -16,9 +16,10 @@ website:
 format:
   html:
     theme: flatly
-    backgroundcolor: '#f5f0e9'
-    linkcolor: '#6d423a'
+    backgroundcolor: '#f7eedf'
+    linkcolor: '#785a3b'
     toc: false
+    code-block-bg: '#f5f5f5'
 
 editor: visual
 
