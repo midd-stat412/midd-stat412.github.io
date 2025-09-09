@@ -10,14 +10,15 @@ website:
         text: Home
       - href: schedule.qmd
         text: Schedule
+      - href: handouts.qmd
+        text: Handouts
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
-    css: styles.css
-    toc: true
+    theme: flatly
+    backgroundcolor: '#f5f0e9'
+    linkcolor: '#6d423a'
+    toc: false
 
 editor: visual
 

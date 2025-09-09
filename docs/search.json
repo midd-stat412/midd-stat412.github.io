@@ -18,20 +18,27 @@
     "href": "index.html#announcements",
     "title": "STAT 412: Bayesian Statistics",
     "section": "Announcements",
-    "text": "Announcements\n\nNone1"
+    "text": "Announcements\n\nPlease bring laptop with R Studio functioning to next class!"
   },
   {
     "objectID": "index.html#course-details",
     "href": "index.html#course-details",
     "title": "STAT 412: Bayesian Statistics",
     "section": "Course details",
-    "text": "Course details\nInstructor: Becky Tang (she/her)\n\nOffice: WNS 214\nEmail: btang@middlebury.edu\n\nMeeting times and location: Mondays and Wednesdays 9:45-11am in WNS 011\nOffice hours: Monday 3-4pm, Tuesday 3:30-4:30pm, Friday 11am-12pm\nSyllabus (most recent update 9/1/2025): outlines our course policies and a rough schedule. Once classes begin, you should follow the schedule and due dates found on this website."
+    "text": "Course details\nInstructor: Becky Tang (she/her)\n\nOffice: WNS 214\nEmail: btang@middlebury.edu\n\nMeeting times and location: Mondays and Wednesdays 9:45-11am in WNS 011\nOffice hours: Monday 3-4pm, Tuesday 3:30-4:30pm, Friday 11am-12pm\nSyllabus (most recent update 9/1/2025): our syllabus outlines our course policies and a rough schedule. Once classes begin, you should follow the schedule and due dates found on this website."
   },
   {
     "objectID": "schedule.html",
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\nR recap?\n\n\n\n\n2\nM 9/15\n\n\n\n\n\nW 9/17"
+  },
+  {
+    "objectID": "handouts.html",
+    "href": "handouts.html",
+    "title": "Handouts",
+    "section": "",
+    "text": "Distribution sheet"
   }
 ]
