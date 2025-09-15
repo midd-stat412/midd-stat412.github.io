@@ -32,7 +32,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\n\n\n\n\nW 9/17"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\n\n\n\nW 9/17\n\nEstimators\nConfidence regions"
   },
   {
     "objectID": "handouts.html",
@@ -68,5 +68,12 @@
     "title": "Learning about a Binomial Probability",
     "section": "If you didn’t want to plot",
     "text": "If you didn’t want to plot\n\nmarg_like &lt;- sum(prior1 * like)\npost &lt;- (prior1 * like)/marg_like\ncbind(theta, post)\n\n      theta          post\n [1,]   0.1 0.01893857939\n [2,]   0.2 0.13286167531\n [3,]   0.3 0.26413206805\n [4,]   0.4 0.28375828506\n [5,]   0.5 0.19333918362\n [6,]   0.6 0.08407652891\n [7,]   0.7 0.02079173713\n [8,]   0.8 0.00207596368\n [9,]   0.9 0.00002597885"
+  },
+  {
+    "objectID": "code/proportionality.html",
+    "href": "code/proportionality.html",
+    "title": "Prior, likelihood, posterior, proportionality",
+    "section": "",
+    "text": "We often say the posterior distribution is “proportional to likelihood times prior”, where proportionality is with respect to \\(\\theta\\):\n\\[\\begin{align*}\nf_{\\theta | y}(\\theta | y) &= \\frac{f_{y | \\theta} (y | \\theta) f_{\\theta}(\\theta)}{f_{Y}(y)} \\\\\n& \\overset{\\theta}{\\propto} f_{y | \\theta} (y | \\theta) f_{\\theta}(\\theta)\n\\end{align*}\\]\nThat is, the posterior distribution is a function of \\(\\theta\\), so the marginal likelihood \\(f_{Y}(y)\\) is a constant with respect to \\(\\theta\\). It is just a scaling factor, as illustrated here:"
   }
 ]
