@@ -3,3 +3,7 @@ title: "Handouts"
 ---
 
 -   [Distribution sheet](handouts/distribution_sheet.pdf)
+
+-   Data
+
+    -   [prussianHorses1.csv](prussianHorses1.csv)
