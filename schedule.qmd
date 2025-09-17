@@ -14,15 +14,13 @@ title: "Schedule"
 |         |               |     -   Likelihood, prior, posterior                                                            |                                                                 |
 |         |               |     -   [Code](code/binom_discrete_prior.qmd) and [worksheet](handouts/binom_prob_discrete.pdf) |                                                                 |
 +---------+---------------+-------------------------------------------------------------------------------------------------+-----------------------------------------------------------------+
-| **2**   | M 9/15        | -   Beta-Binomial model                                                                         | -   [Problem Set 2](homework/412_hw2.pdf) (due 9/25)            |
+| **2**   | M 9/15        | -   Beta-Binomial model                                                                         | -   [Problem Set 2](homework/412_hw2.pdf) (due 9/24)            |
 |         |               |                                                                                                 |                                                                 |
-|         |               |     -   [Proportionality](code/proportionality.qmd)                                             |     -   As of 9/15: Not all problems have been assigned yet!    |
+|         |               |     -   [Proportionality](code/proportionality.qmd)                                             |                                                                 |
 |         |               |                                                                                                 |                                                                 |
 |         |               | -   Posterior predictive distribution                                                           |                                                                 |
 +---------+---------------+-------------------------------------------------------------------------------------------------+-----------------------------------------------------------------+
-|         | W 9/17        | -   Bayes estimators/estimates                                                                  |                                                                 |
+|         | W 9/17        | -   Bayes estimators/estimates                                                                  | -   [Problem Set 2](homework/412_hw2.pdf) (due 9/24)            |
 |         |               |                                                                                                 |                                                                 |
 |         |               |     -   Some [proofs](handouts/bayes_est.qmd)                                                   |                                                                 |
-|         |               |                                                                                                 |                                                                 |
-|         |               | -   Confidence regions                                                                          |                                                                 |
 +---------+---------------+-------------------------------------------------------------------------------------------------+-----------------------------------------------------------------+

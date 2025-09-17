@@ -1,5 +1,5 @@
 #mtcars-btn {
-     font-size: small;
+     font-size: x-small;
      padding: 0.2rem 0.3rem !important;
    }
 
@@ -14,7 +14,7 @@ a:has(#mtcars-btn) {
 
 .btn {
   padding: 2px 6px;
-  background-color: #F5A327;  
+  background-color: #48d9ca;  /* Bootstrap blue */
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -24,5 +24,5 @@ a:has(#mtcars-btn) {
 }
 
 .btn:hover {
-  background-color: #D48C20; 
+  background-color: #37ab9f; /* Darker blue on hover */
 }

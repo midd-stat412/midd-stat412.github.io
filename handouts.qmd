@@ -1,9 +1,18 @@
 ---
 title: "Handouts"
+format: 
+  html:
+    css: styles.css
 ---
 
 -   [Distribution sheet](handouts/distribution_sheet.pdf)
 
 -   Data
 
-    -   [prussianHorses1.csv](prussianHorses1.csv)
+    -   
+
+        {{< downloadthis handouts/prussianHorses1.csv dname="prussianHorses1" label="prussianHorses1" id=mtcars-btn >}}
+
+    -   
+
+        {{< downloadthis handouts/prussianHorses2.csv dname="prussianHorses2" label="prussianHorses2" id=mtcars-btn >}}
