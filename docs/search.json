@@ -32,7 +32,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/25)\n\nAs of 9/15: Not all problems have been assigned yet!\n\n\n\n\n\nW 9/17\n\nEstimators\nConfidence regions"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/25)\n\nAs of 9/15: Not all problems have been assigned yet!\n\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\nConfidence regions"
   },
   {
     "objectID": "handouts.html",
@@ -75,5 +75,61 @@
     "title": "Prior, likelihood, posterior, proportionality",
     "section": "",
     "text": "We often say the posterior distribution is “proportional to likelihood times prior”, where proportionality is with respect to \\(\\theta\\):\n\\[\\begin{align*}\nf_{\\theta | y}(\\theta | y) &= \\frac{f_{y | \\theta} (y | \\theta) f_{\\theta}(\\theta)}{f_{Y}(y)} \\\\\n& \\overset{\\theta}{\\propto} f_{y | \\theta} (y | \\theta) f_{\\theta}(\\theta)\n\\end{align*}\\]\nThat is, the posterior distribution is a function of \\(\\theta\\), so the marginal likelihood \\(f_{Y}(y)\\) is a constant with respect to \\(\\theta\\). It is just a scaling factor, as illustrated here:"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#theorem",
+    "href": "handouts/bayes_est.html#theorem",
+    "title": "Bayes estimator proofs",
+    "section": "Theorem",
+    "text": "Theorem\nUnder squared loss \\(L(\\theta, a) = (\\theta - a)^2\\), the Bayes estimator for \\(\\theta\\) is the posterior mean of \\(\\theta\\), \\(\\mathbb{E}[\\theta | \\mathbf{y}]\\).\n\nWant to show that \\(\\mathbb{E}[\\theta | \\mathbf{y}] = \\underset{a}{\\text{argmin}} \\ \\mathbb{E}[(\\theta - a)^2 | \\mathbf{y}]\\)\nRecall: \\(\\mathbb{E}[\\theta | \\mathbf{y}] = \\int_{\\Theta} \\theta f(\\theta | \\mathbf{y}) d\\theta\\) is a function of \\(\\mathbf{y}\\)! We’ve integrated out \\(\\theta\\)!\nAlso, for any function \\(g\\), \\(\\mathbb{E}[g(\\mathbf{y}) | \\mathbf{y}] = g(\\mathbf{y})\\).\n\nThat is, since we condition on \\(\\mathbf{y}\\) (not random), the expectation of any function of \\(\\mathbf{y}\\) is itself"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#proof-set-up",
+    "href": "handouts/bayes_est.html#proof-set-up",
+    "title": "Bayes estimator proofs",
+    "section": "Proof set-up",
+    "text": "Proof set-up\n\nWant to show that \\(m = \\underset{a}{\\text{argmin}} \\ \\mathbb{E}[ |\\theta - a| | \\mathbf{y}]\\)\nNote that the absolute value function is not differentiable, so proving a maximum/minimum cannot rely on derivatives!\nAssume that \\(\\theta\\) is continuous, so that if \\(m\\) is the posterior median, then \\(\\text{Pr}(\\theta \\geq m | \\mathbf{y}) = \\frac{1}{2} = \\text{Pr}(\\theta \\leq m | \\mathbf{y})\\).\nLet \\(a\\) be any other estimator of \\(\\theta\\).\nWe will show that\n\\[\n\\mathbb{E}[L(\\theta , a) | \\mathbf{y}] - \\mathbb{E}[L(\\theta, m) | \\mathbf{y}]  \\geq 0\n\\]\nthus demonstrating that \\(m\\) minimizes the expected loss.\nSome recap from probability: if \\(Y\\) continuous with pdf \\(f\\),\n\n\\(\\text{Pr}(Y \\leq a) = \\int_{-\\infty}^{a} f(y) dy\\)\n\\(\\text{Pr}(a \\leq Y \\leq b) = \\text{Pr}(Y\\leq b) - \\text{Pr}(Y \\leq a)\\) and these inequalities could be \\(\\leq\\) or \\(&lt;\\)"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#proof",
+    "href": "handouts/bayes_est.html#proof",
+    "title": "Bayes estimator proofs",
+    "section": "Proof",
+    "text": "Proof\nLet \\(m\\) be the posterior median, and suppose \\(a &lt; m\\) is any other estimator. Remember, \\(a\\) and \\(m\\) are constant w.r.t. \\(\\theta\\).\n\\[\n\\begin{align}\n\\mathbb{E}[L(\\theta , a) | \\mathbf{y}] & - \\mathbb{E}[L(\\theta, m) | \\mathbf{y}] = \\int_{\\Theta} |\\theta - a| f(\\theta | \\mathbf{y}) d\\theta - \\int_{\\Theta} |\\theta - m| f(\\theta | \\mathbf{y})d\\theta \\\\\n&\\class{fragment}{= \\int_{\\Theta} \\left(|\\theta - a| - |\\theta - m|\\right) f(\\theta | \\mathbf{y})d\\theta } \\\\\n&\\class{fragment}{= \\int_{-\\infty}^{a} \\left(|\\theta - a| - |\\theta - m|\\right) f(\\theta | \\mathbf{y})d\\theta + \\int_{a}^{m} \\left(|\\theta - a| - |\\theta - m|\\right) f(\\theta | \\mathbf{y})d\\theta + \\int_{m}^{\\infty} \\left(|\\theta - a| - |\\theta - m|\\right) f(\\theta | \\mathbf{y})d\\theta }\\\\\n& \\class{fragment}{= \\int_{-\\infty}^{a} ((a-\\theta) - ( m - \\theta)) f(\\theta | \\mathbf{y}) d\\theta + \\int_{a}^{m} ((\\theta - a) - (m- \\theta)) f(\\theta | \\mathbf{y}) d\\theta  +\n\\int_{m}^{\\infty} ((\\theta - a) - (\\theta - m)) f(\\theta | \\mathbf{y}) d\\theta} \\\\\n&\\class{fragment}{= \\int_{-\\infty}^{a} (a - m)  f(\\theta | \\mathbf{y}) d\\theta + \\int_{a}^{m} (2\\theta - a- m)  f(\\theta | \\mathbf{y}) d\\theta + \\int_{m}^{\\infty} (m-a) f(\\theta | \\mathbf{y}) d\\theta} \\\\\n&\\class{fragment}{\\color{orange}{\\geq}  \\int_{-\\infty}^{a} (a - m)  f(\\theta | \\mathbf{y}) d\\theta + \\int_{a}^{m} (2\\color{orange}{a} - a- m)  f(\\theta | \\mathbf{y}) d\\theta + \\int_{m}^{\\infty} (m-a) f(\\theta | \\mathbf{y}) d\\theta} \\\\\n&\\class{fragment}{= (a-m)\\text{Pr}(\\theta \\leq a | \\mathbf{y}) + \\color{purple}{(a-m)\\text{Pr}(a  &lt; \\theta \\leq m | \\mathbf{y}) }+ (m-a) \\text{Pr}(\\theta \\geq m | \\mathbf{y})} \\\\\n&\\class{fragment}{ = (a-m)\\text{Pr}(\\theta \\leq a | \\mathbf{y}) + \\color{purple}{(a-m) \\text{Pr}(\\theta \\leq m | \\mathbf{y})  - (a-m) \\text{Pr}(\\theta \\leq a | \\mathbf{y})} + (m-a) \\text{Pr}(\\theta \\geq m | \\mathbf{y}) } \\\\\n&\\class{fragment}{= (a-m) \\text{Pr}(\\theta \\leq m | \\mathbf{y}) +  (m-a) \\text{Pr}(\\theta \\geq m | \\mathbf{y})} \\\\\n&\\class{fragment}{= (a-m)\\left(\\frac{1}{2}\\right) + (m-a)\\left(\\frac{1}{2}\\right)} \\\\\n&\\class{fragment}{= (a-m)\\left(\\frac{1}{2}\\right) - (a-m)\\left(\\frac{1}{2}\\right)}\\\\\n&\\class{fragment}{= 0 \\qquad \\tiny{\\square} }\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#proof-2",
+    "href": "handouts/bayes_est.html#proof-2",
+    "title": "Bayes estimator proofs",
+    "section": "Proof 2",
+    "text": "Proof 2\nApologies; you’ll have to do several “right clicks” until you reach the next slide.\nLet’s begin by manipulating the term we’d like to minimize: \\[\\begin{align}\n\\mathbb{E}[(\\theta - a)^2 | \\mathbf{y}] &= \\mathbb{E}[( \\color{red}{(} \\theta - \\mathbb{E}[\\theta | \\mathbf{y}]\\color{red}{)} + \\color{red}{(}\\mathbb{E}[\\theta | \\mathbf{y}]  - a\\color{red}{)})^2 | \\mathbf{y}] \\\\\n&\\class{fragment}{\\overset{\\text{FOIL}}{=} \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}] + 2\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])(\\mathbb{E}[\\theta | \\mathbf{y}]-a) | \\mathbf{y}] + \\mathbb{E}[(\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2 | \\mathbf{y}]} \\\\\n&\\class{fragment}{=\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}] + 2\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])\\color{orange}{(\\mathbb{E}[\\theta | \\mathbf{y}]-a)} | \\mathbf{y}] + \\mathbb{E}[\\color{orange}{(\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2} | \\mathbf{y}]} \\\\\n& \\class{fragment}{\\text{Note: }  \\color{orange}{\\mathbb{E}[\\theta | \\mathbf{y}]} \\text{ and } \\color{orange}{a} \\text{ are constant w.r.t } \\mathbf{y}}  \\\\\n&\\class{fragment}{=\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}]  + 2 \\color{orange}{(\\mathbb{E}[\\theta | \\mathbf{y}]-a)}\\color{purple}{\\mathbb{E}[\\theta - \\mathbb{E}[\\theta | \\mathbf{y}] | \\mathbf{y}]}+ \\color{orange}{(\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2}} \\\\\n&\\class{fragment}{=\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}]  + 2 (\\mathbb{E}[\\theta | \\mathbf{y}]-a) \\color{purple}{( \\mathbb{E}[\\theta | \\mathbf{y}] - \\mathbb{E}[\\theta | \\mathbf{y}])} + (\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2} \\\\\n&\\class{fragment}{=\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}]  + (\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2}\n\\end{align}\n\\]"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#theorem-1",
+    "href": "handouts/bayes_est.html#theorem-1",
+    "title": "Bayes estimator proofs",
+    "section": "Theorem",
+    "text": "Theorem\nUnder absolute loss \\(L(\\theta, a) = |\\theta - a|\\), a Bayes estimator for \\(\\theta\\) is any posterior median of \\(\\theta\\).\n\nThat is, a Bayes estimator is a function \\(\\delta(\\mathbf{y}) \\equiv m\\) such that \\(\\text{Pr}(\\theta \\leq m | \\mathbf{y}) \\geq \\frac{1}{2}\\) and \\(\\text{Pr}(\\theta \\geq m | \\mathbf{y}) \\geq \\frac{1}{2}\\).\nNote that when \\(\\theta\\) is continuous, there exists a single median."
+  },
+  {
+    "objectID": "handouts/bayes_est.html#proof-2-cont.",
+    "href": "handouts/bayes_est.html#proof-2-cont.",
+    "title": "Bayes estimator proofs",
+    "section": "Proof 2 (cont.)",
+    "text": "Proof 2 (cont.)\nThus, \\[\n\\underset{a}{\\text{argmin}} \\ \\mathbb{E}[(\\theta - a)^2 | \\mathbf{y}] = \\underset{a}{\\text{argmin}} \\ \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta | \\mathbf{y}])^2 | \\mathbf{y}]  + (\\mathbb{E}[\\theta | \\mathbf{y}]-a)^2\n\\]\n\nThe first term does not depend on \\(a\\), so cannot do anything about minimizing w.r.t \\(a\\)\nThus, focus on minimizing the second term. Minimized when \\(a = \\mathbb{E}[\\theta | \\mathbf{y}]\\).\nThus, the Bayes estimate under squared loss is the posterior mean. \\(\\tiny{\\square}\\)"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#temp",
+    "href": "handouts/bayes_est.html#temp",
+    "title": "Bayes estimator proofs",
+    "section": "temp",
+    "text": "temp"
+  },
+  {
+    "objectID": "handouts/bayes_est.html#incremental-derivation",
+    "href": "handouts/bayes_est.html#incremental-derivation",
+    "title": "Bayes estimator proofs",
+    "section": "Incremental Derivation",
+    "text": "Incremental Derivation\n\\[\n\\begin{align}\n\\mathbb{E}[(\\theta - a)^2 \\mid \\mathbf{y}] &= \\mathbb{E}[\\big( \\color{red}{(} \\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}]\\color{red}{)} + \\color{red}{(}\\mathbb{E}[\\theta \\mid \\mathbf{y}]  - a\\color{red}{)}\\big)^2 \\mid \\mathbf{y}]\n\\end{align}\n\\]\n.fragment[ \\[\n\\begin{align}\n&= \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])^2 \\mid \\mathbf{y}] \\\\\n&\\quad + 2\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a) \\mid \\mathbf{y}] \\\\\n&\\quad + \\mathbb{E}[(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)^2 \\mid \\mathbf{y}]\n\\end{align}\n\\]]\n.fragment[ \\[\n\\begin{align}\n&= \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])^2 \\mid \\mathbf{y}] \\\\\n&\\quad + 2\\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])\\color{orange}{(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)} \\mid \\mathbf{y}] \\\\\n&\\quad + \\mathbb{E}[\\color{orange}{(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)^2} \\mid \\mathbf{y}]\n\\end{align}\n\\]]\n.fragment[ &gt; Note: () and () are constant with respect to ()]\n.fragment[ \\[\n\\begin{align}\n&= \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])^2 \\mid \\mathbf{y}] \\\\\n&\\quad + 2 \\color{orange}{(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)} \\color{purple}{\\mathbb{E}[\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}] \\mid \\mathbf{y}]} \\\\\n&\\quad + \\color{orange}{(\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)^2}\n\\end{align}\n\\]]\n.fragment[ \\[\n\\begin{align}\n&= \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])^2 \\mid \\mathbf{y}] \\\\\n&\\quad + 2 (\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a) \\color{purple}{( \\mathbb{E}[\\theta \\mid \\mathbf{y}] - \\mathbb{E}[\\theta \\mid \\mathbf{y}])} \\\\\n&\\quad + (\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)^2\n\\end{align}\n\\]]\n.fragment[ \\[\n\\begin{align}\n&= \\mathbb{E}[(\\theta - \\mathbb{E}[\\theta \\mid \\mathbf{y}])^2 \\mid \\mathbf{y}] + (\\mathbb{E}[\\theta \\mid \\mathbf{y}]-a)^2\n\\end{align}\n\\]]"
   }
 ]

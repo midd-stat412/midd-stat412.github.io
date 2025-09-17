@@ -1,0 +1,111 @@
+---
+title: "Bayes estimator proofs"
+format: 
+  revealjs:
+    incremental: true 
+    height: 1000
+    width: 2000
+    include-before: [ '<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {enableAssistiveMml: false}});</script>']
+---
+
+# Squared loss
+
+## Theorem {style="font-size: 115%;"}
+
+Under squared loss $L(\theta, a) = (\theta - a)^2$, the Bayes estimator for $\theta$ is the posterior mean of $\theta$, $\mathbb{E}[\theta | \mathbf{y}]$.
+
+- Want to show that $\mathbb{E}[\theta | \mathbf{y}] = \underset{a}{\text{argmin}} \ \mathbb{E}[(\theta - a)^2 | \mathbf{y}]$
+
+- Recall: $\mathbb{E}[\theta | \mathbf{y}] = \int_{\Theta} \theta f(\theta | \mathbf{y}) d\theta$ is a function of $\mathbf{y}$! We've integrated out $\theta$!
+
+- Also, for any function $g$, $\mathbb{E}[g(\mathbf{y}) | \mathbf{y}] = g(\mathbf{y})$. 
+
+    - That is, since we condition on $\mathbf{y}$ (not random), the expectation of any function of $\mathbf{y}$ is itself
+
+## Proof 2  {style="font-size: 115%;"}
+
+*Apologies; you'll have to do several "right clicks" until you reach the next slide.*
+
+Let's begin by manipulating the term we'd like to minimize:
+$$\begin{align}
+\mathbb{E}[(\theta - a)^2 | \mathbf{y}] &= \mathbb{E}[( \color{red}{(} \theta - \mathbb{E}[\theta | \mathbf{y}]\color{red}{)} + \color{red}{(}\mathbb{E}[\theta | \mathbf{y}]  - a\color{red}{)})^2 | \mathbf{y}] \\
+&\class{fragment}{\overset{\text{FOIL}}{=} \mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}] + 2\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])(\mathbb{E}[\theta | \mathbf{y}]-a) | \mathbf{y}] + \mathbb{E}[(\mathbb{E}[\theta | \mathbf{y}]-a)^2 | \mathbf{y}]} \\
+&\class{fragment}{=\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}] + 2\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])\color{orange}{(\mathbb{E}[\theta | \mathbf{y}]-a)} | \mathbf{y}] + \mathbb{E}[\color{orange}{(\mathbb{E}[\theta | \mathbf{y}]-a)^2} | \mathbf{y}]} \\
+& \class{fragment}{\text{Note: }  \color{orange}{\mathbb{E}[\theta | \mathbf{y}]} \text{ and } \color{orange}{a} \text{ are constant w.r.t } \mathbf{y}}  \\
+&\class{fragment}{=\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}]  + 2 \color{orange}{(\mathbb{E}[\theta | \mathbf{y}]-a)}\color{purple}{\mathbb{E}[\theta - \mathbb{E}[\theta | \mathbf{y}] | \mathbf{y}]}+ \color{orange}{(\mathbb{E}[\theta | \mathbf{y}]-a)^2}} \\
+&\class{fragment}{=\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}]  + 2 (\mathbb{E}[\theta | \mathbf{y}]-a) \color{purple}{( \mathbb{E}[\theta | \mathbf{y}] - \mathbb{E}[\theta | \mathbf{y}])} + (\mathbb{E}[\theta | \mathbf{y}]-a)^2} \\
+&\class{fragment}{=\mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}]  + (\mathbb{E}[\theta | \mathbf{y}]-a)^2}
+\end{align}
+$$
+
+
+## Proof 2 (cont.) {style="font-size: 115%;"}
+
+Thus, 
+$$
+\underset{a}{\text{argmin}} \ \mathbb{E}[(\theta - a)^2 | \mathbf{y}] = \underset{a}{\text{argmin}} \ \mathbb{E}[(\theta - \mathbb{E}[\theta | \mathbf{y}])^2 | \mathbf{y}]  + (\mathbb{E}[\theta | \mathbf{y}]-a)^2
+$$
+
+
+- The first term does not depend on $a$, so cannot do anything about minimizing w.r.t $a$
+
+- Thus, focus on minimizing the second term. Minimized when $a = \mathbb{E}[\theta | \mathbf{y}]$.
+
+- Thus, the Bayes estimate under squared loss is the posterior mean. $\tiny{\square}$
+
+
+# Absolute loss
+
+## Theorem {style="font-size: 115%;"}
+
+Under absolute loss $L(\theta, a) = |\theta - a|$, a Bayes estimator for $\theta$ is any posterior median of $\theta$.
+
+-   That is, a Bayes estimator is a function $\delta(\mathbf{y}) \equiv m$ such that $\text{Pr}(\theta \leq m | \mathbf{y}) \geq \frac{1}{2}$ and $\text{Pr}(\theta \geq m | \mathbf{y}) \geq \frac{1}{2}$.
+
+-   Note that when $\theta$ is continuous, there exists a single median.
+
+## Proof set-up
+
+- Want to show that $m = \underset{a}{\text{argmin}} \ \mathbb{E}[ |\theta - a| | \mathbf{y}]$
+
+-   Note that the absolute value function is not differentiable, so proving a maximum/minimum cannot rely on derivatives!
+
+-   Assume that $\theta$ is continuous, so that if $m$ is the posterior median, then $\text{Pr}(\theta \geq m | \mathbf{y}) = \frac{1}{2} = \text{Pr}(\theta \leq m | \mathbf{y})$.
+
+-   Let $a$ be any other estimator of $\theta$.
+
+-   We will show that
+
+    $$
+    \mathbb{E}[L(\theta , a) | \mathbf{y}] - \mathbb{E}[L(\theta, m) | \mathbf{y}]  \geq 0
+    $$
+
+    thus demonstrating that $m$ minimizes the expected loss.
+
+-   Some recap from probability: if $Y$ continuous with pdf $f$,
+
+    -   $\text{Pr}(Y \leq a) = \int_{-\infty}^{a} f(y) dy$
+
+    -   $\text{Pr}(a \leq Y \leq b) = \text{Pr}(Y\leq b) - \text{Pr}(Y \leq a)$ and these inequalities could be $\leq$ or $<$
+
+## Proof {.scrollable style="font-size: 90%;"}
+
+Let $m$ be the posterior median, and suppose $a < m$ is any other estimator. Remember, $a$ and $m$ are constant w.r.t. $\theta$.
+
+$$
+\begin{align}
+\mathbb{E}[L(\theta , a) | \mathbf{y}] & - \mathbb{E}[L(\theta, m) | \mathbf{y}] = \int_{\Theta} |\theta - a| f(\theta | \mathbf{y}) d\theta - \int_{\Theta} |\theta - m| f(\theta | \mathbf{y})d\theta \\ 
+&\class{fragment}{= \int_{\Theta} \left(|\theta - a| - |\theta - m|\right) f(\theta | \mathbf{y})d\theta } \\
+&\class{fragment}{= \int_{-\infty}^{a} \left(|\theta - a| - |\theta - m|\right) f(\theta | \mathbf{y})d\theta + \int_{a}^{m} \left(|\theta - a| - |\theta - m|\right) f(\theta | \mathbf{y})d\theta + \int_{m}^{\infty} \left(|\theta - a| - |\theta - m|\right) f(\theta | \mathbf{y})d\theta }\\
+& \class{fragment}{= \int_{-\infty}^{a} ((a-\theta) - ( m - \theta)) f(\theta | \mathbf{y}) d\theta + \int_{a}^{m} ((\theta - a) - (m- \theta)) f(\theta | \mathbf{y}) d\theta  +
+\int_{m}^{\infty} ((\theta - a) - (\theta - m)) f(\theta | \mathbf{y}) d\theta} \\
+&\class{fragment}{= \int_{-\infty}^{a} (a - m)  f(\theta | \mathbf{y}) d\theta + \int_{a}^{m} (2\theta - a- m)  f(\theta | \mathbf{y}) d\theta + \int_{m}^{\infty} (m-a) f(\theta | \mathbf{y}) d\theta} \\
+&\class{fragment}{\color{orange}{\geq}  \int_{-\infty}^{a} (a - m)  f(\theta | \mathbf{y}) d\theta + \int_{a}^{m} (2\color{orange}{a} - a- m)  f(\theta | \mathbf{y}) d\theta + \int_{m}^{\infty} (m-a) f(\theta | \mathbf{y}) d\theta} \\
+&\class{fragment}{= (a-m)\text{Pr}(\theta \leq a | \mathbf{y}) + \color{purple}{(a-m)\text{Pr}(a  < \theta \leq m | \mathbf{y}) }+ (m-a) \text{Pr}(\theta \geq m | \mathbf{y})} \\
+&\class{fragment}{ = (a-m)\text{Pr}(\theta \leq a | \mathbf{y}) + \color{purple}{(a-m) \text{Pr}(\theta \leq m | \mathbf{y})  - (a-m) \text{Pr}(\theta \leq a | \mathbf{y})} + (m-a) \text{Pr}(\theta \geq m | \mathbf{y}) } \\
+&\class{fragment}{= (a-m) \text{Pr}(\theta \leq m | \mathbf{y}) +  (m-a) \text{Pr}(\theta \geq m | \mathbf{y})} \\
+&\class{fragment}{= (a-m)\left(\frac{1}{2}\right) + (m-a)\left(\frac{1}{2}\right)} \\
+&\class{fragment}{= (a-m)\left(\frac{1}{2}\right) - (a-m)\left(\frac{1}{2}\right)}\\
+&\class{fragment}{= 0 \qquad \tiny{\square} }
+\end{align}
+$$

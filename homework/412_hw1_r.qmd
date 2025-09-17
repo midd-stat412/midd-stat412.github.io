@@ -1,0 +1,61 @@
+---
+title: "Problem Set 1 (R)"
+format: pdf
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. The number of particles $Y$ emitted from a substance depends on the unknown proportion $\theta$ of the substance that is radioactive. Suppose that for each possible value of $\theta$,
+$$Pr(Y = y | \theta) = f(y| \theta) = \frac{(5\theta)^y e^{-5\theta}}{y!}$$
+Suppose that the substance is monitored and it is observed that $Y = 3$. 
+
+a) Make a graph of $f(\theta| y )$ for $y = 3$ in the case that $f(\theta) = \frac{1}{101}$ for each $\theta \in \{0, \frac{1}{100}, \frac{2}{100}, \ldots, 1\}$ (and 0 otherwise).
+
+```{r}
+y <- 3
+theta <- seq(0, 1, 0.01)
+
+like <- ((5*theta)^y) * exp(-5*theta) / factorial(y)
+prior <- rep(1/101, 101)
+marg <- sum(like * prior)
+post <- like * prior / marg
+sum(post) ## sanity check
+plot(theta, post, xlab = expression(theta), ylab = expression("p("~ theta ~ "|"~ y ~ ")"))
+```
+
+
+b) What are the mean, median, and mode of $\theta$ under our prior?  Using code and/or your graph, what are the posterior mean, median, and mode?
+
+
+```{r}
+# prior mode DNE
+
+# prior median
+m1 <- theta[max(which(cumsum(rep(1/101, 101)) <= 0.5))]
+m2 <- theta[min(which(cumsum(rep(1/101, 101)) >= 0.5))]
+prior_med <- mean(c(m1, m2))
+
+# prior mean
+prior_mean <- sum(theta * prior)
+```
+
+The prior mode DNE, the prior median is `r prior_med`, and the prior mean is `r prior_mean`.
+
+
+```{r}
+# posterior mode
+post_mode <- theta[which(post == max(post))]
+
+# posterior median
+m1 <- theta[max(which(cumsum(post) <= 0.5))]
+m2 <- theta[min(which(cumsum(post) >= 0.5))]
+post_med <- mean(c(m1, m2))
+
+# posterior mean
+post_mean <- sum(theta * post)
+```
+
+The prior mode `r post_mode`, the prior median is `r post_med`, and the prior mean is `r post_mean`.
