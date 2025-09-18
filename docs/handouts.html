@@ -41,6 +41,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/quarto-contrib/downloadthis-1.9.1/downloadthis.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -70,6 +71,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed fullcontent quarto-light">
@@ -141,7 +143,24 @@ ul.task-list li input[type="checkbox"] {
 <li><p><a href="handouts/distribution_sheet.pdf">Distribution sheet</a></p></li>
 <li><p>Data</p>
 <ul>
-<li><a href="prussianHorses1.csv">prussianHorses1.csv</a></li>
+<li><p><a href="#mtcars-btn" onclick="fetch('data:text/csv;base64,ZGVhdGhzLHllYXIsY29ycAowLDE4NzUsSQowLDE4NzUsSUkKMCwxODc1LElJSQowLDE4NzYsSQowLDE4NzYsSUkKMCwxODc2LElJSQowLDE4NzcsSQowLDE4NzcsSUkKMCwxODc3LElJSQoyLDE4NzgsSQoyLDE4NzgsSUkKMSwxODc4LElJSQowLDE4NzksSQowLDE4NzksSUkKMSwxODc5LElJSQozLDE4ODAsSQoyLDE4ODAsSUkKMSwxODgwLElJSQowLDE4ODEsSQowLDE4ODEsSUkKMiwxODgxLElJSQoyLDE4ODIsSQowLDE4ODIsSUkKMCwxODgyLElJSQowLDE4ODMsSQoxLDE4ODMsSUkKMiwxODgzLElJSQowLDE4ODQsSQoxLDE4ODQsSUkKMCwxODg0LElJSQowLDE4ODUsSQowLDE4ODUsSUkKMCwxODg1LElJSQoxLDE4ODYsSQowLDE4ODYsSUkKMCwxODg2LElJSQoxLDE4ODcsSQoyLDE4ODcsSUkKMSwxODg3LElJSQoxLDE4ODgsSQoxLDE4ODgsSUkKMCwxODg4LElJSQowLDE4ODksSQoxLDE4ODksSUkKMSwxODg5LElJSQoyLDE4OTAsSQowLDE4OTAsSUkKMiwxODkwLElJSQowLDE4OTEsSQowLDE4OTEsSUkKMSwxODkxLElJSQozLDE4OTIsSQoyLDE4OTIsSUkKMCwxODkyLElJSQoxLDE4OTMsSQowLDE4OTMsSUkKMCwxODkzLElJSQowLDE4OTQsSQowLDE4OTQsSUkKMCwxODk0LElJSQo=').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'prussianHorses1.csv'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> prussianHorses1 </button></a></p></li>
+<li><p><a href="#mtcars-btn" onclick="fetch('data:text/csv;base64,ZGVhdGhzLHllYXIsY29ycAowLDE4NzUsRwowLDE4NzUsSVYKMCwxODc1LFYKMCwxODc1LFZJCjEsMTg3NSxWSUkKMSwxODc1LFZJSUkKMCwxODc1LElYCjAsMTg3NSxYCjAsMTg3NSxYSQoxLDE4NzUsWElWCjAsMTg3NSxYVgoyLDE4NzYsRwoxLDE4NzYsSVYKMCwxODc2LFYKMCwxODc2LFZJCjAsMTg3NixWSUkKMCwxODc2LFZJSUkKMCwxODc2LElYCjAsMTg3NixYCjAsMTg3NixYSQoxLDE4NzYsWElWCjEsMTg3NixYVgoyLDE4NzcsRwowLDE4NzcsSVYKMCwxODc3LFYKMSwxODc3LFZJCjEsMTg3NyxWSUkKMCwxODc3LFZJSUkKMCwxODc3LElYCjEsMTg3NyxYCjAsMTg3NyxYSQoyLDE4NzcsWElWCjAsMTg3NyxYVgoxLDE4NzgsRwoxLDE4NzgsSVYKMCwxODc4LFYKMCwxODc4LFZJCjAsMTg3OCxWSUkKMCwxODc4LFZJSUkKMCwxODc4LElYCjEsMTg3OCxYCjAsMTg3OCxYSQoxLDE4NzgsWElWCjAsMTg3OCxYVgowLDE4NzksRwoxLDE4NzksSVYKMiwxODc5LFYKMiwxODc5LFZJCjAsMTg3OSxWSUkKMSwxODc5LFZJSUkKMCwxODc5LElYCjAsMTg3OSxYCjIsMTg3OSxYSQoxLDE4NzksWElWCjAsMTg3OSxYVgowLDE4ODAsRwoxLDE4ODAsSVYKMSwxODgwLFYKMCwxODgwLFZJCjAsMTg4MCxWSUkKMCwxODgwLFZJSUkKMiwxODgwLElYCjEsMTg4MCxYCjQsMTg4MCxYSQozLDE4ODAsWElWCjAsMTg4MCxYVgoxLDE4ODEsRwoxLDE4ODEsSVYKMCwxODgxLFYKMCwxODgxLFZJCjEsMTg4MSxWSUkKMCwxODgxLFZJSUkKMSwxODgxLElYCjAsMTg4MSxYCjAsMTg4MSxYSQowLDE4ODEsWElWCjAsMTg4MSxYVgoxLDE4ODIsRwowLDE4ODIsSVYKMCwxODgyLFYKMSwxODgyLFZJCjAsMTg4MixWSUkKMSwxODgyLFZJSUkKMSwxODgyLElYCjIsMTg4MixYCjEsMTg4MixYSQo0LDE4ODIsWElWCjEsMTg4MixYVgowLDE4ODMsRwowLDE4ODMsSVYKMSwxODgzLFYKMiwxODgzLFZJCjEsMTg4MyxWSUkKMCwxODgzLFZJSUkKMSwxODgzLElYCjAsMTg4MyxYCjMsMTg4MyxYSQowLDE4ODMsWElWCjAsMTg4MyxYVgozLDE4ODQsRwowLDE4ODQsSVYKMCwxODg0LFYKMCwxODg0LFZJCjEsMTg4NCxWSUkKMCwxODg0LFZJSUkKMCwxODg0LElYCjIsMTg4NCxYCjAsMTg4NCxYSQoxLDE4ODQsWElWCjEsMTg4NCxYVgowLDE4ODUsRwowLDE4ODUsSVYKMCwxODg1LFYKMSwxODg1LFZJCjAsMTg4NSxWSUkKMCwxODg1LFZJSUkKMiwxODg1LElYCjAsMTg4NSxYCjEsMTg4NSxYSQowLDE4ODUsWElWCjEsMTg4NSxYVgoyLDE4ODYsRwoxLDE4ODYsSVYKMSwxODg2LFYKMSwxODg2LFZJCjAsMTg4NixWSUkKMCwxODg2LFZJSUkKMSwxODg2LElYCjAsMTg4NixYCjEsMTg4NixYSQozLDE4ODYsWElWCjAsMTg4NixYVgoxLDE4ODcsRwowLDE4ODcsSVYKMCwxODg3LFYKMywxODg3LFZJCjIsMTg4NyxWSUkKMSwxODg3LFZJSUkKMSwxODg3LElYCjAsMTg4NyxYCjEsMTg4NyxYSQoyLDE4ODcsWElWCjAsMTg4NyxYVgowLDE4ODgsRwowLDE4ODgsSVYKMSwxODg4LFYKMSwxODg4LFZJCjAsMTg4OCxWSUkKMCwxODg4LFZJSUkKMCwxODg4LElYCjAsMTg4OCxYCjEsMTg4OCxYSQoxLDE4ODgsWElWCjAsMTg4OCxYVgowLDE4ODksRwowLDE4ODksSVYKMSwxODg5LFYKMSwxODg5LFZJCjAsMTg4OSxWSUkKMCwxODg5LFZJSUkKMSwxODg5LElYCjIsMTg4OSxYCjIsMTg4OSxYSQowLDE4ODksWElWCjIsMTg4OSxYVgoxLDE4OTAsRwowLDE4OTAsSVYKMSwxODkwLFYKMSwxODkwLFZJCjIsMTg5MCxWSUkKMCwxODkwLFZJSUkKMiwxODkwLElYCjEsMTg5MCxYCjEsMTg5MCxYSQoyLDE4OTAsWElWCjIsMTg5MCxYVgowLDE4OTEsRwoxLDE4OTEsSVYKMSwxODkxLFYKMCwxODkxLFZJCjEsMTg5MSxWSUkKMSwxODkxLFZJSUkKMCwxODkxLElYCjMsMTg5MSxYCjMsMTg5MSxYSQoxLDE4OTEsWElWCjAsMTg5MSxYVgoxLDE4OTIsRwoxLDE4OTIsSVYKMSwxODkyLFYKMywxODkyLFZJCjAsMTg5MixWSUkKMSwxODkyLFZJSUkKMSwxODkyLElYCjAsMTg5MixYCjEsMTg5MixYSQoxLDE4OTIsWElWCjAsMTg5MixYVgowLDE4OTMsRwowLDE4OTMsSVYKMSwxODkzLFYKMCwxODkzLFZJCjIsMTg5MyxWSUkKMCwxODkzLFZJSUkKMCwxODkzLElYCjEsMTg5MyxYCjMsMTg5MyxYSQowLDE4OTMsWElWCjAsMTg5MyxYVgoxLDE4OTQsRwowLDE4OTQsSVYKMCwxODk0LFYKMCwxODk0LFZJCjAsMTg5NCxWSUkKMSwxODk0LFZJSUkKMCwxODk0LElYCjEsMTg5NCxYCjEsMTg5NCxYSQowLDE4OTQsWElWCjAsMTg5NCxYVgo=').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'prussianHorses2.csv'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> prussianHorses2 </button></a></p></li>
 </ul></li>
 </ul>
 
