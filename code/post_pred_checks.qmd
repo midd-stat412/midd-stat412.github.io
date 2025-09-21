@@ -1,0 +1,185 @@
+---
+title: "Simulating posterior and posterior predictive distributions"
+---
+
+
+```{r message = F}
+library(tidyverse)
+library(MASS)
+data("Aids2")
+```
+
+From the `Aids2` dataset from `MASS`, we have data on patients diagnosed with AIDS in Australia before 1 July 1991. In particular, we are interested in the outcome `status` of each individual at the end of the observation (alive `A` or dead `D`). We also have data on state of origin:
+
+```{r fig.height=2, fig.width=5, echo = F}
+aids_df <- Aids2 |>
+  count(state, status) |>
+  pivot_wider(names_from = "status", values_from = "n")  |>
+  mutate(n = A + D,
+         death_rate = D / n)
+aids_df
+```
+
+
+
+```{r fig.height=3, echo = F}
+Aids2 |>
+  filter(status == "D") |>
+  ggplot(aes(x = state, fill = state)) +
+  geom_bar() +
+  labs(y = "Number of deaths", title = "Observed data") +
+  guides(fill = "none")
+
+n <- nrow(Aids2)
+```
+
+## Model
+
+The response is binary, so a Bernoulli sampling model could work here. While morbid, let us consider death as success. I'll assume that individuals are conditionally iid given the probability of death, no matter the state:
+
+$$Y_{i} | \theta \overset{iid}{\sim} \text{Bern}(\theta) \qquad i = 1,\ldots, `r n`$$
+For my prior, I don't know much about death rates due to AIDS, so I will use a rather uninformative prior:
+
+$$\theta \sim \text{Beta}(2,2)$$
+Because $n$ is so large, I expect my posterior to be guided almost fully by the observed data. 
+
+Under this sampling model and prior, we know the posterior distribution of $\theta$ and the PPD for a new data point $Y^{*}$ exactly. However, we will obtain samples via simulation from the posterior and PPD instead.
+
+## Simulate posterior and posterior predictive distributions
+
+In particular, I will obtain $S = 5000$ samples from each distribution:
+
+```{r}
+set.seed(412)
+sum_y <- sum(Aids2$status == "D")
+n <- nrow(Aids2)
+a <- 2
+b <- 2
+
+S <- 5000
+a_star <- a + sum_y
+b_star <- a + b + n
+
+### OPTION 1: for loop
+theta_samps <- rep(NA, S) 
+ystar_samps <- rep(NA, S)
+for(s in 1:S){
+  # sample theta from posterior
+  theta <- rbeta(1, a_star, b_star)
+  
+  # sample y* from data model
+  ystar <- rbinom(1, size = 1, prob = theta)
+  
+  # store
+  theta_samps[s] <- theta
+  ystar_samps[s] <- ystar
+}
+
+### OPTION 2: leverage vectorized language
+theta_samps <- rbeta(S, a_star, b_star)
+ystar_samps <- rbinom(S, size = 1, prob = a_star/(a_star + b_star))
+```
+
+You could run the following code to see how well the simulations approximate the exact distributions:
+
+```{r eval = F}
+## Compare simulated vs exact posterior quantities
+# exact posterior mean
+a_star / (a_star + b_star)
+# approximate posterior mean
+mean(theta_samps)
+
+# quantile-based 95% posterior credible interval: exact
+qbeta(c(0.025, 0.975), a_star, b_star)
+# quantile-based 95% posterior credible interval: Monte Carlo approximate
+quantile(theta_samps, c(0.025, 0.975))
+
+## Compare simulated PPD to exact
+# mean and var under exact PPD
+a_star / (a_star + b_star)
+(a_star / (a_star + b_star)) * (1- (a_star / (a_star + b_star)))
+
+# approximate mean and var under simulated PPD
+mean(ystar_samps)
+var(ystar_samps)
+```
+
+We would work with the `theta_samps` vector to answer questions about $\theta$. But let's turn to model checking.
+
+## Posterior predictive check
+
+Now, let's do some posterior predictive checks (PPC). One thing I might be wondering is if my assumption of iid across the 4 states is reasonble. 
+
+First, let me simulate $R = 1000$ new datasets of size `r n` from the PPD. For each dataset $r$, I can assign `state` values according the observed data because I assumed state doesn't matter (i.e. state and death status are independent).
+
+```{r}
+set.seed(412)
+# posterior predictive check
+R <- 1000
+df_ls <- list()
+for(r in 1:R){
+  theta_samps <- rbeta(n, a + sum_y, b + n - sum_y)
+  ystar_samps <- rbinom(n, size = 1, prob = theta_samps)
+  df_ls[[r]] <- data.frame(status = ystar_samps) |>
+    add_column(state = Aids2$state)
+}
+# Random sample of three rows in first simulated dataset:
+df_ls[[1]] |>
+  sample_n(3)
+```
+
+Visually, we can look at how the distribution of deaths varies across the states in some of the *simulated* datasets:
+
+```{r fig.height=2, echo = F}
+plot_ls <- list()
+for(r in 1:4){
+  plot_ls[[r]] <- df_ls[[r]] |>
+    filter(status == 1) |>
+    ggplot(aes(x = state, fill = state)) +
+    geom_bar() +
+    labs(y = "Number of deaths", title = paste0("Sim. data ", r)) +
+    guides(fill = "none")
+}
+gridExtra::grid.arrange(grobs = plot_ls, nrow = 1)
+```
+
+Looks pretty similar to the plot of the original data above, but humans like to see what they want to see.
+
+For a more robust PPC, let's consider the following test function $T(\mathbf{y})$: the ratio of the highest death rate and the lowest death rate among the four states. 
+
+```{r echo = F}
+obs_T <- max(aids_df$death_rate)/min(aids_df$death_rate) 
+```
+
+In the observed data, this is `r round(max(aids_df$death_rate), 3)`/`r round(min(aids_df$death_rate), 3)` = `r round(obs_T, 3)`. Let's now obtain the values of the test function for the `r R` simualated datasets:
+
+```{r}
+ppd_T <- rep(NA, R)
+for(r in 1:R){
+  temp <- df_ls[[r]] |>
+    group_by(state) |>
+    summarise(death_rate = mean(status))
+  ppd_T[r] <- max(temp$death_rate)/min(temp$death_rate)
+}
+```
+
+```{r fig.height=2, fig.width=5, echo = F}
+data.frame(ppd_T) |>
+  ggplot(aes(x = ppd_T)) +
+  geom_histogram(bins = 25) +
+  labs(x = "Death rate ratios T(y)",
+       caption = "Vertical line denotes observed ratio") +
+  geom_vline(xintercept = obs_T, col = "orange")
+
+```
+
+The posterior predictive probability of a ratio as or more extreme than the observed $T(\mathbf{y}) = `r round(obs_T, 3)`$ is:
+
+```{r}
+# monte carlo approximation
+post_prob_T <- mean(ppd_T >= obs_T)
+```
+
+$$\text{Pr}(T(\mathbf{y}^{*} \geq T(\mathbf{y})) | \mathbf{y}) = `r round(post_prob_T, 4)`$$
+This says that in `r round(post_prob_T*R)` of the `r R` simulated datasets, I saw a test ratio value as or more extreme that what I observed in real life. To me, that seems quite low. An ideal scenario would have this posterior predictive probability be close to 0.50. Thus, it seems like maybe I should not treat the data as coming from one giant state, and instead allow for variation on the four states. That's coming in a few weeks...
+
