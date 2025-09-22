@@ -246,7 +246,7 @@ window.Quarto = {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>a_star <span class="ot">&lt;-</span> a <span class="sc">+</span> sum_y</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>b_star <span class="ot">&lt;-</span> a <span class="sc">+</span> b <span class="sc">+</span> n</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>b_star <span class="ot">&lt;-</span> b <span class="sc">+</span> n <span class="sc">-</span> sum_y</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="do">### OPTION 1: for loop</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>theta_samps <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, S) </span>
@@ -265,7 +265,7 @@ window.Quarto = {
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="do">### OPTION 2: leverage vectorized language</span></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>theta_samps <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(S, a_star, b_star)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>ystar_samps <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(S, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> a_star<span class="sc">/</span>(a_star <span class="sc">+</span> b_star))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>ystar_samps <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(S, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> theta_samps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You could run the following code to see how well the simulations approximate the exact distributions:</p>
 <div class="cell">
@@ -301,8 +301,8 @@ window.Quarto = {
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df_ls <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(r <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>R){</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  theta_samps <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(n, a <span class="sc">+</span> sum_y, b <span class="sc">+</span> n <span class="sc">-</span> sum_y)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ystar_samps <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> theta_samps)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  theta_samp <span class="ot">&lt;-</span> <span class="fu">rbeta</span>(<span class="dv">1</span>, a <span class="sc">+</span> sum_y, b <span class="sc">+</span> n <span class="sc">-</span> sum_y)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ystar_samps <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> theta_samp)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  df_ls[[r]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">status =</span> ystar_samps) <span class="sc">|&gt;</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">state =</span> Aids2<span class="sc">$</span>state)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span>
@@ -311,9 +311,9 @@ window.Quarto = {
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  status state
-1      1   NSW
+1      0   NSW
 2      1   NSW
-3      1   VIC</code></pre>
+3      0   NSW</code></pre>
 </div>
 </div>
 <p>Visually, we can look at how the distribution of deaths varies across the states in some of the <em>simulated</em> datasets:</p>
@@ -352,7 +352,7 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># monte carlo approximation</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>post_prob_T <span class="ot">&lt;-</span> <span class="fu">mean</span>(ppd_T <span class="sc">&gt;=</span> obs_T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><span class="math display">\[\text{Pr}(T(\mathbf{y}^{*} \geq T(\mathbf{y})) | \mathbf{y}) = 0.078\]</span> This says that in 78 of the 1000 simulated datasets, I saw a test ratio value as or more extreme that what I observed in real life. To me, that seems quite low. An ideal scenario would have this posterior predictive probability be close to 0.50. Thus, it seems like maybe I should not treat the data as coming from one giant state, and instead allow for variation on the four states. That’s coming in a few weeks…</p>
+<p><span class="math display">\[\text{Pr}(T(\mathbf{y}^{*} \geq T(\mathbf{y})) | \mathbf{y}) = 0.088\]</span> This says that in 88 of the 1000 simulated datasets, I saw a test ratio value as or more extreme that what I observed in real life. To me, that seems quite low. An ideal scenario would have this posterior predictive probability be close to 0.50. Thus, it seems like maybe I should not treat the data as coming from one giant state, and instead allow for variation on the four states. That’s coming in a few weeks…</p>
 
 
 </section>

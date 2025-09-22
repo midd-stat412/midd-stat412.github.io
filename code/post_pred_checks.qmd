@@ -2,7 +2,6 @@
 title: "Simulating posterior and posterior predictive distributions"
 ---
 
-
 ```{r message = F}
 library(tidyverse)
 library(MASS)
@@ -20,8 +19,6 @@ aids_df <- Aids2 |>
 aids_df
 ```
 
-
-
 ```{r fig.height=3, echo = F}
 Aids2 |>
   filter(status == "D") |>
@@ -37,11 +34,9 @@ n <- nrow(Aids2)
 
 The response is binary, so a Bernoulli sampling model could work here. While morbid, let us consider death as success. I'll assume that individuals are conditionally iid given the probability of death, no matter the state:
 
-$$Y_{i} | \theta \overset{iid}{\sim} \text{Bern}(\theta) \qquad i = 1,\ldots, `r n`$$
-For my prior, I don't know much about death rates due to AIDS, so I will use a rather uninformative prior:
+$$Y_{i} | \theta \overset{iid}{\sim} \text{Bern}(\theta) \qquad i = 1,\ldots, `r n`$$ For my prior, I don't know much about death rates due to AIDS, so I will use a rather uninformative prior:
 
-$$\theta \sim \text{Beta}(2,2)$$
-Because $n$ is so large, I expect my posterior to be guided almost fully by the observed data. 
+$$\theta \sim \text{Beta}(2,2)$$ Because $n$ is so large, I expect my posterior to be guided almost fully by the observed data.
 
 Under this sampling model and prior, we know the posterior distribution of $\theta$ and the PPD for a new data point $Y^{*}$ exactly. However, we will obtain samples via simulation from the posterior and PPD instead.
 
@@ -58,7 +53,7 @@ b <- 2
 
 S <- 5000
 a_star <- a + sum_y
-b_star <- a + b + n
+b_star <- b + n - sum_y
 
 ### OPTION 1: for loop
 theta_samps <- rep(NA, S) 
@@ -77,7 +72,7 @@ for(s in 1:S){
 
 ### OPTION 2: leverage vectorized language
 theta_samps <- rbeta(S, a_star, b_star)
-ystar_samps <- rbinom(S, size = 1, prob = a_star/(a_star + b_star))
+ystar_samps <- rbinom(S, size = 1, prob = theta_samps)
 ```
 
 You could run the following code to see how well the simulations approximate the exact distributions:
@@ -108,7 +103,7 @@ We would work with the `theta_samps` vector to answer questions about $\theta$. 
 
 ## Posterior predictive check
 
-Now, let's do some posterior predictive checks (PPC). One thing I might be wondering is if my assumption of iid across the 4 states is reasonble. 
+Now, let's do some posterior predictive checks (PPC). One thing I might be wondering is if my assumption of iid across the 4 states is reasonble.
 
 First, let me simulate $R = 1000$ new datasets of size `r n` from the PPD. For each dataset $r$, I can assign `state` values according the observed data because I assumed state doesn't matter (i.e. state and death status are independent).
 
@@ -118,8 +113,8 @@ set.seed(412)
 R <- 1000
 df_ls <- list()
 for(r in 1:R){
-  theta_samps <- rbeta(n, a + sum_y, b + n - sum_y)
-  ystar_samps <- rbinom(n, size = 1, prob = theta_samps)
+  theta_samp <- rbeta(1, a + sum_y, b + n - sum_y)
+  ystar_samps <- rbinom(n, size = 1, prob = theta_samp)
   df_ls[[r]] <- data.frame(status = ystar_samps) |>
     add_column(state = Aids2$state)
 }
@@ -145,7 +140,7 @@ gridExtra::grid.arrange(grobs = plot_ls, nrow = 1)
 
 Looks pretty similar to the plot of the original data above, but humans like to see what they want to see.
 
-For a more robust PPC, let's consider the following test function $T(\mathbf{y})$: the ratio of the highest death rate and the lowest death rate among the four states. 
+For a more robust PPC, let's consider the following test function $T(\mathbf{y})$: the ratio of the highest death rate and the lowest death rate among the four states.
 
 ```{r echo = F}
 obs_T <- max(aids_df$death_rate)/min(aids_df$death_rate) 
@@ -180,6 +175,4 @@ The posterior predictive probability of a ratio as or more extreme than the obse
 post_prob_T <- mean(ppd_T >= obs_T)
 ```
 
-$$\text{Pr}(T(\mathbf{y}^{*} \geq T(\mathbf{y})) | \mathbf{y}) = `r round(post_prob_T, 4)`$$
-This says that in `r round(post_prob_T*R)` of the `r R` simulated datasets, I saw a test ratio value as or more extreme that what I observed in real life. To me, that seems quite low. An ideal scenario would have this posterior predictive probability be close to 0.50. Thus, it seems like maybe I should not treat the data as coming from one giant state, and instead allow for variation on the four states. That's coming in a few weeks...
-
+$$\text{Pr}(T(\mathbf{y}^{*} \geq T(\mathbf{y})) | \mathbf{y}) = `r round(post_prob_T, 4)`$$ This says that in `r round(post_prob_T*R)` of the `r R` simulated datasets, I saw a test ratio value as or more extreme that what I observed in real life. To me, that seems quite low. An ideal scenario would have this posterior predictive probability be close to 0.50. Thus, it seems like maybe I should not treat the data as coming from one giant state, and instead allow for variation on the four states. That's coming in a few weeks...
