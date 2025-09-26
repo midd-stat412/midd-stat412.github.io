@@ -172,10 +172,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p>The <code>density()</code> function in <code>R</code> estimates the density of a random variable based off an iid sample from the density. It works by chopping up the “x-axis” or support of the density (i.e.&nbsp;the observed range from the iid sample) into small pieces, called coordinates. The function then estimates the density at each one of those coordinates based on the iid sample. The coordinates are the <code>x</code> output from <code>density()</code>, and the estimated density values are the <code>y</code> output from the function. These are accessed accessed via the <code>$</code> symbol when the returned value from the function is stored as a variable (<code>dens</code> below).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># theta_samps: vector of random samples of theta</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cred_mass: gamma (e.g. 0.95)</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># grid_size: the discretization/bandwidth we use to estimate the posterior density of theta</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># grid_size: the bandwidth/number of coordinates used to estimate density</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>get_hpd <span class="ot">&lt;-</span> <span class="cf">function</span>(theta_samps, cred_mass, <span class="at">grid_size =</span> <span class="dv">10000</span>) {</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate true posterior density of theta using kernel density estimation.</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  dens <span class="ot">&lt;-</span> <span class="fu">density</span>(theta_samps, <span class="at">n =</span> grid_size)</span>

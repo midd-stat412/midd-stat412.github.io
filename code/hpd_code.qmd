@@ -2,10 +2,12 @@
 title: "Code for HPD"
 ---
 
+The `density()` function in `R` estimates the density of a random variable based off an iid sample from the density. It works by chopping up the "x-axis" or support of the density (i.e. the observed range from the iid sample) into small pieces, called coordinates. The function then estimates the density at each one of those coordinates based on the iid sample. The coordinates are the `x` output from `density()`, and the estimated density values are the `y` output from the function. These are accessed accessed via the `$` symbol when the returned value from the function is stored as a variable (`dens` below). 
+
 ```{r}
 # theta_samps: vector of random samples of theta
 # cred_mass: gamma (e.g. 0.95)
-# grid_size: the discretization/bandwidth we use to estimate the posterior density of theta
+# grid_size: the bandwidth/number of coordinates used to estimate density
 get_hpd <- function(theta_samps, cred_mass, grid_size = 10000) {
   # Estimate true posterior density of theta using kernel density estimation.
   dens <- density(theta_samps, n = grid_size)
