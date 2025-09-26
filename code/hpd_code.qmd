@@ -1,0 +1,43 @@
+---
+title: "Code for HPD"
+---
+
+```{r}
+# theta_samps: vector of random samples of theta
+# cred_mass: gamma (e.g. 0.95)
+# grid_size: the discretization/bandwidth we use to estimate the posterior density of theta
+get_hpd <- function(theta_samps, cred_mass, grid_size = 10000) {
+  # Estimate true posterior density of theta using kernel density estimation.
+  dens <- density(theta_samps, n = grid_size)
+  
+  dx <- diff(dens$x[1:2])  
+  
+  ord <- order(dens$y, decreasing = TRUE)
+  
+  cum_prob <- cumsum(dens$y[ord]) * dx
+  
+  id <- min(which(cum_prob >= cred_mass))
+  dens_cutoff <- dens$y[ord][id]
+  
+  inside <- dens$y >= dens_cutoff
+  
+  hpd_regions <- list() 
+  in_region <- FALSE
+  for (i in seq_along(inside)) {
+    if (inside[i] && !in_region) { 
+      start <- dens$x[i] 
+      in_region <- TRUE 
+    } else if ( (!inside[i]) & in_region) { 
+      end <- dens$x[i - 1]
+      hpd_regions[[length(hpd_regions) + 1]] <- c(start, end)
+      in_region <- FALSE 
+    }
+  }
+  
+  if (in_region) {
+    hpd_regions[[length(hpd_regions) + 1]] <- c(start, dens$x[length(dens$x)])
+  }
+  
+  return(hpd_regions)
+}
+```
