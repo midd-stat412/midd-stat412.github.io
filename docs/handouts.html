@@ -161,6 +161,15 @@ ul.task-list li input[type="checkbox"] {
       window.URL.revokeObjectURL(downloadURL);
       document.body.removeChild(a);
         });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> prussianHorses2 </button></a></p></li>
+<li><p><a href="#mtcars-btn" onclick="fetch('data:application/x-gzip;base64,H4sIAAAAAAAAA4vgYmBgYGZgYWZkYGYFMhlYQ0PcdC2ADD4glnRgeOi+TqTqoYNyA0iSwUH7UH+MxtfDDmozQWCWg+Idja9AIQf9wNetcjuCHAwSIeqFwMKaDoo7wBIO6lBzND4svs5lW+igZgEV9zkDBGcddPljQDoclKHiskACyHLggupXAnPlHZSepYGAgzhINPCNgyzUPYpg5zHY/zgDMU8Nqk65FKTgGwC/3mB15wAAAA==').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'school1.Rda'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> school1 </button></a> Load code in as <code>readRDS("filepath/school1.Rda")</code></p></li>
 </ul></li>
 </ul>
 

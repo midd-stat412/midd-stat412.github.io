@@ -32,14 +32,14 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode to be posted after class\nPractice (time permitting)\n\n\n\nFor Monday, read the article found under Handouts and prepare to discuss!\nProblem Set 4"
   },
   {
     "objectID": "handouts.html",
     "href": "handouts.html",
     "title": "Handouts",
     "section": "",
-    "text": "Distribution sheet\nData\n\n prussianHorses1 \n prussianHorses2"
+    "text": "Distribution sheet\nData\n\n prussianHorses1 \n prussianHorses2 \n school1  Load code in as readRDS(\"filepath/school1.Rda\")"
   },
   {
     "objectID": "code/binom_discrete_prior.html",
@@ -180,5 +180,110 @@
     "title": "Code for HPD",
     "section": "",
     "text": "The density() function in R estimates the density of a random variable based off an iid sample from the density. It works by chopping up the “x-axis” or support of the density (i.e. the observed range from the iid sample) into small pieces, called coordinates. The function then estimates the density at each one of those coordinates based on the iid sample. The coordinates are the x output from density(), and the estimated density values are the y output from the function. These are accessed accessed via the $ symbol when the returned value from the function is stored as a variable (dens below).\n\n# theta_samps: vector of random samples of theta\n# cred_mass: gamma (e.g. 0.95)\n# grid_size: the bandwidth/number of coordinates used to estimate density\nget_hpd &lt;- function(theta_samps, cred_mass, grid_size = 10000) {\n  # Estimate true posterior density of theta using kernel density estimation.\n  dens &lt;- density(theta_samps, n = grid_size)\n  \n  dx &lt;- diff(dens$x[1:2])  \n  \n  ord &lt;- order(dens$y, decreasing = TRUE)\n  \n  cum_prob &lt;- cumsum(dens$y[ord]) * dx\n  \n  id &lt;- min(which(cum_prob &gt;= cred_mass))\n  dens_cutoff &lt;- dens$y[ord][id]\n  \n  inside &lt;- dens$y &gt;= dens_cutoff\n  \n  hpd_regions &lt;- list() \n  in_region &lt;- FALSE\n  for (i in seq_along(inside)) {\n    if (inside[i] && !in_region) { \n      start &lt;- dens$x[i] \n      in_region &lt;- TRUE \n    } else if ( (!inside[i]) & in_region) { \n      end &lt;- dens$x[i - 1]\n      hpd_regions[[length(hpd_regions) + 1]] &lt;- c(start, end)\n      in_region &lt;- FALSE \n    }\n  }\n  \n  if (in_region) {\n    hpd_regions[[length(hpd_regions) + 1]] &lt;- c(start, dens$x[length(dens$x)])\n  }\n  \n  return(hpd_regions)\n}"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html",
+    "href": "code/gibbs_normal_model.html",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "",
+    "text": "We have data on the amount of time (in hours) a sample of students from a high school spent studying during a two-day reading period before exams. We will model the data as:\n\\[ \\begin{align*}\nY_{i} \\mid \\theta, \\sigma^2 &\\overset{iid}{\\sim} N(\\theta, \\sigma^2) \\qquad i = 1,\\ldots,n \\\\\n\\theta &\\sim N(\\mu_{0}, \\sigma_{0}^2) \\\\\n\\phi &\\sim \\text{Gamma}(a_{0}, b_{0})\n\\end{align*}\\]\nwhere \\(\\phi = \\frac{1}{\\sigma^2}\\). We have to fill out our priors for \\(\\theta\\) and \\(\\phi\\) to fully specify the statistical model before seeing the data. Let’s do that together!\n\nmu_0 &lt;- 5\ns2_0 &lt;- 4\na_0 &lt;- 5\nb_0 &lt;- 15\n\n# demonstrate how I might do prior elicitation\nhist(sqrt(1/(rgamma(10000, a_0, b_0))))"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#prior-specification",
+    "href": "code/gibbs_normal_model.html#prior-specification",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "",
+    "text": "We have data on the amount of time (in hours) a sample of students from a high school spent studying during a two-day reading period before exams. We will model the data as:\n\\[ \\begin{align*}\nY_{i} \\mid \\theta, \\sigma^2 &\\overset{iid}{\\sim} N(\\theta, \\sigma^2) \\qquad i = 1,\\ldots,n \\\\\n\\theta &\\sim N(\\mu_{0}, \\sigma_{0}^2) \\\\\n\\phi &\\sim \\text{Gamma}(a_{0}, b_{0})\n\\end{align*}\\]\nwhere \\(\\phi = \\frac{1}{\\sigma^2}\\). We have to fill out our priors for \\(\\theta\\) and \\(\\phi\\) to fully specify the statistical model before seeing the data. Let’s do that together!\n\nmu_0 &lt;- 5\ns2_0 &lt;- 4\na_0 &lt;- 5\nb_0 &lt;- 15\n\n# demonstrate how I might do prior elicitation\nhist(sqrt(1/(rgamma(10000, a_0, b_0))))"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#data",
+    "href": "code/gibbs_normal_model.html#data",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Data",
+    "text": "Data\nNow we get to see the data:\n\ny &lt;- readRDS(\"~/Desktop/STAT 412/data/school1.Rda\")\ndata.frame(hours = y) |&gt;\n  ggplot(aes(x = hours)) +\n  geom_histogram(bins = 15)\n\n\n\n\n\n\n\nybar &lt;- mean(y)\nn &lt;- length(y)"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#gibbs-sampler",
+    "href": "code/gibbs_normal_model.html#gibbs-sampler",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Gibbs sampler",
+    "text": "Gibbs sampler\n\nset.seed(412)\n### GIBBS sampler\nS &lt;- 5000\n\n# will generate a bunch of samples, need to store them somewhere!\nTHETA &lt;- rep(NA, S)\nS2 &lt;- rep(NA, S)\n  \n# initialize the sampler \n# since sampling precision first, initialize value of theta\ntheta &lt;- 2\n\nfor (s in 1:S){\n  # sample phi from full conditional\n  b_n &lt;- 0.5*sum( (y - theta)^2) + b_0\n  a_n &lt;- 0.5*n + a_0\n  phi &lt;- rgamma(1, a_n, b_n)\n  \n  # convert phi to s2\n  s2 &lt;- 1/phi\n  \n  # sample theta from full conditional\n  s2_n &lt;- 1/(1/s2_0 + n / s2)\n  mu_n &lt;- s2_n * (n * ybar/s2 + mu_0/s2_0)\n  theta &lt;- rnorm(1, mu_n, sqrt(s2_n))\n\n  # store my samples\n  THETA[s] &lt;- theta\n  S2[s] &lt;- s2\n}\n\n\nSeeing the sampling"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#traceplots-and-posterior-quantities",
+    "href": "code/gibbs_normal_model.html#traceplots-and-posterior-quantities",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Traceplots and posterior quantities",
+    "text": "Traceplots and posterior quantities\nTrace plots of markov chains: line plot of simulated draws of parameter against iteration. In theory, the Metropolis and Gibbs sampling algorithms will produce simulated draws that converge to the posterior distribution of interest. But in typical practice, it may take a number of iterations before the simulation values are close to the posterior distribution. So in general it is recommended that one run the algorithm for a number of “burn-in” iterations before one collects iterations for inference.\nWe want nice “caterpillar” looking traceplots. This would suggest convergence!\n\nplot(THETA, xlab = \"Iteration\", ylab = \"theta\", type = \"l\", main = \"Traceplot\")\n\n\n\n\n\n\n\nplot(S2, xlab = \"Iteration\", ylab = \"sigma2\", type = \"l\", main = \"Traceplot\")\n\n\n\n\n\n\n\n\nThat crazy large sampled \\(\\sigma^2\\) at the beginning is a product of intialization and exploring the state space; we almost surely haven’t entered stationary distribution yet. Let’s go ahead and throw away half of our values as burn-in.\n\n# throw away some values as burn-in\nTHETA &lt;- THETA[-c(1:round(S/2))]\nS2 &lt;- S2[-c(1:round(S/2))]\n\nLet’s re-examine the traceplots post burn-in. From experience, these are beautiful looking traceplots!\n\npost_df &lt;- data.frame(theta = THETA, s2 = S2)\npost_df |&gt;\n  mutate(iteration = row_number()) |&gt;\n  pivot_longer(cols = 1:2, names_to = \"param\", values_to = \"value\") |&gt;\n  ggplot(aes(x = iteration, y = value)) +\n  geom_line() +\n  facet_wrap(~param, scales = \"free\") +\n  labs(\"Traceplots after burn-in\")\n\n\n\n\n\n\n\n\nWe should only estimate quantities after we’ve converged (i.e. after burn-in). In this case, we can obtain estimates of posterior quantities like usual:\n\n# estimated posterior mean of theta\nmean(THETA)\n\n[1] 8.967482\n\n# estimated posterior mean of sigma\nmean(sqrt(S2))\n\n[1] 3.493671\n\n## estimated CIs\nquantile(THETA, c(0.025, 0.975))\n\n     2.5%     97.5% \n 7.629652 10.265034 \n\nquantile(sqrt(S2), c(0.025, 0.975))\n\n    2.5%    97.5% \n2.787186 4.464605"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#diving-into-joint-density",
+    "href": "code/gibbs_normal_model.html#diving-into-joint-density",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Diving into joint density",
+    "text": "Diving into joint density\nWe can obtain a contour plot of the joint density using the samples obtained from Gibbs:\n\n\n\n\n\n\n\n\n\nWe can see how we “marginalize out” one parameter to get the posterior density of the other. To obtain marginals, we simply grab/isolate the parameter of interest.\n\n\n\n\n\n\n\n\n\n\nhist(THETA, main = \"Marginal posterior histogram\", xlab = \"theta\")\n\n\n\n\n\n\n\nhist(S2, main = \"Marginal posterior histogram\", xlab = \"s2\")"
+  },
+  {
+    "objectID": "code/gibbs_normal_model.html#chains",
+    "href": "code/gibbs_normal_model.html#chains",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Chains",
+    "text": "Chains\nIn this example, we have illustrated running a single “chain” where one has a single starting value and we simulated draws over \\(S\\) iterations. It is possible that the behavior of the MCMC sample will depend on the choice of starting value. So a general recommendation is to run the MCMC algorithm several times using different starting values. In this case, one will have multiple MCMC chains and combine them.\nWhen we code samplers by hand in this course, we will almost always run a single chain to make our lives easier. However, when we turn to software that implements the MCMC for us, it’s very easy to specify multiple chains!"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_sampler_code.html",
+    "href": "code/gibbs_normal_model_sampler_code.html",
+    "title": "Gibbs Sampler: Normal Model",
+    "section": "",
+    "text": "set.seed(412)\n### GIBBS sampler\nS &lt;- 5000\n\n# will generate a bunch of samples, need to store them somewhere!\nTHETA &lt;- rep(NA, S)\nS2 &lt;- rep(NA, S)\n  \n# initialize the sampler \n# since sampling precision first, initialize value of theta\ntheta &lt;- 2\n\nfor (s in 1:S){\n  # sample phi from full conditional\n  b_n &lt;- 0.5*sum((y - theta)^2) + b_0\n  a_n &lt;- 0.5*n + a_0\n  phi &lt;- rgamma(1, a_n, b_n)\n  \n  # convert phi to s2\n  s2 &lt;- 1/phi\n  \n  # sample theta from full conditional\n  s2_n &lt;- 1/(1/s2_0 + n / s2)\n  mu_n &lt;- s2_n * (n * ybar/s2 + mu_0/s2_0)\n  theta &lt;- rnorm(1, mu_n, sqrt(s2_n))\n\n  # store my samples\n  THETA[s] &lt;- theta\n  S2[s] &lt;- s2\n}"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html",
+    "href": "code/gibbs_normal_model_walkthrough.html",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "",
+    "text": "We have data on the amount of time (in hours) a sample of students from a high school spent studying during a two-day reading period before exams. We will model the data as:\n\\[ \\begin{align*}\nY_{i} \\mid \\theta, \\sigma^2 &\\overset{iid}{\\sim} N(\\theta, \\sigma^2) \\qquad i = 1,\\ldots,n \\\\\n\\theta &\\sim N(\\mu_{0}, \\sigma_{0}^2) \\\\\n\\phi &\\sim \\text{Gamma}(a_{0}, b_{0})\n\\end{align*}\\]\nwhere \\(\\phi = \\frac{1}{\\sigma^2}\\). We have to fill out our priors for \\(\\theta\\) and \\(\\phi\\) to fully specify the statistical model before seeing the data. Let’s do that together!\n\nmu_0 &lt;- 5\ns2_0 &lt;- 4\na_0 &lt;- 5\nb_0 &lt;- 15\n\n# demonstrate how I might do prior elicitation\nhist(sqrt(1/(rgamma(10000, a_0, b_0))))"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#prior-specification",
+    "href": "code/gibbs_normal_model_walkthrough.html#prior-specification",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "",
+    "text": "We have data on the amount of time (in hours) a sample of students from a high school spent studying during a two-day reading period before exams. We will model the data as:\n\\[ \\begin{align*}\nY_{i} \\mid \\theta, \\sigma^2 &\\overset{iid}{\\sim} N(\\theta, \\sigma^2) \\qquad i = 1,\\ldots,n \\\\\n\\theta &\\sim N(\\mu_{0}, \\sigma_{0}^2) \\\\\n\\phi &\\sim \\text{Gamma}(a_{0}, b_{0})\n\\end{align*}\\]\nwhere \\(\\phi = \\frac{1}{\\sigma^2}\\). We have to fill out our priors for \\(\\theta\\) and \\(\\phi\\) to fully specify the statistical model before seeing the data. Let’s do that together!\n\nmu_0 &lt;- 5\ns2_0 &lt;- 4\na_0 &lt;- 5\nb_0 &lt;- 15\n\n# demonstrate how I might do prior elicitation\nhist(sqrt(1/(rgamma(10000, a_0, b_0))))"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#data",
+    "href": "code/gibbs_normal_model_walkthrough.html#data",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Data",
+    "text": "Data\nNow we get to see the data:\n\ny &lt;- readRDS(\"~/Desktop/STAT 412/data/school1.Rda\")\ndata.frame(hours = y) |&gt;\n  ggplot(aes(x = hours)) +\n  geom_histogram(bins = 15)\n\n\n\n\n\n\n\nybar &lt;- mean(y)\nn &lt;- length(y)"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#gibbs-sampler",
+    "href": "code/gibbs_normal_model_walkthrough.html#gibbs-sampler",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Gibbs sampler",
+    "text": "Gibbs sampler\n\nset.seed(412)\n### GIBBS sampler\nS &lt;- 5000\n\n# will generate a bunch of samples, need to store them somewhere!\nTHETA &lt;- rep(NA, S)\nS2 &lt;- rep(NA, S)\n  \n# initialize the sampler \n# since sampling precision first, initialize value of theta\ntheta &lt;- 2\n\nfor (s in 1:S){\n  # sample phi from full conditional\n  b_n &lt;- 0.5*sum( (y - theta)^2) + b_0\n  a_n &lt;- 0.5*n + a_0\n  phi &lt;- rgamma(1, a_n, b_n)\n  \n  # convert phi to s2\n  s2 &lt;- 1/phi\n  \n  # sample theta from full conditional\n  s2_n &lt;- 1/(1/s2_0 + n / s2)\n  mu_n &lt;- s2_n * (n * ybar/s2 + mu_0/s2_0)\n  theta &lt;- rnorm(1, mu_n, sqrt(s2_n))\n\n  # store my samples\n  THETA[s] &lt;- theta\n  S2[s] &lt;- s2\n}\n\n\nSeeing the sampling"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#traceplots-and-posterior-quantities",
+    "href": "code/gibbs_normal_model_walkthrough.html#traceplots-and-posterior-quantities",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Traceplots and posterior quantities",
+    "text": "Traceplots and posterior quantities\nTrace plots of markov chains: line plot of simulated draws of parameter against iteration. In theory, the Metropolis and Gibbs sampling algorithms will produce simulated draws that converge to the posterior distribution of interest. But in typical practice, it may take a number of iterations before the simulation values are close to the posterior distribution. So in general it is recommended that one run the algorithm for a number of “burn-in” iterations before one collects iterations for inference.\nWe want nice “caterpillar” looking traceplots. This would suggest convergence!\n\nplot(THETA, xlab = \"Iteration\", ylab = \"theta\", type = \"l\", main = \"Traceplot\")\n\n\n\n\n\n\n\nplot(S2, xlab = \"Iteration\", ylab = \"sigma2\", type = \"l\", main = \"Traceplot\")\n\n\n\n\n\n\n\n\nThat crazy large sampled \\(\\sigma^2\\) at the beginning is a product of intialization and exploring the state space; we almost surely haven’t entered stationary distribution yet. Let’s go ahead and throw away half of our values as burn-in.\n\n# throw away some values as burn-in\nTHETA &lt;- THETA[-c(1:round(S/2))]\nS2 &lt;- S2[-c(1:round(S/2))]\n\nLet’s re-examine the traceplots post burn-in. From experience, these are beautiful looking traceplots!\n\npost_df &lt;- data.frame(theta = THETA, s2 = S2)\npost_df |&gt;\n  mutate(iteration = row_number()) |&gt;\n  pivot_longer(cols = 1:2, names_to = \"param\", values_to = \"value\") |&gt;\n  ggplot(aes(x = iteration, y = value)) +\n  geom_line() +\n  facet_wrap(~param, scales = \"free\") +\n  labs(\"Traceplots after burn-in\")\n\n\n\n\n\n\n\n\nWe should only estimate quantities after we’ve converged (i.e. after burn-in). In this case, we can obtain estimates of posterior quantities like usual:\n\n# estimated posterior mean of theta\nmean(THETA)\n\n[1] 8.967482\n\n# estimated posterior mean of sigma\nmean(sqrt(S2))\n\n[1] 3.493671\n\n## estimated CIs\nquantile(THETA, c(0.025, 0.975))\n\n     2.5%     97.5% \n 7.629652 10.265034 \n\nquantile(sqrt(S2), c(0.025, 0.975))\n\n    2.5%    97.5% \n2.787186 4.464605"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#diving-into-joint-density",
+    "href": "code/gibbs_normal_model_walkthrough.html#diving-into-joint-density",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Diving into joint density",
+    "text": "Diving into joint density\nWe can obtain a contour plot of the joint density using the samples obtained from Gibbs:\n\n\n\n\n\n\n\n\n\nWe can see how we “marginalize out” one parameter to get the posterior density of the other. To obtain marginals, we simply grab/isolate the parameter of interest.\n\n\n\n\n\n\n\n\n\n\nhist(THETA, main = \"Marginal posterior histogram\", xlab = \"theta\")\n\n\n\n\n\n\n\nhist(S2, main = \"Marginal posterior histogram\", xlab = \"s2\")"
+  },
+  {
+    "objectID": "code/gibbs_normal_model_walkthrough.html#chains",
+    "href": "code/gibbs_normal_model_walkthrough.html#chains",
+    "title": "Gibbs sampler: Normal Model",
+    "section": "Chains",
+    "text": "Chains\nIn this example, we have illustrated running a single “chain” where one has a single starting value and we simulated draws over \\(S\\) iterations. It is possible that the behavior of the MCMC sample will depend on the choice of starting value. So a general recommendation is to run the MCMC algorithm several times using different starting values. In this case, one will have multiple MCMC chains and combine them.\nWhen we code samplers by hand in this course, we will almost always run a single chain to make our lives easier. However, when we turn to software that implements the MCMC for us, it’s very easy to specify multiple chains!"
   }
 ]

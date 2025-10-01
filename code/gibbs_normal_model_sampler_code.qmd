@@ -1,0 +1,36 @@
+---
+title: "Gibbs Sampler: Normal Model"
+---
+
+```{r eval = F}
+set.seed(412)
+### GIBBS sampler
+S <- 5000
+
+# will generate a bunch of samples, need to store them somewhere!
+THETA <- rep(NA, S)
+S2 <- rep(NA, S)
+  
+# initialize the sampler 
+# since sampling precision first, initialize value of theta
+theta <- 2
+
+for (s in 1:S){
+  # sample phi from full conditional
+  b_n <- 0.5*sum((y - theta)^2) + b_0
+  a_n <- 0.5*n + a_0
+  phi <- rgamma(1, a_n, b_n)
+  
+  # convert phi to s2
+  s2 <- 1/phi
+  
+  # sample theta from full conditional
+  s2_n <- 1/(1/s2_0 + n / s2)
+  mu_n <- s2_n * (n * ybar/s2 + mu_0/s2_0)
+  theta <- rnorm(1, mu_n, sqrt(s2_n))
+
+  # store my samples
+  THETA[s] <- theta
+  S2[s] <- s2
+}
+```

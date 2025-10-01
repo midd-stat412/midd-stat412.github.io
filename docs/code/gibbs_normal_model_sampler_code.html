@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Schedule – STAT 412</title>
+<title>Gibbs Sampler: Normal Model – STAT 412</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +20,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -79,9 +114,9 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">STAT 412</span>
     </a>
   </div>
@@ -92,15 +127,15 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./schedule.html" aria-current="page"> 
+    <a class="nav-link" href="../schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./handouts.html"> 
+    <a class="nav-link" href="../handouts.html"> 
 <span class="menu-text">Handouts</span></a>
   </li>  
 </ul>
@@ -120,7 +155,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Schedule</h1>
+<h1 class="title">Gibbs Sampler: Normal Model</h1>
 </div>
 
 
@@ -137,119 +172,38 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><em>This page is frequently updated!</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Week</th>
-<th style="text-align: center;">Date</th>
-<th>Topic</th>
-<th>Assignments</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;"><strong>1</strong></td>
-<td style="text-align: center;">M 9/08</td>
-<td><ul>
-<li>Welcome!</li>
-<li>What is a statistical model?</li>
-</ul></td>
-<td><ul>
-<li><a href="homework/review.pdf">Problem Set 0</a> (due next class 9/10)</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/10</td>
-<td><ul>
-<li>Bayes’ rule, Bayes modeling
-<ul>
-<li>Likelihood, prior, posterior</li>
-<li><a href="./code/binom_discrete_prior.html">Code</a> and <a href="handouts/binom_prob_discrete.pdf">worksheet</a></li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw1.pdf">Problem Set 1</a> (due next class 9/15)</li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>2</strong></td>
-<td style="text-align: center;">M 9/15</td>
-<td><ul>
-<li><p>Beta-Binomial model</p>
-<ul>
-<li><a href="./code/proportionality.html">Proportionality</a></li>
-</ul></li>
-<li><p>Posterior predictive distribution</p></li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw2.pdf">Problem Set 2</a> (due 9/24)</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/17</td>
-<td><ul>
-<li><p>Bayes estimators/estimates</p>
-<ul>
-<li>Some <a href="./handouts/bayes_est.html">proofs</a></li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw2.pdf">Problem Set 2</a> (due 9/24)</li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>3</strong></td>
-<td style="text-align: center;">M 9/22</td>
-<td><ul>
-<li><p>Confidence regions</p></li>
-<li><p>Posterior quantities and posterior predictive checks via simulation</p>
-<ul>
-<li><a href="./code/post_pred_checks.html">Code</a></li>
-</ul></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/24</td>
-<td><ul>
-<li><p>Conjugacy</p></li>
-<li><p>Normal sampling model</p></li>
-</ul></td>
-<td><ul>
-<li><p><a href="homework/412_hw3.pdf">Problem Set 3</a> (complete!)</p>
-<p><a href="./code/hpd_code.html">Code for HW 3</a></p></li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>4</strong></td>
-<td style="text-align: center;">M 9/29</td>
-<td><ul>
-<li>Markov chain basics</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/01</td>
-<td><ul>
-<li><p>Normal model (cont.) with Gibbs sampling!</p>
-<ul>
-<li>Data under <a href="./handouts.html">Handouts</a></li>
-<li>Code to be posted after class</li>
-<li><a href="handouts/gibbs_gamma_gamma_poisson.pdf">Practice</a> (time permitting)</li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><p>For Monday, read the article found under Handouts and prepare to discuss!</p></li>
-<li><p>Problem Set 4</p></li>
-</ul></td>
-</tr>
-</tbody>
-</table>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">412</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="do">### GIBBS sampler</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># will generate a bunch of samples, need to store them somewhere!</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>THETA <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, S)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, S)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize the sampler </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># since sampling precision first, initialize value of theta</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sample phi from full conditional</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  b_n <span class="ot">&lt;-</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">sum</span>((y <span class="sc">-</span> theta)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> b_0</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  a_n <span class="ot">&lt;-</span> <span class="fl">0.5</span><span class="sc">*</span>n <span class="sc">+</span> a_0</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  phi <span class="ot">&lt;-</span> <span class="fu">rgamma</span>(<span class="dv">1</span>, a_n, b_n)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert phi to s2</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  s2 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>phi</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sample theta from full conditional</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  s2_n <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">/</span>s2_0 <span class="sc">+</span> n <span class="sc">/</span> s2)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  mu_n <span class="ot">&lt;-</span> s2_n <span class="sc">*</span> (n <span class="sc">*</span> ybar<span class="sc">/</span>s2 <span class="sc">+</span> mu_0<span class="sc">/</span>s2_0)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, mu_n, <span class="fu">sqrt</span>(s2_n))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># store my samples</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  THETA[s] <span class="ot">&lt;-</span> theta</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  S2[s] <span class="ot">&lt;-</span> s2</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
 

@@ -16,3 +16,5 @@ format:
     -   
 
         {{< downloadthis handouts/prussianHorses2.csv dname="prussianHorses2" label="prussianHorses2" id=mtcars-btn >}}
+
+    -   {{< downloadthis handouts/school1.Rda dname="school1" label="school1" id=mtcars-btn >}} Load code in as `readRDS("filepath/school1.Rda")`

@@ -1,0 +1,209 @@
+---
+title: "Gibbs sampler: Normal Model"
+author: "Becky Tang"
+date: "10/01/2025"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.height = 3, fig.width = 5)
+library(tidyverse)
+```
+
+## Prior specification
+
+We have data on the amount of time (in hours) a sample of students from a high school spent studying during a two-day reading period before exams. We will model the data as:
+
+$$ \begin{align*}
+Y_{i} \mid \theta, \sigma^2 &\overset{iid}{\sim} N(\theta, \sigma^2) \qquad i = 1,\ldots,n \\
+\theta &\sim N(\mu_{0}, \sigma_{0}^2) \\
+\phi &\sim \text{Gamma}(a_{0}, b_{0})
+\end{align*}$$
+
+where $\phi = \frac{1}{\sigma^2}$. We have to fill out our priors for $\theta$ and $\phi$ to fully specify the statistical model before seeing the data. Let's do that together!
+
+```{r}
+mu_0 <- 5
+s2_0 <- 4
+a_0 <- 5
+b_0 <- 15
+
+# demonstrate how I might do prior elicitation
+hist(sqrt(1/(rgamma(10000, a_0, b_0))))
+```
+
+## Data
+
+Now we get to see the data:
+
+```{r}
+y <- readRDS("~/Desktop/STAT 412/data/school1.Rda")
+data.frame(hours = y) |>
+  ggplot(aes(x = hours)) +
+  geom_histogram(bins = 15)
+ybar <- mean(y)
+n <- length(y)
+```
+
+## Gibbs sampler
+
+```{r}
+set.seed(412)
+### GIBBS sampler
+S <- 5000
+
+# will generate a bunch of samples, need to store them somewhere!
+THETA <- rep(NA, S)
+S2 <- rep(NA, S)
+  
+# initialize the sampler 
+# since sampling precision first, initialize value of theta
+theta <- 2
+
+for (s in 1:S){
+  # sample phi from full conditional
+  b_n <- 0.5*sum( (y - theta)^2) + b_0
+  a_n <- 0.5*n + a_0
+  phi <- rgamma(1, a_n, b_n)
+  
+  # convert phi to s2
+  s2 <- 1/phi
+  
+  # sample theta from full conditional
+  s2_n <- 1/(1/s2_0 + n / s2)
+  mu_n <- s2_n * (n * ybar/s2 + mu_0/s2_0)
+  theta <- rnorm(1, mu_n, sqrt(s2_n))
+
+  # store my samples
+  THETA[s] <- theta
+  S2[s] <- s2
+}
+
+```
+
+### Seeing the sampling
+
+```{r echo = F}
+post_df <- data.frame(theta = THETA, s2 = S2)
+theta_lim <- quantile(THETA, c(0.005, 0.995))
+s2_lim <-  quantile(S2, c(0.005, 0.995))
+post_df |> 
+  mutate(iter = row_number()) |>
+  slice(1:5) |>
+  ggplot(aes(x = theta, y = s2, label = iter))+
+  geom_point() +
+  geom_path(col = "grey")+
+  geom_text(nudge_x = 0.1, nudge_y = 0.05) +
+  xlim(theta_lim) +
+  # ylim(s2_lim) +
+  ggtitle("First 5 samples from joint posterior")
+
+
+post_df |> 
+  mutate(iter = row_number()) |>
+  slice(1:15) |>
+  ggplot(aes(x = theta, y = s2, label = iter))+
+  geom_point() +
+  geom_path(col = "grey")+
+  geom_text(nudge_x = 0.1) +
+  xlim(theta_lim) +
+  # ylim(s2_lim) +
+  ggtitle("First 15 samples from joint posterior")
+
+post_df |> 
+  mutate(iter = row_number()) |>
+  slice(1:75) |>
+  ggplot(aes(x = theta, y = s2))+
+  geom_point() +
+  geom_path(col = "grey")+
+  # geom_text(nudge_x = 0.05) +
+  xlim(theta_lim) +
+  # ylim(s2_lim) +
+  ggtitle("First 75 samples from joint posterior")
+```
+
+## Traceplots and posterior quantities
+
+Trace plots of markov chains: line plot of simulated draws of parameter against iteration. In theory, the Metropolis and Gibbs sampling algorithms will produce simulated draws that converge to the posterior distribution of interest. But in typical practice, it may take a number of iterations before the simulation values are close to the posterior distribution. So in general it is recommended that one run the algorithm for a number of “burn-in” iterations before one collects iterations for inference.
+
+We want nice "caterpillar" looking traceplots. This would suggest convergence!
+
+```{r}
+plot(THETA, xlab = "Iteration", ylab = "theta", type = "l", main = "Traceplot")
+plot(S2, xlab = "Iteration", ylab = "sigma2", type = "l", main = "Traceplot")
+```
+
+That crazy large sampled $\sigma^2$ at the beginning is a product of intialization and exploring the state space; we almost surely haven't entered stationary distribution yet. Let's go ahead and throw away half of our values as burn-in.
+
+```{r}
+# throw away some values as burn-in
+THETA <- THETA[-c(1:round(S/2))]
+S2 <- S2[-c(1:round(S/2))]
+```
+
+Let's re-examine the traceplots post burn-in. From experience, these are beautiful looking traceplots!
+
+```{r}
+post_df <- data.frame(theta = THETA, s2 = S2)
+post_df |>
+  mutate(iteration = row_number()) |>
+  pivot_longer(cols = 1:2, names_to = "param", values_to = "value") |>
+  ggplot(aes(x = iteration, y = value)) +
+  geom_line() +
+  facet_wrap(~param, scales = "free") +
+  labs("Traceplots after burn-in")
+```
+
+We should only estimate quantities after we've converged (i.e. after burn-in). In this case, we can obtain estimates of posterior quantities like usual:
+
+```{r}
+# estimated posterior mean of theta
+mean(THETA)
+
+# estimated posterior mean of sigma
+mean(sqrt(S2))
+
+## estimated CIs
+quantile(THETA, c(0.025, 0.975))
+quantile(sqrt(S2), c(0.025, 0.975))
+```
+
+## Diving into joint density
+
+We can obtain a contour plot of the joint density using the samples obtained from Gibbs:
+
+```{r echo = F}
+# estimated joint density of theta and s2
+p_joint <- post_df |>
+  ggplot(aes(x = theta, y = s2))+
+  geom_point(size = 0.25)
+
+p_joint +
+  geom_density_2d_filled(alpha = 0.75) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  ggtitle("Contour plot of samples from joint posterior") +
+  labs(caption = "Brighter = higher density")
+
+```
+
+We can see how we "marginalize out" one parameter to get the posterior density of the other. To obtain marginals, we simply grab/isolate the parameter of interest.
+
+```{r echo = F}
+# going from joint to marginals
+ggExtra::ggMarginal(p_joint+
+  ggtitle("Plot of joint posterior samples with\n marginal posterior histograms"), type="histogram") 
+```
+
+```{r}
+hist(THETA, main = "Marginal posterior histogram", xlab = "theta")
+hist(S2, main = "Marginal posterior histogram", xlab = "s2")
+```
+
+## Chains 
+
+In this example, we have illustrated running a single “chain” where one has a single starting value and we simulated draws over $S$ iterations. It is possible that the behavior of the MCMC sample will depend on the choice of starting value. So a general recommendation is to run the MCMC algorithm several times using different starting values. In this case, one will have multiple MCMC chains and combine them.
+
+When we code samplers by hand in this course, we will almost always run a single chain to make our lives easier. However, when we turn to software that implements the MCMC for us, it's very easy to specify multiple chains!

@@ -33,7 +33,6 @@ post_prob <-pgamma(0.5, a_post, b_post)
 
 The posterior probability $\text{Pr}(\theta  < 0.5 = \mathbf{y}) = `r post_prob`$. Since this is relatively small, I would say that there is not strong evidence to suggest that the average rate of deaths by horsekick in a given year and cavalary is less than 0.5.
 
-
 ```{r fig.width=8, fig.height=3}
 set.seed(2)
 y_new <- rnbinom(220, size = a_post, prob = (b_post)/(b_post + 1))
