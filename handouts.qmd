@@ -9,7 +9,7 @@ format:
 
 -   [Explaining the Gibbs Sampler (1992)](handouts/ExpGibbs_TAS1992.pdf)
 
-    -   Discussion questions posted soon!
+    -   Discussion questions posted [here](handouts/gibbs_reading_guide.pdf)!
 
 -   Data
 
