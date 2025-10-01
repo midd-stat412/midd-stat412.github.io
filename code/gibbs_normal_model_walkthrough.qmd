@@ -25,13 +25,13 @@ Y_{i} \mid \theta, \sigma^2 &\overset{iid}{\sim} N(\theta, \sigma^2) \qquad i = 
 where $\phi = \frac{1}{\sigma^2}$. We have to fill out our priors for $\theta$ and $\phi$ to fully specify the statistical model before seeing the data. Let's do that together!
 
 ```{r}
-mu_0 <- 5
-s2_0 <- 4
+mu_0 <- 6
+s2_0 <- 2.5
 a_0 <- 5
-b_0 <- 15
+b_0 <- 100
 
 # demonstrate how I might do prior elicitation
-hist(sqrt(1/(rgamma(10000, a_0, b_0))))
+# hist(sqrt(1/(rgamma(10000, a_0, b_0))))
 ```
 
 ## Data
@@ -202,7 +202,7 @@ hist(THETA, main = "Marginal posterior histogram", xlab = "theta")
 hist(S2, main = "Marginal posterior histogram", xlab = "s2")
 ```
 
-## Chains 
+## Chains
 
 In this example, we have illustrated running a single “chain” where one has a single starting value and we simulated draws over $S$ iterations. It is possible that the behavior of the MCMC sample will depend on the choice of starting value. So a general recommendation is to run the MCMC algorithm several times using different starting values. In this case, one will have multiple MCMC chains and combine them.
 

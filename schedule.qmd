@@ -39,6 +39,5 @@ title: "Schedule"
 |         | W 10/01       | -   Normal model (cont.) with Gibbs sampling!                                                   | -   For Monday, read the article found under Handouts and prepare to discuss! |
 |         |               |                                                                                                 |                                                                               |
 |         |               |     -   Data under [Handouts](handouts.qmd)                                                     | -   Problem Set 4                                                             |
-|         |               |     -   Code to be posted after class                                                           |                                                                               |
-|         |               |     -   [Practice](handouts/gibbs_gamma_gamma_poisson.pdf) (time permitting)                    |                                                                               |
+|         |               |     -   [Code](code/gibbs_normal_model_walkthrough.qmd) from class                              |                                                                               |
 +---------+---------------+-------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
