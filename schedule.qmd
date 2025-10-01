@@ -38,6 +38,6 @@ title: "Schedule"
 +---------+---------------+-------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+
 |         | W 10/01       | -   Normal model (cont.) with Gibbs sampling!                                                   | -   For **Monday**, read the article found under Handouts and prepare to discuss! |
 |         |               |                                                                                                 |                                                                                   |
-|         |               |     -   Data under [Handouts](handouts.qmd)                                                     | -   Problem Set 4                                                                 |
+|         |               |     -   Data under [Handouts](handouts.qmd)                                                     | -   [Problem Set 4](homework/412_hw4.pdf)                                         |
 |         |               |     -   [Code](code/gibbs_normal_model_walkthrough.qmd) from class                              |                                                                                   |
 +---------+---------------+-------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+
