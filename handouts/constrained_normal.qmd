@@ -1,0 +1,17 @@
+---
+title: "Constrained Normal Sampling Code"
+format: html
+---
+
+```{r}
+# n = number of random samples 
+# mu = mean of normal 
+# sd = std. dev. normal 
+# a = lower constraint (can be -Inf or a real number) 
+# b = upper constraint (can be Inf or a real number)
+
+rnorm_constrained <- function(n, mu, sd, a, b){
+  u <- runif(n, pnorm(a, mu,sd), pnorm(b, mu, sd)) 
+  qnorm(u, mu, sd) 
+}
+```

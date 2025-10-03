@@ -32,14 +32,14 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4\n\n\n\n5\nM 10/06\n\nDiscuss Explaining the Gibbs Sampler\nMCMC diagnostics\n\n\n\n\n\nW 10/06\n\nIntroduce Case Study 1\nMSE\n\n\nWork on Case Study 1"
   },
   {
     "objectID": "handouts.html",
     "href": "handouts.html",
     "title": "Handouts",
     "section": "",
-    "text": "Distribution sheet\nExplaining the Gibbs Sampler (1992)\n\nDiscussion questions posted here!\n\nData\n\n prussianHorses1 \n prussianHorses2 \n school1  Load code in as readRDS(\"filepath/school1.Rda\")\n divorce  Load code in as readRDS(\"filepath/divorce.Rda\")"
+    "text": "Distribution sheet\nExplaining the Gibbs Sampler (1992)\n\nDiscussion questions posted here!\n\nConstrained normal sampling code\nData\n\n prussianHorses1 \n prussianHorses2 \n school1  Load code in as readRDS(\"filepath/school1.Rda\")\n divorce  Load code in as readRDS(\"filepath/divorce.Rda\")"
   },
   {
     "objectID": "code/binom_discrete_prior.html",
@@ -285,5 +285,12 @@
     "title": "Gibbs sampler: Normal Model",
     "section": "Chains",
     "text": "Chains\nIn this example, we have illustrated running a single “chain” where one has a single starting value and we simulated draws over \\(S\\) iterations. It is possible that the behavior of the MCMC sample will depend on the choice of starting value. So a general recommendation is to run the MCMC algorithm several times using different starting values. In this case, one will have multiple MCMC chains and combine them.\nWhen we code samplers by hand in this course, we will almost always run a single chain to make our lives easier. However, when we turn to software that implements the MCMC for us, it’s very easy to specify multiple chains!"
+  },
+  {
+    "objectID": "handouts/constrained_normal.html",
+    "href": "handouts/constrained_normal.html",
+    "title": "Constrained Normal Sampling Code",
+    "section": "",
+    "text": "# n = number of random samples \n# mu = mean of normal \n# sd = std. dev. normal \n# a = lower constraint (can be -Inf or a real number) \n# b = upper constraint (can be Inf or a real number)\n\nrnorm_constrained &lt;- function(n, mu, sd, a, b){\n  u &lt;- runif(n, pnorm(a, mu,sd), pnorm(b, mu, sd)) \n  qnorm(u, mu, sd) \n}"
   }
 ]

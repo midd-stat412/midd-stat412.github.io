@@ -11,6 +11,8 @@ format:
 
     -   Discussion questions posted [here](handouts/gibbs_reading_guide.pdf)!
 
+-   Constrained normal sampling [code](handouts/constrained_normal.qmd)
+
 -   Data
 
     -   
