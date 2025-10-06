@@ -18,7 +18,7 @@
     "href": "index.html#announcements",
     "title": "STAT 412: Bayesian Statistics",
     "section": "Announcements",
-    "text": "Announcements\n\nPlease ensure R Studio functions on your laptop"
+    "text": "Announcements\n\nWeek 6 schedule is a bit wonky!"
   },
   {
     "objectID": "index.html#course-details",
@@ -32,7 +32,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4\n\n\n\n5\nM 10/06\n\nDiscuss Explaining the Gibbs Sampler\nMCMC diagnostics\n\n\n\n\n\nW 10/06\n\nIntroduce Case Study 1\nMSE\n\n\nWork on Case Study 1"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4\n\n\n\n5\nM 10/06\n\nDiscuss Explaining the Gibbs Sampler\nMCMC diagnostics\n\nCode here\n\n\n\n\n\n\nW 10/06\n\nJeffrey’s prior\nMSE?\nIntroduce Case Study 1\n\n\nWork on Case Study 1\n\n\n\n6\nM 10/13\n\nWork on Case Study 1\nMidterm review?\n\n\nWork on Case Study 1\n\n\n\n\nW 10/15\n\nPresent Case Study 1\n\n\nStudy for midterm!"
   },
   {
     "objectID": "handouts.html",
@@ -292,5 +292,40 @@
     "title": "Constrained Normal Sampling Code",
     "section": "",
     "text": "# n = number of random samples \n# mu = mean of normal \n# sd = std. dev. normal \n# a = lower constraint (can be -Inf or a real number) \n# b = upper constraint (can be Inf or a real number)\n\nrnorm_constrained &lt;- function(n, mu, sd, a, b){\n  u &lt;- runif(n, pnorm(a, mu,sd), pnorm(b, mu, sd)) \n  qnorm(u, mu, sd) \n}"
+  },
+  {
+    "objectID": "code/mixture_normals.html",
+    "href": "code/mixture_normals.html",
+    "title": "Mixture of Normals",
+    "section": "",
+    "text": "The density we’re interest in sampling from is \\[f(\\theta) = 0.45 N\\left(\\theta; -3, \\frac{1}{4}\\right) + 0.10 N\\left(\\theta; 0, \\frac{1}{4}\\right) +0.45 N\\left(\\theta; 3, \\frac{1}{4}\\right)\\] This is a mixutre of three Normals. You’ve seen your first mixture distribution in this class on the previous homework!\nWe can easily evaluate this distribution at a grid of \\(\\theta\\) values.\n\nw_prob &lt;- c(0.45, 0.1, 0.45)\nmu_vec &lt;- c(-3, 0, 3)\nsigma_vec &lt;- c(0.5, 0.5,0.5)\n\n# true density\ntheta_vec &lt;- seq(-10, 10, 0.01)\nmixture_dens &lt;- rep(NA, length(theta_vec))\nfor(i in 1:length(theta_vec)){\n  mixture_dens[i] &lt;- sum(dnorm(theta_vec[i], mu_vec, sigma_vec)*w_prob)\n}"
+  },
+  {
+    "objectID": "code/mixture_normals.html#mixture-of-normals-density",
+    "href": "code/mixture_normals.html#mixture-of-normals-density",
+    "title": "Mixture of Normals",
+    "section": "",
+    "text": "The density we’re interest in sampling from is \\[f(\\theta) = 0.45 N\\left(\\theta; -3, \\frac{1}{4}\\right) + 0.10 N\\left(\\theta; 0, \\frac{1}{4}\\right) +0.45 N\\left(\\theta; 3, \\frac{1}{4}\\right)\\] This is a mixutre of three Normals. You’ve seen your first mixture distribution in this class on the previous homework!\nWe can easily evaluate this distribution at a grid of \\(\\theta\\) values.\n\nw_prob &lt;- c(0.45, 0.1, 0.45)\nmu_vec &lt;- c(-3, 0, 3)\nsigma_vec &lt;- c(0.5, 0.5,0.5)\n\n# true density\ntheta_vec &lt;- seq(-10, 10, 0.01)\nmixture_dens &lt;- rep(NA, length(theta_vec))\nfor(i in 1:length(theta_vec)){\n  mixture_dens[i] &lt;- sum(dnorm(theta_vec[i], mu_vec, sigma_vec)*w_prob)\n}"
+  },
+  {
+    "objectID": "code/mixture_normals.html#monte-carlo-sampling",
+    "href": "code/mixture_normals.html#monte-carlo-sampling",
+    "title": "Mixture of Normals",
+    "section": "Monte Carlo sampling",
+    "text": "Monte Carlo sampling\nIf we want to sample from this mixture distribution, we can use Monte Calo sampling! For \\(s = 1,\\ldots, S\\):\n\nSample a value \\(w^{(s)} = \\{1,2,3\\}\\) according to mixture weights \\(\\{0.45, 0.10, 0.45\\}\\)\nGiven the value of \\(w\\), sample \\(\\theta^{(s)}\\) from the corresponding Normal. For example:\n\n\\[\\theta^{(s)} | w^{(s)} = 1 \\sim N\\left (-3, \\frac{1}{4}\\right)\\] Note this is indeed Monte Carlo sampling because we are drawing independent random sample!\nLet’s draw 1000 MC samples. A normalized histogram of the samples is shown below, along with the true density overlaid in orange:\n\nset.seed(1)\n# monte carlo\nS &lt;- 1000\nd_samp &lt;- sample(1:3, S, replace = T, prob = w_prob)\nhist(rnorm(S, mu_vec[d_samp], sigma_vec[d_samp]), freq = F, breaks =\n       20, main = \"Mixture of Normals\", xlab = \"theta\")\nlines(theta_vec, mixture_dens, type = \"l\", col = \"orange\")"
+  },
+  {
+    "objectID": "code/mixture_normals.html#mcmc-sampling",
+    "href": "code/mixture_normals.html#mcmc-sampling",
+    "title": "Mixture of Normals",
+    "section": "MCMC sampling",
+    "text": "MCMC sampling\nWe can also obtain samples from this distribution via Gibbs sampling (i.e. Markov Chain Monte Carlo)! Note that even though we’re not working with a posterior, we can still perform Gibbs Sampling if we have more than one parameter of interest. In this case, why don’t I iterate between 1) sampling a \\(\\theta\\) value from its full conditional and 2) sampling a mixture component \\(w\\) value from its full conditional? That is, for \\(s =1,\\ldots, S\\):\n\nSample \\(w^{(s)} \\sim f(w | \\theta^{s-1})\\)\nSample \\(\\theta^{(s)} \\sim f(\\theta | w^{(s)})\\)\n\nConvince yourself that this sampling scheme is different from the previous!\nWe already have the distrution for sampling in step 2. So we just need to derive the full conditional for \\(w\\)! Let’s do that together.\n\nGibbs sampler\nLet’s run our sampler for \\(S=5000\\) iterations, then take a look at the traceplot and marginal histogram for \\(\\theta\\). Note: even though we’re sampling \\(w\\)’s along the way, I don’t actually care about them (they are latent variables). So I don’t bother storing them!\n\nseed &lt;- 10\nS &lt;- 5000\nset.seed(seed)\ntheta &lt;- -2\nTHETA &lt;- rep(NA, S)\nfor(s in 1:S){\n  # sample w\n  prob_vec_unnorm &lt;- dnorm(theta, mu_vec, sigma_vec) * w_prob\n  prob_vec_norm &lt;- prob_vec_unnorm/sum(prob_vec_unnorm)\n  w &lt;- sample(1:3, size = 1, prob = prob_vec_norm)\n  \n  # sample theta\n  theta &lt;- rnorm(1, mu_vec[w], sigma_vec[w])\n  THETA[s] &lt;- theta\n}\npar(mfrow = c(1, 2))\nplot(THETA, type = \"l\", main = \"Traceplot\", xlab = \"iteration\")\nhist(THETA, freq = F, main = \"\", xlab = expression(theta))\n\n\n\n\n\n\n\n\nWhat are we noticing?\nWell, we did say that we should throw out the first chunk of iterations to burn-in. So let me throw out the first half and re-visualize:\n\npar(mfrow = c(1, 2))\nTHETA_burned &lt;- THETA[-c(1:(S/2))]\nplot(THETA_burned, type = \"l\",  main = \"Traceplot\", xlab = \"iteration (after burn-in)\")\nhist(THETA_burned, freq = F, main = \"\", xlab = expression(theta))\n\n\n\n\n\n\n\n\nYikes!! That sure is misleading!!!! After burn-in, it seems like my density has converged to a unimodal distribution. What’s happening here?\nLet’s talk about convergence, mixing, and autocorrelation!\n\n\nGibbs, take 2\nLet’s now run the chain a lot longer, this time for \\(S = 20000\\) iterations.\n\n\n\n\n\n\n\n\n\nThat’s much better! Of course, in real life, we don’t know what the desire (posterior) density should look like. But this goes to show that you should, if computationally feasible, run your chain for a long time and perhaps for many different \\(S\\) values."
+  },
+  {
+    "objectID": "code/mixture_normals.html#functions-for-mcmc-diagnostics",
+    "href": "code/mixture_normals.html#functions-for-mcmc-diagnostics",
+    "title": "Mixture of Normals",
+    "section": "Functions for MCMC diagnostics",
+    "text": "Functions for MCMC diagnostics\n\nAutocorrelation\nThe R function for examining autocorrelation is acf(), and you pass in a vector of samples:\n\nacf(THETA_burned)\n\n\n\n\n\n\n\n\nThe horizontal blue linee give the values beyond which the autocorrelations are (statistically) significantly different from 0. So you’d like ACF values within the blue bands.\nIf you just want the sample lag \\(t\\) ACF value, you can access it as follows:\n\nacf_out &lt;- acf(THETA_burned, plot = T)\n\n\n\n\n\n\n\n# lag-0 is at index 1\n# lag-1 is at index 2\nacf_out$acf[2]\n\n[1] 0.9685008\n\n\n\n\nEffective sample size\nWe can obtain \\(n_{eff}\\) using the effectiveSize() function from the R package coda (install it first).\n\n# yikes\ncoda::effectiveSize(THETA_burned) \n\n    var1 \n6.235923"
   }
 ]
