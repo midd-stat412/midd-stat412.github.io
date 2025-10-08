@@ -32,7 +32,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4\n\n\n\n5\nM 10/06\n\nDiscuss Explaining the Gibbs Sampler\nMCMC diagnostics\n\nCode here\n\n\n\n\n\n\nW 10/06\n\nJeffrey’s prior\nMSE?\nIntroduce Case Study 1\n\n\nWork on Case Study 1\n\n\n\n6\nM 10/13\n\nWork on Case Study 1\nMidterm review?\n\n\nWork on Case Study 1\n\n\n\n\nW 10/15\n\nPresent Case Study 1\n\n\nStudy for midterm!"
+    "text": "This page is frequently updated!\n\n\n\nWeek\nDate\nTopic\nAssignments\n\n\n\n\n1\nM 9/08\n\nWelcome!\nWhat is a statistical model?\n\n\nProblem Set 0 (due next class 9/10)\n\n\n\n\nW 9/10\n\nBayes’ rule, Bayes modeling\n\nLikelihood, prior, posterior\nCode and worksheet\n\n\n\nProblem Set 1 (due next class 9/15)\n\n\n\n2\nM 9/15\n\nBeta-Binomial model\n\nProportionality\n\nPosterior predictive distribution\n\n\nProblem Set 2 (due 9/24)\n\n\n\n\nW 9/17\n\nBayes estimators/estimates\n\nSome proofs\n\n\n\nProblem Set 2 (due 9/24)\n\n\n\n3\nM 9/22\n\nConfidence regions\nPosterior quantities and posterior predictive checks via simulation\n\nCode\n\n\n\n\n\n\nW 9/24\n\nConjugacy\nNormal sampling model\n\n\nProblem Set 3 (complete!)\nCode for HW 3\n\n\n\n4\nM 9/29\n\nMarkov chain basics\n\n\n\n\n\nW 10/01\n\nNormal model (cont.) with Gibbs sampling!\n\nData under Handouts\nCode from class\n\n\n\nFor Monday, read the article Explaining the Gibbs Sampler under Handouts and prepare to discuss!\nProblem Set 4\n\n\n\n5\nM 10/06\n\nDiscuss Explaining the Gibbs Sampler\nMCMC diagnostics\n\nCode here\n\n\n\n\n\n\nW 10/06\n\nFinish MCMC diagnostics\nJeffrey’s prior\nIntroduce Case Study 1\n\n\nWork on Case Study 1\n\n\n\n6\nM 10/13\nBecky out of town; Prof. Christian Stratton will be here in my stead!\n\nWork on Case Study 1\nMidterm review?\n\n\nWork on Case Study 1\n\n\n\n\nW 10/15\n\nPresent Case Study 1\n\n\nStudy for midterm!"
   },
   {
     "objectID": "handouts.html",
@@ -327,5 +327,68 @@
     "title": "Mixture of Normals",
     "section": "Functions for MCMC diagnostics",
     "text": "Functions for MCMC diagnostics\n\nAutocorrelation\nThe R function for examining autocorrelation is acf(), and you pass in a vector of samples:\n\nacf(THETA_burned)\n\n\n\n\n\n\n\n\nThe horizontal blue linee give the values beyond which the autocorrelations are (statistically) significantly different from 0. So you’d like ACF values within the blue bands.\nIf you just want the sample lag \\(t\\) ACF value, you can access it as follows:\n\nacf_out &lt;- acf(THETA_burned, plot = T)\n\n\n\n\n\n\n\n# lag-0 is at index 1\n# lag-1 is at index 2\nacf_out$acf[2]\n\n[1] 0.9685008\n\n\n\n\nEffective sample size\nWe can obtain \\(n_{eff}\\) using the effectiveSize() function from the R package coda (install it first).\n\n# yikes\ncoda::effectiveSize(THETA_burned) \n\n    var1 \n6.235923"
+  },
+  {
+    "objectID": "case_study.html",
+    "href": "case_study.html",
+    "title": "Case studies",
+    "section": "",
+    "text": "Your first case study will be performed in pairs! You should work together; don’t just divy up the work. A large part of modeling is bouncing ideas back and forth and checking in to make sure things “make sense”. Each group will submit 1 report in the form of both a .Rmd and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by beginning of class 10/15.\nThe description of the case study and the data are found here:\n\nDescription\nData:  ItalyMarriageRates \nOptional .Rmd template:  caseStudy1 \n\nAdditionally, each group will give a brief 5 minute presentation of their work to the class on 10/15. Your presentation should be accompanied by a brief set of slides. These slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation). You should be prepared to answer questions from the audience."
+  },
+  {
+    "objectID": "case_study.html#case-study-1",
+    "href": "case_study.html#case-study-1",
+    "title": "Case studies",
+    "section": "",
+    "text": "Your first case study will be performed in pairs! You should work together; don’t just divy up the work. A large part of modeling is bouncing ideas back and forth and checking in to make sure things “make sense”. Each group will submit 1 report in the form of both a .Rmd and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by beginning of class 10/15.\nThe description of the case study and the data are found here:\n\nDescription\nData:  ItalyMarriageRates \nOptional .Rmd template:  caseStudy1 \n\nAdditionally, each group will give a brief 5 minute presentation of their work to the class on 10/15. Your presentation should be accompanied by a brief set of slides. These slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation). You should be prepared to answer questions from the audience."
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html",
+    "href": "case_study/case_study_1_template.html",
+    "title": "STAT 412: Case Study 1",
+    "section": "",
+    "text": "DELETE ALL THE TEXT PROVIDED BY BECKY BEFORE SUBMITTING!\n# if you need packages, load them here\n\n# the following line of code sets the size of the figures when knitting for all code chunks. \n# You can also change the figure size in each specific chunk's header\nknitr::opts_chunk$set(fig.height = 3, fig.width = 5)\n\n# load your data here\n# Once you've set your file path, change the R chunk header to eval = TRUE\nmarriage &lt;- read_csv()"
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html#model-description",
+    "href": "case_study/case_study_1_template.html#model-description",
+    "title": "STAT 412: Case Study 1",
+    "section": "Model description",
+    "text": "Model description\nClearly state your model (Address questions 1 and 2). I encourage you to type up your model in math notation using Latex. For example:\n\\(Y_{1}, \\ldots, Y_{n} |\\theta \\overset{iid}{\\sim} f(y | \\theta)\\)\nIf you do not know how, that’s okay! Just let me know and I will be happy to help or point you towards some resources."
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html#implementation",
+    "href": "case_study/case_study_1_template.html#implementation",
+    "title": "STAT 412: Case Study 1",
+    "section": "Implementation",
+    "text": "Implementation\nClearly state how you will implement your model. (Address question 3.) You should provide enough detail such that someone else could implement your analysis."
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html#gibbs-sampler",
+    "href": "case_study/case_study_1_template.html#gibbs-sampler",
+    "title": "STAT 412: Case Study 1",
+    "section": "Gibbs sampler",
+    "text": "Gibbs sampler\n\n# code for your gibbs sampler should go here\n# remember to only keep necessary code for submission!"
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html#results",
+    "href": "case_study/case_study_1_template.html#results",
+    "title": "STAT 412: Case Study 1",
+    "section": "Results",
+    "text": "Results\n\nDiagnostics\nFirst do some diagnostics to see if your chain has converged\n\n\nFindings\nProvide results with interpretation (Address question 4). You should alternate between R code and text!"
+  },
+  {
+    "objectID": "case_study/case_study_1_template.html#conclusion",
+    "href": "case_study/case_study_1_template.html#conclusion",
+    "title": "STAT 412: Case Study 1",
+    "section": "Conclusion",
+    "text": "Conclusion\nGive a conclusion that answers the research question (Address question 5)."
+  },
+  {
+    "objectID": "handouts/jeffreys_prior_normal.html",
+    "href": "handouts/jeffreys_prior_normal.html",
+    "title": "Jeffreys Prior",
+    "section": "",
+    "text": "Suppose I use Jeffrey’s prior for \\(\\theta\\), but I don’t use Jeffrey’s prior for \\(\\gamma = e^{\\theta}\\). Then if I obtain the posterior for \\(\\theta\\) and transform that posterior to \\(\\gamma\\) space, I’m not guaranteed to get the same posterior as if I’d started in \\(\\gamma\\)-space to begin with!\n\nlibrary(pracma)\n\n# Data: single observation\ny &lt;- 2.5\nsigma &lt;- 1\n\n# Grid in mu-space\nmu_vec &lt;- seq(-5, 5, length.out = 10000)\n\n# Likelihood in mu\nlik_mu &lt;- dnorm(y, mean = mu_vec, sd = sigma)\n\n# Prior 1: Jeffreys prior on mu: uniform (constant)\nprior_jeff_mu &lt;- rep(1, length(mu_vec))\n\n# Posterior in mu under Jeffreys prior for mu\npost_mu_jeff &lt;- lik_mu * prior_jeff_mu\npost_mu_jeff &lt;- post_mu_jeff / trapz(mu_vec, post_mu_jeff)\n\n# Transform parameter: gamma = exp(mu)\ngamma_vec &lt;- exp(mu_vec)\ndmu_dgamma &lt;- 1 / gamma_vec  # derivative of mu w.r.t gamma\n\n# Transform posterior to gamma-space\npost_gamma_from_mu &lt;- post_mu_jeff / dmu_dgamma  # divide by |dmu/dgamma| for pdf transform\npost_gamma_from_mu &lt;- post_gamma_from_mu / trapz(gamma_vec, post_gamma_from_mu)\n\n# flat prior on gamma (this is NOT jeffrey's prior for gamma)\nprior_flat_gamma &lt;- rep(1, length(gamma_vec))\n\n# Likelihood in gamma-space (transform mu to gamma)\nlik_gamma &lt;- dnorm(y, mean = log(gamma_vec), sd = sigma)\n\n\n# Posterior in gamma-space under flat prior for gamma\npost_gamma &lt;- lik_gamma * prior_flat_gamma\npost_gamma &lt;- post_gamma / trapz(gamma_vec, post_gamma)\n\n# Sampling function from mu posterior\ncdf_mu_jeff &lt;- cumtrapz(mu_vec, post_mu_jeff)\ncdf_mu_jeff &lt;- cdf_mu_jeff / max(cdf_mu_jeff)\nsample_mu &lt;- function(n) {\n  u &lt;- runif(n)\n  approx(cdf_mu_jeff, mu_vec, xout = u, rule = 2)$y\n}\nmu_samps_jeff &lt;- sample_mu(50000)\n# induced gamma posterior from jeffrey's prior on mu\ngamma_samps_from_mu_jeff &lt;- exp(mu_samps_jeff)\n\n# Sampling function from gamma posterior\ncdf_gamma &lt;- cumtrapz(gamma_vec, post_gamma)\ncdf_gamma &lt;- cdf_gamma / max(cdf_gamma)\nsample_gamma &lt;- function(n) {\n  u &lt;- runif(n)\n  approx(cdf_gamma, gamma_vec, xout = u, rule = 2)$y\n}\n# gamma posterior with flat prior on gamma starting in gamma space\ngamma_samps &lt;- sample_gamma(50000)\n\n\n\n\n\n\n\n\n\n\nNow what happens if I use Jeffrey’s prior for \\(\\theta\\) and also Jeffrey’s prior for \\(\\gamma\\)? The posteriors in \\(\\gamma\\)-space ought to look the same!\n\n# Jeffreys prior on gamma is proportional to 1/gamma\nprior_jeff_gamma &lt;- 1 / gamma_vec\n\n# Posterior in gamma under jeffreys prior\npost_gamma_jeff &lt;- lik_gamma * prior_jeff_gamma\npost_gamma_jeff &lt;- post_gamma_jeff / trapz(gamma_vec, post_gamma_jeff)\n\n# Sampling functions using inverse CDF method\ncdf_gamma_jeff &lt;- cumtrapz(gamma_vec, post_gamma_jeff)\ncdf_gamma_jeff &lt;- cdf_gamma_jeff / max(cdf_gamma_jeff)\nsample_gamma_jeff &lt;- function(n) {\n  u &lt;- runif(n)\n  approx(cdf_gamma_jeff, gamma_vec, xout = u, rule = 2)$y\n}\n# gamma posterior with Jeffreys prior on gamma starting in gamma space\ngamma_samps_jeff &lt;- sample_gamma_jeff(50000)"
   }
 ]

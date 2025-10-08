@@ -12,6 +12,8 @@ website:
         text: Schedule
       - href: handouts.qmd
         text: Handouts
+      - href: case_study.qmd
+        text: Case Studies
 
 format:
   html:

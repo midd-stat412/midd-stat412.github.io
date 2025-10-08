@@ -1,0 +1,112 @@
+---
+title: "Jeffreys Prior"
+editor_options: 
+  chunk_output_type: console
+---
+
+Suppose I use Jeffrey's prior for $\theta$, but I don't use Jeffrey's prior for $\gamma = e^{\theta}$. Then if I obtain the posterior for $\theta$ and transform that posterior to $\gamma$ space, I'm not guaranteed to get the same posterior as if I'd started in $\gamma$-space to begin with!
+
+```{r}
+library(pracma)
+
+# Data: single observation
+y <- 2.5
+sigma <- 1
+
+# Grid in mu-space
+mu_vec <- seq(-5, 5, length.out = 10000)
+
+# Likelihood in mu
+lik_mu <- dnorm(y, mean = mu_vec, sd = sigma)
+
+# Prior 1: Jeffreys prior on mu: uniform (constant)
+prior_jeff_mu <- rep(1, length(mu_vec))
+
+# Posterior in mu under Jeffreys prior for mu
+post_mu_jeff <- lik_mu * prior_jeff_mu
+post_mu_jeff <- post_mu_jeff / trapz(mu_vec, post_mu_jeff)
+
+# Transform parameter: gamma = exp(mu)
+gamma_vec <- exp(mu_vec)
+dmu_dgamma <- 1 / gamma_vec  # derivative of mu w.r.t gamma
+
+# Transform posterior to gamma-space
+post_gamma_from_mu <- post_mu_jeff / dmu_dgamma  # divide by |dmu/dgamma| for pdf transform
+post_gamma_from_mu <- post_gamma_from_mu / trapz(gamma_vec, post_gamma_from_mu)
+
+# flat prior on gamma (this is NOT jeffrey's prior for gamma)
+prior_flat_gamma <- rep(1, length(gamma_vec))
+
+# Likelihood in gamma-space (transform mu to gamma)
+lik_gamma <- dnorm(y, mean = log(gamma_vec), sd = sigma)
+
+
+# Posterior in gamma-space under flat prior for gamma
+post_gamma <- lik_gamma * prior_flat_gamma
+post_gamma <- post_gamma / trapz(gamma_vec, post_gamma)
+
+# Sampling function from mu posterior
+cdf_mu_jeff <- cumtrapz(mu_vec, post_mu_jeff)
+cdf_mu_jeff <- cdf_mu_jeff / max(cdf_mu_jeff)
+sample_mu <- function(n) {
+  u <- runif(n)
+  approx(cdf_mu_jeff, mu_vec, xout = u, rule = 2)$y
+}
+mu_samps_jeff <- sample_mu(50000)
+# induced gamma posterior from jeffrey's prior on mu
+gamma_samps_from_mu_jeff <- exp(mu_samps_jeff)
+
+# Sampling function from gamma posterior
+cdf_gamma <- cumtrapz(gamma_vec, post_gamma)
+cdf_gamma <- cdf_gamma / max(cdf_gamma)
+sample_gamma <- function(n) {
+  u <- runif(n)
+  approx(cdf_gamma, gamma_vec, xout = u, rule = 2)$y
+}
+# gamma posterior with flat prior on gamma starting in gamma space
+gamma_samps <- sample_gamma(50000)
+```
+
+```{r echo = F}
+## PLOT
+hist(gamma_samps_from_mu_jeff, breaks = 100, freq = FALSE, col = rgb(1,0,0,0.4),
+     main = expression(paste("Posterior in ", gamma, "-space")),
+     xlab = expression(gamma), xlim = range(gamma_vec))
+hist(gamma_samps, breaks = 100, freq = FALSE, col = rgb(0,0,1,0.4), add = TRUE)
+legend("topright", legend = c("Posterior from mu-space", "Posterior directly in gamma-space"),
+       fill = c(rgb(1,0,0,0.4), rgb(0,0,1,0.4)))
+
+
+```
+
+Now what happens if I use Jeffrey's prior for $\theta$ and *also* Jeffrey's prior for $\gamma$? The posteriors in $\gamma$-space ought to look the same!
+
+```{r}
+# Jeffreys prior on gamma is proportional to 1/gamma
+prior_jeff_gamma <- 1 / gamma_vec
+
+# Posterior in gamma under jeffreys prior
+post_gamma_jeff <- lik_gamma * prior_jeff_gamma
+post_gamma_jeff <- post_gamma_jeff / trapz(gamma_vec, post_gamma_jeff)
+
+# Sampling functions using inverse CDF method
+cdf_gamma_jeff <- cumtrapz(gamma_vec, post_gamma_jeff)
+cdf_gamma_jeff <- cdf_gamma_jeff / max(cdf_gamma_jeff)
+sample_gamma_jeff <- function(n) {
+  u <- runif(n)
+  approx(cdf_gamma_jeff, gamma_vec, xout = u, rule = 2)$y
+}
+# gamma posterior with Jeffreys prior on gamma starting in gamma space
+gamma_samps_jeff <- sample_gamma_jeff(50000)
+```
+
+```{r echo = F}
+# PLOT
+hist(gamma_samps_from_mu_jeff, breaks = 100, freq = FALSE, col = rgb(1,0,0,0.4),
+     main = expression(paste("Jeffreys Posterior in ", gamma, "-space")),
+     xlab = expression(gamma), xlim = range(gamma_vec))
+hist(gamma_samps_jeff, breaks = 100, freq = FALSE, col = rgb(0,0,1,0.4), add = TRUE)
+legend("topright", legend = c("From mu-space", "Directly in gamma-space"),
+       fill = c(rgb(1,0,0,0.4), rgb(0,0,1,0.4)))
+
+```

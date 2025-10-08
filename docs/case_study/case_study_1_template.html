@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Your name(s)">
+<meta name="dcterms.date" content="2025-10-15">
 
-<title>STAT 412: Problem Set 2 (R) – STAT 412</title>
+<title>STAT 412: Case Study 1 – STAT 412</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -136,7 +138,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -167,10 +169,6 @@ window.Quarto = {
     <a class="nav-link" href="../handouts.html"> 
 <span class="menu-text">Handouts</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../case_study.html"> 
-<span class="menu-text">Case Studies</span></a>
-  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -182,21 +180,32 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="412_hw2_r.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">STAT 412: Problem Set 2 (R)</h1>
+<h1 class="title">STAT 412: Case Study 1</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Your name(s) </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 15, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -206,65 +215,52 @@ window.Quarto = {
 </header>
 
 
+<p>DELETE ALL THE TEXT PROVIDED BY BECKY BEFORE SUBMITTING!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>prussian1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../handouts/prussianHorses1.csv"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>prussian2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../handouts/prussianHorses2.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if you need packages, load them here</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the following line of code sets the size of the figures when knitting for all code chunks. </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># You can also change the figure size in each specific chunk's header</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">fig.height =</span> <span class="dv">3</span>, <span class="at">fig.width =</span> <span class="dv">5</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load your data here</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Once you've set your file path, change the R chunk header to eval = TRUE</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>marriage <span class="ot">&lt;-</span> <span class="fu">read_csv</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<section id="model-description" class="level2">
+<h2 class="anchored" data-anchor-id="model-description">Model description</h2>
+<p>Clearly state your model (Address questions 1 and 2). I encourage you to type up your model in math notation using Latex. For example:</p>
+<p><span class="math inline">\(Y_{1}, \ldots, Y_{n} |\theta \overset{iid}{\sim} f(y | \theta)\)</span></p>
+<p>If you do not know how, that’s okay! Just let me know and I will be happy to help or point you towards some resources.</p>
+</section>
+<section id="implementation" class="level2">
+<h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
+<p>Clearly state how you will implement your model. (Address question 3.) You should provide enough detail such that someone else could implement your analysis.</p>
+</section>
+<section id="gibbs-sampler" class="level2">
+<h2 class="anchored" data-anchor-id="gibbs-sampler">Gibbs sampler</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qgamma</span>(<span class="fl">0.95</span>, a,b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.497866</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># code for your gibbs sampler should go here</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># remember to only keep necessary code for submission!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> prussian1<span class="sc">$</span>deaths</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(prussian1<span class="sc">$</span>deaths)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>theta_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">5</span>, <span class="fl">0.05</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(theta_seq, a, b)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>a_post <span class="ot">&lt;-</span> a <span class="sc">+</span> <span class="fu">sum</span>(y)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>b_post <span class="ot">&lt;-</span> b <span class="sc">+</span> n</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>post <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(theta_seq, a_post, b_post)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>bayes_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">theta =</span> theta_seq, <span class="at">prior =</span> prior, <span class="at">post =</span> post) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"distribution"</span>, <span class="at">values_to =</span> <span class="st">"density"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>bayes_df <span class="sc">|&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density, <span class="at">col =</span> distribution)) <span class="sc">+</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="412_hw2_r_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>post_prob <span class="ot">&lt;-</span><span class="fu">pgamma</span>(<span class="fl">0.5</span>, a_post, b_post)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>The posterior probability <span class="math inline">\(\text{Pr}(\theta  &lt; 0.5 = \mathbf{y}) = 0.0487284\)</span>. Since this is relatively small, I would say that there is not strong evidence to suggest that the average rate of deaths by horsekick in a given year and cavalary is less than 0.5.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y_new <span class="ot">&lt;-</span> <span class="fu">rnbinom</span>(<span class="dv">220</span>, <span class="at">size =</span> a_post, <span class="at">prob =</span> (b_post)<span class="sc">/</span>(b_post <span class="sc">+</span> <span class="dv">1</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(y_new) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> y_new)) <span class="sc">+</span> </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths"</span>, <span class="at">title =</span> <span class="st">"Draws from posterior predictive distribution"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> prussian2 <span class="sc">|&gt;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> deaths)) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths"</span>, <span class="at">title =</span> <span class="st">"Held-out observations"</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="412_hw2_r_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="diagnostics" class="level3">
+<h3 class="anchored" data-anchor-id="diagnostics">Diagnostics</h3>
+<p>First do some diagnostics to see if your chain has converged</p>
+</section>
+<section id="findings" class="level3">
+<h3 class="anchored" data-anchor-id="findings">Findings</h3>
+<p>Provide results with interpretation (Address question 4). You should alternate between R code and text!</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Give a conclusion that answers the research question (Address question 5).</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

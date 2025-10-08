@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>STAT 412: Problem Set 2 (R) – STAT 412</title>
+<title>Jeffreys Prior – STAT 412</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -136,7 +136,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -182,14 +182,13 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="412_hw2_r.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">STAT 412: Problem Set 2 (R)</h1>
+<h1 class="title">Jeffreys Prior</h1>
 </div>
 
 
@@ -206,59 +205,100 @@ window.Quarto = {
 </header>
 
 
+<p>Suppose I use Jeffrey’s prior for <span class="math inline">\(\theta\)</span>, but I don’t use Jeffrey’s prior for <span class="math inline">\(\gamma = e^{\theta}\)</span>. Then if I obtain the posterior for <span class="math inline">\(\theta\)</span> and transform that posterior to <span class="math inline">\(\gamma\)</span> space, I’m not guaranteed to get the same posterior as if I’d started in <span class="math inline">\(\gamma\)</span>-space to begin with!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>prussian1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../handouts/prussianHorses1.csv"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>prussian2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../handouts/prussianHorses2.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Data: single observation</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid in mu-space</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu_vec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">10000</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood in mu</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>lik_mu <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(y, <span class="at">mean =</span> mu_vec, <span class="at">sd =</span> sigma)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior 1: Jeffreys prior on mu: uniform (constant)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>prior_jeff_mu <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(mu_vec))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior in mu under Jeffreys prior for mu</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>post_mu_jeff <span class="ot">&lt;-</span> lik_mu <span class="sc">*</span> prior_jeff_mu</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>post_mu_jeff <span class="ot">&lt;-</span> post_mu_jeff <span class="sc">/</span> <span class="fu">trapz</span>(mu_vec, post_mu_jeff)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform parameter: gamma = exp(mu)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>gamma_vec <span class="ot">&lt;-</span> <span class="fu">exp</span>(mu_vec)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>dmu_dgamma <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> gamma_vec  <span class="co"># derivative of mu w.r.t gamma</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform posterior to gamma-space</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>post_gamma_from_mu <span class="ot">&lt;-</span> post_mu_jeff <span class="sc">/</span> dmu_dgamma  <span class="co"># divide by |dmu/dgamma| for pdf transform</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>post_gamma_from_mu <span class="ot">&lt;-</span> post_gamma_from_mu <span class="sc">/</span> <span class="fu">trapz</span>(gamma_vec, post_gamma_from_mu)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># flat prior on gamma (this is NOT jeffrey's prior for gamma)</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>prior_flat_gamma <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(gamma_vec))</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood in gamma-space (transform mu to gamma)</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>lik_gamma <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(y, <span class="at">mean =</span> <span class="fu">log</span>(gamma_vec), <span class="at">sd =</span> sigma)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior in gamma-space under flat prior for gamma</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>post_gamma <span class="ot">&lt;-</span> lik_gamma <span class="sc">*</span> prior_flat_gamma</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>post_gamma <span class="ot">&lt;-</span> post_gamma <span class="sc">/</span> <span class="fu">trapz</span>(gamma_vec, post_gamma)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Sampling function from mu posterior</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>cdf_mu_jeff <span class="ot">&lt;-</span> <span class="fu">cumtrapz</span>(mu_vec, post_mu_jeff)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>cdf_mu_jeff <span class="ot">&lt;-</span> cdf_mu_jeff <span class="sc">/</span> <span class="fu">max</span>(cdf_mu_jeff)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>sample_mu <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">approx</span>(cdf_mu_jeff, mu_vec, <span class="at">xout =</span> u, <span class="at">rule =</span> <span class="dv">2</span>)<span class="sc">$</span>y</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>mu_samps_jeff <span class="ot">&lt;-</span> <span class="fu">sample_mu</span>(<span class="dv">50000</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># induced gamma posterior from jeffrey's prior on mu</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>gamma_samps_from_mu_jeff <span class="ot">&lt;-</span> <span class="fu">exp</span>(mu_samps_jeff)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Sampling function from gamma posterior</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>cdf_gamma <span class="ot">&lt;-</span> <span class="fu">cumtrapz</span>(gamma_vec, post_gamma)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>cdf_gamma <span class="ot">&lt;-</span> cdf_gamma <span class="sc">/</span> <span class="fu">max</span>(cdf_gamma)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>sample_gamma <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">approx</span>(cdf_gamma, gamma_vec, <span class="at">xout =</span> u, <span class="at">rule =</span> <span class="dv">2</span>)<span class="sc">$</span>y</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="co"># gamma posterior with flat prior on gamma starting in gamma space</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>gamma_samps <span class="ot">&lt;-</span> <span class="fu">sample_gamma</span>(<span class="dv">50000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qgamma</span>(<span class="fl">0.95</span>, a,b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.497866</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> prussian1<span class="sc">$</span>deaths</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(prussian1<span class="sc">$</span>deaths)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>theta_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">5</span>, <span class="fl">0.05</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(theta_seq, a, b)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>a_post <span class="ot">&lt;-</span> a <span class="sc">+</span> <span class="fu">sum</span>(y)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>b_post <span class="ot">&lt;-</span> b <span class="sc">+</span> n</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>post <span class="ot">&lt;-</span> <span class="fu">dgamma</span>(theta_seq, a_post, b_post)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>bayes_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">theta =</span> theta_seq, <span class="at">prior =</span> prior, <span class="at">post =</span> post) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"distribution"</span>, <span class="at">values_to =</span> <span class="st">"density"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>bayes_df <span class="sc">|&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density, <span class="at">col =</span> distribution)) <span class="sc">+</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="412_hw2_r_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="jeffreys_prior_normal_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>post_prob <span class="ot">&lt;-</span><span class="fu">pgamma</span>(<span class="fl">0.5</span>, a_post, b_post)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The posterior probability <span class="math inline">\(\text{Pr}(\theta  &lt; 0.5 = \mathbf{y}) = 0.0487284\)</span>. Since this is relatively small, I would say that there is not strong evidence to suggest that the average rate of deaths by horsekick in a given year and cavalary is less than 0.5.</p>
+<p>Now what happens if I use Jeffrey’s prior for <span class="math inline">\(\theta\)</span> and <em>also</em> Jeffrey’s prior for <span class="math inline">\(\gamma\)</span>? The posteriors in <span class="math inline">\(\gamma\)</span>-space ought to look the same!</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y_new <span class="ot">&lt;-</span> <span class="fu">rnbinom</span>(<span class="dv">220</span>, <span class="at">size =</span> a_post, <span class="at">prob =</span> (b_post)<span class="sc">/</span>(b_post <span class="sc">+</span> <span class="dv">1</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(y_new) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> y_new)) <span class="sc">+</span> </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths"</span>, <span class="at">title =</span> <span class="st">"Draws from posterior predictive distribution"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> prussian2 <span class="sc">|&gt;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> deaths)) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths"</span>, <span class="at">title =</span> <span class="st">"Held-out observations"</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeffreys prior on gamma is proportional to 1/gamma</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>prior_jeff_gamma <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> gamma_vec</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior in gamma under jeffreys prior</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>post_gamma_jeff <span class="ot">&lt;-</span> lik_gamma <span class="sc">*</span> prior_jeff_gamma</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>post_gamma_jeff <span class="ot">&lt;-</span> post_gamma_jeff <span class="sc">/</span> <span class="fu">trapz</span>(gamma_vec, post_gamma_jeff)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sampling functions using inverse CDF method</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>cdf_gamma_jeff <span class="ot">&lt;-</span> <span class="fu">cumtrapz</span>(gamma_vec, post_gamma_jeff)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>cdf_gamma_jeff <span class="ot">&lt;-</span> cdf_gamma_jeff <span class="sc">/</span> <span class="fu">max</span>(cdf_gamma_jeff)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sample_gamma_jeff <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">approx</span>(cdf_gamma_jeff, gamma_vec, <span class="at">xout =</span> u, <span class="at">rule =</span> <span class="dv">2</span>)<span class="sc">$</span>y</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># gamma posterior with Jeffreys prior on gamma starting in gamma space</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>gamma_samps_jeff <span class="ot">&lt;-</span> <span class="fu">sample_gamma_jeff</span>(<span class="dv">50000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="412_hw2_r_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="jeffreys_prior_normal_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

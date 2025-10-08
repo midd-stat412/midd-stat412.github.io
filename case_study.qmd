@@ -1,0 +1,20 @@
+---
+title: "Case studies"
+format: 
+  html:
+    css: styles.css
+---
+
+## Case study 1
+
+Your first case study will be performed in pairs! You should work together; don't just divy up the work. A large part of modeling is bouncing ideas back and forth and checking in to make sure things "make sense". Each group will submit 1 report in the form of both a `.Rmd` and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by beginning of class 10/15.
+
+The description of the case study and the data are found here:
+
+-   [Description](case_study/marriage_rates_description.pdf)
+
+-   Data: {{< downloadthis case_study/ItalyMarriageRates.csv dname="ItalyMarriageRates" label="ItalyMarriageRates" id=mtcars-btn >}}
+
+-   Optional `.Rmd` template: {{< downloadthis case_study/case_study_1_template.Rmd dname="caseStudy1" label="caseStudy1" id=mtcars-btn >}}
+
+Additionally, each group will give a brief 5 minute presentation of their work to the class on 10/15. Your presentation should be accompanied by a *brief* set of slides. These slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation). You should be prepared to answer questions from the audience.

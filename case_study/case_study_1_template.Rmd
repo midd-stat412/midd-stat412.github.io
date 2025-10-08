@@ -1,0 +1,68 @@
+---
+title: "STAT 412: Case Study 1"
+author: "Your name(s)"
+date: "Due: October 15, 2025"
+output: pdf_document
+---
+
+DELETE ALL THE TEXT PROVIDED BY BECKY BEFORE SUBMITTING!
+
+```{r setup, message = F, eval = FALSE}
+# if you need packages, load them here
+
+# the following line of code sets the size of the figures when knitting for all code chunks. 
+# You can also change the figure size in each specific chunk's header
+knitr::opts_chunk$set(fig.height = 3, fig.width = 5)
+
+# load your data here
+# Once you've set your file path, change the R chunk header to eval = TRUE
+marriage <- read_csv()
+
+```
+
+
+## Model description
+
+Clearly state your model (Address questions 1 and 2). I encourage you to type up your model in math notation using Latex. For example:
+
+$Y_{1}, \ldots, Y_{n} |\theta \overset{iid}{\sim} f(y | \theta)$
+
+If you do not know how, that's okay! Just let me know and I will be happy to help or point you towards some resources. 
+
+
+
+
+## Implementation
+
+Clearly state how you will implement your model. (Address question 3.) You
+should provide enough detail such that someone else could implement your analysis.
+
+## Gibbs sampler
+
+
+```{r gibbs_sampler}
+# code for your gibbs sampler should go here
+# remember to only keep necessary code for submission!
+```
+
+## Results
+
+### Diagnostics
+
+First do some diagnostics to see if your chain has converged
+
+```{r}
+
+```
+
+### Findings
+
+Provide results with interpretation (Address question 4). You should alternate between R code and text!
+
+```{r}
+
+```
+
+## Conclusion
+
+Give a conclusion that answers the research question (Address question 5).
