@@ -39,7 +39,7 @@
     "href": "handouts.html",
     "title": "Handouts",
     "section": "",
-    "text": "Distribution sheet\nExplaining the Gibbs Sampler (1992)\n\nDiscussion questions posted here!\n\nConstrained normal sampling code\nData\n\n prussianHorses1 \n prussianHorses2 \n school1  Load code in as readRDS(\"filepath/school1.Rda\")\n divorce  Load code in as readRDS(\"filepath/divorce.Rda\")"
+    "text": "Distribution sheet (updated 10/11 with Inverse Gamma dist.)\nExplaining the Gibbs Sampler (1992)\n\nDiscussion questions posted here!\n\nConstrained normal sampling code\nData\n\n prussianHorses1 \n prussianHorses2 \n school1  Load code in as readRDS(\"filepath/school1.Rda\")\n divorce  Load code in as readRDS(\"filepath/divorce.Rda\")"
   },
   {
     "objectID": "code/binom_discrete_prior.html",

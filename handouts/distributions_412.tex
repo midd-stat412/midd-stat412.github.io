@@ -1,0 +1,151 @@
+\documentclass[12pt,a4paper,twocolumn]{article}
+%\documentclass[a4paper,14pt]{extarticle}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage[top=30pt,bottom=30pt,left=0cm,right=46pt,landscape]{geometry}
+\usepackage{graphicx}%
+\usepackage{amsfonts}%
+%\usepackage{float}
+\usepackage{natbib}
+\usepackage{floatrow}
+\bibliographystyle{agsm}
+\setcitestyle{authoryear,open={(},close={)},aysep={}}
+\usepackage{xr}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\captionsetup[subfigure]{labelformat=empty}
+\usepackage{sidecap}
+\pagenumbering{gobble}
+\usepackage{multirow}
+\renewcommand{\baselinestretch}{1.0}
+\renewcommand{\arraystretch}{2}
+
+\setlength{\oddsidemargin}{0in} \setlength{\textwidth}{6.5in}
+%SetFonts
+\newcommand{\blam}{ \mbox{\boldmath $ \lambda $} }
+\newcommand{\bet}{ \mbox{\boldmath $ \eta $} }
+\newcommand{\btau}{ \mbox{\boldmath $ \tau $} }
+\newcommand{\bome}{ \mbox{\boldmath $ \omega $} }
+\newcommand{\bbet}{ \mbox{\boldmath $ \beta $} }
+\newcommand{\bbeta}{ \mbox{\boldmath $ \beta $} }
+\newcommand{\balph}{ \mbox{\boldmath $ \alpha $} }
+\newcommand{\balpha}{ \mbox{\boldmath $ \alpha $} }
+\newcommand{\bphi}{ \mbox{\boldmath $\phi$}}
+\newcommand{\bzeta}{ \mbox{\boldmath $\zeta$}}
+\newcommand{\bkap}{ \mbox{\boldmath $\kappa$}}
+\newcommand{\bkappa}{ \mbox{\boldmath $\kappa$}}
+\newcommand{\beps}{ \mbox{\boldmath $\epsilon$}}
+\newcommand{\bepsilon}{ \mbox{\boldmath $\epsilon$}}
+\newcommand{\bthet}{ \mbox{\boldmath $ \theta $} }
+\newcommand{\btheta}{ \mbox{\boldmath $ \theta $} }
+\newcommand{\bnu}{ \mbox{\boldmath $\nu$} }
+\newcommand{\bmu}{ \mbox{\boldmath $\mu$} }
+\newcommand{\bOmega}{ \mbox{\boldmath $\Omega$} }
+\newcommand{\bGam}{ \mbox{\boldmath $\Gamma$} }
+\newcommand{\bSig}{ \mbox{\boldmath $\Sigma$} }
+\newcommand{\bSigma}{ \mbox{\boldmath $\Sigma$} }
+\newcommand{\bPhi}{ \mbox{\boldmath $\Phi$} }
+\newcommand{\bThet}{ \mbox{\boldmath $\Theta$} }
+\newcommand{\bTheta}{ \mbox{\boldmath $\Theta$} }
+\newcommand{\bDel}{ \mbox{\boldmath $\Delta$} }
+\newcommand{\bDelta}{ \mbox{\boldmath $\Delta$} }
+\newcommand{\bnabla}{ \mbox{\boldmath $\nabla$} }
+\newcommand{\bLam}{ \mbox{\boldmath $\Lambda$} }
+\newcommand{\bLambda}{ \mbox{\boldmath $\Lambda$} }
+\newcommand{\bLambdasub}{ \scriptsize{\bLambda}}
+\newcommand{\bgam}{ \mbox{\boldmath $\gamma$} }
+\newcommand{\bgamma}{ \mbox{\boldmath $\gamma$} }
+\newcommand{\brho}{ \mbox{\boldmath $\rho$} }
+\newcommand{\bdel}{ \mbox{\boldmath $\delta$} }
+\newcommand{\bdelta}{ \mbox{\boldmath $\delta$} }
+\newcommand{\bvarphi}{ \mbox{\boldmath $\varphi$} }
+\newcommand{\bsigma}{ \mbox{\boldmath $\sigma$} }
+\newcommand{\boeta}{ \mbox{\boldmath $\eta$} }
+\newcommand{\bpi}{ \mbox{\boldmath $\pi$} }
+\newcommand{\bpsi}{ \mbox{\boldmath $\psi$} }
+\newcommand{\bzero}{\textbf{0}}
+\newcommand{\bone}{\textbf{1}}
+\newcommand{\bZ}{\textbf{Z}}
+\newcommand{\bz}{\textbf{z}}
+\newcommand{\ba}{\textbf{a}}
+\newcommand{\bA}{\textbf{A}}
+\newcommand{\bb}{\textbf{b}}
+\newcommand{\bB}{\textbf{B}}
+\newcommand{\bc}{\textbf{c}}
+\newcommand{\bC}{\textbf{C}}
+\newcommand{\bd}{\textbf{d}}
+\newcommand{\bD}{\textbf{D}}
+\newcommand{\be}{\textbf{e}}
+\newcommand{\bE}{\textbf{E}}
+\newcommand{\bbf}{\textbf{f}}
+\newcommand{\bF}{\textbf{F}}
+\newcommand{\bk}{\textbf{k}}
+\newcommand{\bK}{\textbf{K}}
+\newcommand{\bh}{\textbf{h}}
+\newcommand{\bH}{\textbf{H}}
+\newcommand{\bi}{\textbf{i}}
+\newcommand{\bI}{\textbf{I}}
+\newcommand{\bg}{\textbf{g}}
+\newcommand{\bG}{\textbf{G}}
+\newcommand{\bJ}{\textbf{J}}
+\newcommand{\bL}{\textbf{L}}
+\newcommand{\bm}{\textbf{m}}
+\newcommand{\bM}{\textbf{M}}
+\newcommand{\bn}{\textbf{N}}
+\newcommand{\bN}{\textbf{N}}
+\newcommand{\bO}{\textbf{O}}
+\newcommand{\bp}{\textbf{p}}
+\newcommand{\bP}{\textbf{P}}
+\newcommand{\bq}{\textbf{q}}
+\newcommand{\bQ}{\textbf{Q}}
+\newcommand{\bs}{\textbf{s}}
+\newcommand{\bS}{\textbf{S}}
+\newcommand{\bt}{\textbf{t}}
+\newcommand{\bT}{\textbf{T}}
+\newcommand{\bu}{\textbf{u}}
+\newcommand{\bU}{\textbf{U}}
+\newcommand{\bv}{\textbf{v}}
+\newcommand{\bV}{\textbf{V}}
+\newcommand{\bw}{\textbf{w}}
+\newcommand{\bW}{\textbf{W}}
+\newcommand{\bx}{\textbf{x}}
+\newcommand{\bX}{\textbf{X}}
+\newcommand{\by}{\textbf{y}}
+\newcommand{\bY}{\textbf{Y}}
+\newcommand{\br}{\textbf{r}}
+\newcommand{\bR}{\textbf{R}}
+\newcommand{\iidsim}{\overset{\text{iid}}{\sim} }
+
+							% Activate to display a given date or no date
+\begin{document}
+\begin{center}
+\begin{table}
+\begin{adjustwidth}{-1cm}{-1cm}
+\begin{tabular}{lllllll}
+\textbf{Name} &\textbf{Notation} &  \textbf{Parameters}&  \textbf{PDF/PMF} & \textbf{Support} & \textbf{Mean} & \textbf{Variance}  \\
+ \hline
+ \textbf{Bernoulli} & $\text{Bern}(p)$ & $p \in (0,1)$ & $f(x) = p^{x} (1-p)^{1-x}$ & $x \in \{0, 1\}$ & $p$ & $p(1-p)$ \\
+ \textbf{Beta} & $\text{Beta}(a, b)$ &$a, b> 0$ & $f(x) = \frac{\Gamma(a + b)}{\Gamma(a) \Gamma (b)} x^{a - 1} (1-x)^{b - 1}$ & $x \in (0,1)$ & $\frac{a}{a + b}$ & $\frac{a b}{(a + b)^2 (a + b + 1)}$\\
+  \textbf{Binomial} & $\text{Binom}(n, p)$ & $n \in \mathbb{Z}^{+}, p \in (0,1)$ & $f(x) = \binom{n}{x} p^{x} (1-p)^{n-x}$ & $x \in \{0, 1, \ldots, n\}$ & $np$ & $np(1-p)$ \\
+  \textbf{Exponential} & $\text{Exp}(\lambda)$ & $\lambda>0$ & $f(x) = \lambda e^{-\lambda x}$ & $ x > 0$ & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ \\
+   \textbf{First Success} & $\text{FS}(p)$ &$p \in (0,1)$  & $f(x) = p(1-p)^{x-1}$ & $x =1, 2, \ldots$ & $\frac{1}{p}$ &  $\frac{1-p}{p^2}$ \\
+  \textbf{Gamma} & $\text{Gamma}(a, b)$ &$a, b> 0$ & $f(x) = \frac{b^a}{\Gamma(a)} x^{a - 1} e^{-b x}$ & $x > 0$ & $\frac{a}{b}$ & $\frac{a}{b^2}$ \\
+  \textbf{Geometric} & $\text{Geom}(p)$ & $p \in (0,1)$ & $f(x) = p(1-p)^x$ & $x = 0, 1, 2, \ldots$ & $\frac{1-p}{p}$ &  $\frac{1-p}{p^2}$ \\
+   \textbf{Hypergeometric} & $\text{HGeom}(w,b,n)$ & $w, b, n = 0,1,\ldots$ &$f(x) = \frac{\binom{w}{x} \binom{b}{n-x}}{\binom{w + b}{n}}$ & \small{$
+    \parbox{10em}{$x \in \{0,\ldots w\}$,\\ $(n-x) \in \{0,\ldots b\}$}$} & $\frac{nw}{w+b}$ &  $\frac{w+b-n}{w+b - 1}\left(\frac{nwb}{(w+b)^2}\right)$ \\
+      \textbf{Inverse Gamma} & $\text{Inv.Gamma}(a, b)$ &$a, b> 0$ & $f(x) = \frac{b^a}{\Gamma(a)} x^{-a - 1} e^{-\frac{b}{x}}$ & $x > 0$ & $\frac{b}{a-1}$ & $\frac{b^2}{(a-1)^2(a-2)}$ \\
+    \textbf{Multinomial} &  \parbox{10em}{$\text{Multinom}_{k}(n, \bp)$ \\ $\bp = (p_{1},\ldots, p_{k})$} & \parbox{10em}{$n \in \mathbb{Z}^{+}, p_{j} \geq 0\\ \sum_{j=1}^{k} p_{j} = 1$} & $f(\bx) = \frac{n!}{x_{1}! \cdots x_{k}!}p_{1}^{x_{1}} \cdots p_{k}^{x_{k}}$ & $\sum_{j=1}^{k} x_{j} = n$ &  & \\
+  \parbox{10em}{\textbf{Negative\\ Binomial} } & $\text{NegBinom}(r, p)$ &  \small{\parbox{10em}{$n = 0,1,\ldots\\p \in (0,1)$}} & $f(x) = \binom{x + r -1}{x}p^{r}(1-p)^{x}$ & $x = 0, 1, 2, \ldots$ & $\frac{r(1-p)}{p}$ & $\frac{r(1-p)}{p^2}$ \\
+  \textbf{Normal} & $N(\mu, \sigma^2)$ & $\mu \in \mathbb{R}, \sigma^2 > 0$ &$f(x) = \frac{1}{\sqrt{2\pi \sigma^2}} e^{-\frac{1}{2\sigma^2}(x- \mu)^2}$ & $x \in \mathbb{R}$ & $\mu$ & $\sigma^2$ \\
+  \textbf{Poisson} & $\text{Poisson}(\lambda)$ & $\lambda>0$ & $f(x) = \frac{e^{-\lambda}\lambda^x }{x!}$ & $x = 0, 1, 2, \ldots$ & $\lambda$ & $\lambda$ \\
+  \textbf{Uniform (cont.)}& $\text{Unif}(a,b)$ & $a, b \in \mathbb{R}, a< b$ &$f(x) = \frac{1}{b-a}$ & $x \in (a,b)$ & $\frac{a + b}{2}$ & $\frac{(b-a)^2}{12}$  \\
+    \textbf{Uniform (disc.)}&  \parbox{10em}{$\text{DiscUnif}(A)$ \\ $A = \{a_{1},\ldots, a_{n}\}$}  & $a_{i} \in \mathbb{R}$ &$f(x) = \frac{1}{|A|}$ & $x \in A$ & $\frac{\sum a_{i}}{|A|}$ & -
+ \end{tabular}
+   \end{adjustwidth}
+\end{table}
+\end{center}
+
+
+
+\end{document}  
