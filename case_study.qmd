@@ -17,4 +17,33 @@ The description of the case study and the data are found here:
 
 -   Optional `.Rmd` template: {{< downloadthis case_study/case_study_1_template.Rmd dname="caseStudy1" label="caseStudy1" id=mtcars-btn >}}
 
-Additionally, each group will give a brief 5 minute presentation of their work to the class on 10/15. Your presentation should be accompanied by a *brief* set of slides. These slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation). You should be prepared to answer questions from the audience.
+#### **Presentation** 
+
+-   Each group will give a brief 5 minute presentation of their work to the class on 10/15. Presentation order will be randomized.
+
+-   Your presentation should be accompanied by a *brief* set of slides. As we are all aware of the data, these slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation).
+
+    -   Think about embedding LaTex equations and R plots for your statistical model. These should be presented in an *effective* manner.
+
+    -   Your presentation of results should answer the research question in an *effective* manner. Does that mean you'll present a table of posterior summary quantities, a plot of a posterior density, or something else?
+
+-   You should be prepared to answer questions from the audience. You should also be prepared to ask questions of presenters.
+
+-   You *don't* need to submit your slides for this case study! Just be prepared to present from a laptop!
+
+-   This presentation is worth 5 points, in addition to the 35 points of the written portion. However, the presentation will be graded on an individual basis, rather than the entire group. A **general rubric** is:
+
+    -   1 point: slides *effectively* share statistical model.
+    -   1 point: slides *effectively* share results that answer the research question(s)
+    -   1 point: speaker appears practiced and shares speaking time.
+        -   "Appearing practiced" also encompasses being as close to the 5-minute duration as possible!
+        -   Because this presentation is short and you're so close to your model, you shouldn't be reading off any sort of notes!
+    -   1 point: speaker is able to thoughtfully answer questions from audience
+    -   1 point: asks at least one interesting/thoughtful/relevant question to other speakers
+
+-   "Effective" is a broad term that I use to cover:
+
+    -   Presenting equations/distributions/slides in a logical order
+    -   Having font (both text and on figures/tables) be large enough for the audience to see
+    -   Slides have enough text to be generally understood without a speaker, but each slide's content is elevated/made complete by the speaker's additions/commentary
+    -   Minimal errors in terms of spelling and typesetting

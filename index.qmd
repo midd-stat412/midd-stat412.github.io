@@ -6,6 +6,8 @@ Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this we
 
 ## Announcements
 
+-   More details about Case Study 1 presentations are provided on the [Case study](case_study.qmd) tab
+
 -   Week 6 office hours:
 
     -   Monday 10/13 and Tuesday 10/14 cancelled
