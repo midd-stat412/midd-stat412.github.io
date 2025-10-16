@@ -5,7 +5,7 @@ format:
     css: styles.css
 ---
 
--   [Distribution sheet](handouts/distributions_412.pdf) (updated 10/11 with Inverse Gamma dist.)
+-   [Distribution sheet](handouts/distributions_412.pdf) (updated 10/15 with Dirichlet and conjugate priors)
 
 -   [Explaining the Gibbs Sampler (1992)](handouts/ExpGibbs_TAS1992.pdf)
 

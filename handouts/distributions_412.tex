@@ -20,6 +20,8 @@
 \usepackage{multirow}
 \renewcommand{\baselinestretch}{1.0}
 \renewcommand{\arraystretch}{2}
+\usepackage{rotating}
+
 
 \setlength{\oddsidemargin}{0in} \setlength{\textwidth}{6.5in}
 %SetFonts
@@ -129,6 +131,7 @@
  \textbf{Beta} & $\text{Beta}(a, b)$ &$a, b> 0$ & $f(x) = \frac{\Gamma(a + b)}{\Gamma(a) \Gamma (b)} x^{a - 1} (1-x)^{b - 1}$ & $x \in (0,1)$ & $\frac{a}{a + b}$ & $\frac{a b}{(a + b)^2 (a + b + 1)}$\\
   \textbf{Binomial} & $\text{Binom}(n, p)$ & $n \in \mathbb{Z}^{+}, p \in (0,1)$ & $f(x) = \binom{n}{x} p^{x} (1-p)^{n-x}$ & $x \in \{0, 1, \ldots, n\}$ & $np$ & $np(1-p)$ \\
   \textbf{Exponential} & $\text{Exp}(\lambda)$ & $\lambda>0$ & $f(x) = \lambda e^{-\lambda x}$ & $ x > 0$ & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ \\
+  \textbf{Dirichlet} &   \parbox{10em}{$\text{Dirichlet}(\balpha)$ \\ $\balpha = (\alpha_{1},\ldots, \alpha_{K})$}  & $\alpha_{k} > 0, k = 1,\ldots, K$ & $f(\bx) = \frac{\prod_{k=1}^{K} \Gamma(\alpha_{k})}{\Gamma(\sum_{k=1}^{K} \alpha_{k})} \prod_{k=1}^{K} x_{k}^{\alpha_{k} - 1}$ & \footnotesize{$x_{k} \geq 0, \sum_{k=1}^{K} x_{k} = 1$ } & \footnotesize{$\mu_{k} = \alpha_{k}$}  & $-$ \\
    \textbf{First Success} & $\text{FS}(p)$ &$p \in (0,1)$  & $f(x) = p(1-p)^{x-1}$ & $x =1, 2, \ldots$ & $\frac{1}{p}$ &  $\frac{1-p}{p^2}$ \\
   \textbf{Gamma} & $\text{Gamma}(a, b)$ &$a, b> 0$ & $f(x) = \frac{b^a}{\Gamma(a)} x^{a - 1} e^{-b x}$ & $x > 0$ & $\frac{a}{b}$ & $\frac{a}{b^2}$ \\
   \textbf{Geometric} & $\text{Geom}(p)$ & $p \in (0,1)$ & $f(x) = p(1-p)^x$ & $x = 0, 1, 2, \ldots$ & $\frac{1-p}{p}$ &  $\frac{1-p}{p^2}$ \\
@@ -140,11 +143,54 @@
   \textbf{Normal} & $N(\mu, \sigma^2)$ & $\mu \in \mathbb{R}, \sigma^2 > 0$ &$f(x) = \frac{1}{\sqrt{2\pi \sigma^2}} e^{-\frac{1}{2\sigma^2}(x- \mu)^2}$ & $x \in \mathbb{R}$ & $\mu$ & $\sigma^2$ \\
   \textbf{Poisson} & $\text{Poisson}(\lambda)$ & $\lambda>0$ & $f(x) = \frac{e^{-\lambda}\lambda^x }{x!}$ & $x = 0, 1, 2, \ldots$ & $\lambda$ & $\lambda$ \\
   \textbf{Uniform (cont.)}& $\text{Unif}(a,b)$ & $a, b \in \mathbb{R}, a< b$ &$f(x) = \frac{1}{b-a}$ & $x \in (a,b)$ & $\frac{a + b}{2}$ & $\frac{(b-a)^2}{12}$  \\
-    \textbf{Uniform (disc.)}&  \parbox{10em}{$\text{DiscUnif}(A)$ \\ $A = \{a_{1},\ldots, a_{n}\}$}  & $a_{i} \in \mathbb{R}$ &$f(x) = \frac{1}{|A|}$ & $x \in A$ & $\frac{\sum a_{i}}{|A|}$ & -
+    \textbf{Uniform (disc.)}&  \parbox{10em}{$\text{DiscUnif}(A)$ \\ $A = \{a_{1},\ldots, a_{n}\}$}  & $a_{i} \in \mathbb{R}$ &$f(x) = \frac{1}{|A|}$ & $x \in A$ & $\frac{\sum a_{i}}{|A|}$ & $-$
  \end{tabular}
    \end{adjustwidth}
 \end{table}
 \end{center}
+
+\clearpage
+\newgeometry{left=1in,bottom=1in,top=1in,right=-2in}
+\begin{sidewaysfigure}
+\section*{Other helpful things}
+\begin{itemize}
+	\item For any positive value $z$, $\Gamma(z+1) = z \Gamma(z)$. If $z$ is a positive integer, $\Gamma(z) = (z-1)!$
+	\item Fisher Information for $\theta$ from $f(y | \theta)$ is: $-\mathbb{E}_{Y | \theta}\left[ \frac{d^2}{d\theta^2} \log f(y | \theta) \right]$
+\end{itemize}
+
+
+\section*{Conjugate priors}
+\begin{itemize}
+	\item $\theta \sim \text{Beta}(a,b)$ for $Y_{i} | \theta \iidsim \text{Bernoulli}(\theta)$ 
+	\begin{itemize} 
+		\item Posterior: $\theta | \by \sim \text{Beta}(a + \sum y_{i}, b + n - \sum y_{i})$
+		\item Posterior predictive: $\text{Bernoulli}\left(\frac{a + \sum y_{i}}{a+b+n} \right)$
+	\end{itemize}
+	\item $\theta \sim \text{Gamma}(a, b)$ for $Y_{i} | \theta \sim \text{Poisson}(\theta)$ 
+	\begin{itemize}
+		\item Posterior: $\theta | \by \sim \text{Gamma}(a + \sum y_{i}, b + n)$
+		\item Posterior predictive: $\text{NegBinom}\left(a + \sum y_{i}, \frac{b+n}{b+n+1} \right)$
+	\end{itemize}
+	\item $\btheta \sim \text{Dirichlet}(a_{1},\ldots, a_{K})$ for $Y_{i} | \btheta \sim \text{Categorical}(\btheta)$ 
+		\begin{itemize}
+		\item Posterior:$\btheta | \by \sim \text{Dirichlet}(a_{1} + n_{1}, \ldots, a_{K} + n_{K})$ where $n_{k} = \sum_{i=1}^{n} \bone_{\{Y_{i} = k\}}$
+		\item Posterior predictive: $\text{Categorical}\left(\frac{a_{1} + n_{1}}{n + \sum a_{k}}, \ldots, \frac{a_{K} + n_{K}}{n + \sum a_{k}} \right)$
+	\end{itemize}
+	
+
+	\item $\theta \sim N(\mu_{0}, \sigma_{0}^2)$ for $Y_{i} | \theta, \sigma^2 \sim N(\theta, \sigma^2)$ where $\sigma^2$ known 
+	 	\begin{itemize}
+		\item Posterior:  $\theta | \by, \sigma^2 \sim N\left((\frac{1}{\sigma_{0}^2} + \frac{n}{\sigma^2})^{-1} \left(\frac{n\bar{y}}{\sigma^2} + \frac{\mu_{0}}{\sigma_{0}^2} \right), (\frac{1}{\sigma_{0}^2} + \frac{n}{\sigma^2})^{-1}\right)$
+		\item Posterior predictive: $N\left((\frac{1}{\sigma_{0}^2} + \frac{n}{\sigma^2})^{-1} \left(\frac{n\bar{y}}{\sigma^2} + \frac{\mu_{0}}{\sigma_{0}^2} \right), (\frac{1}{\sigma_{0}^2} + \frac{n}{\sigma^2})^{-1} + \sigma^2  \right)$
+	\end{itemize}
+	
+\end{itemize}
+\end{sidewaysfigure}
+
+
+
+
+
 
 
 
