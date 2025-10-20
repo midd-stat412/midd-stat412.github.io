@@ -1,0 +1,268 @@
+---
+title: "Hierarchical modeling: Normal data"
+format: pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r message=F, echo = F}
+knitr::opts_chunk$set(echo = F, fig.height = 3, fig.width = 8)
+library(tidyverse)
+library(patchwork)
+library(coda)
+```
+
+## Data and EDA
+
+We have data from the 2002 Educational Longitudinal Study (ELS), a survey of students from a large sample of schools across the United States. This dataset includes a population of schools as well as a
+population of students within each school. *Note that this is a nested/hierarchical structure.*  This survey included
+10th grade children from 100 diﬀerent large urban public high schools, all having a 10th grade enrollment of 400 or greater. Note that the number of students sampled from each school differs.
+
+In particular, we have data from math scores from a math exam on the ELS, which was standardized to produce a nationwide mean of 50 and a standard deviation of 10. 
+
+
+The following displays boxplots of the distribution of math scores by school. The pink line displays the overall sample mean score, averaged across all schools and students. What do we notice?
+
+```{r}
+school <- readRDS("../handouts/mathscores.Rda")
+grand_mean <- mean(school$score)
+school |>
+  mutate(id = as.factor(school_id)) |>
+  ggplot( aes(x = id, y = score)) +
+  geom_boxplot() +
+  labs(x = "School", caption = "Pink line is overall sample mean")  +
+  geom_hline(yintercept = grand_mean, col = "magenta", linetype = "dashed") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) 
+```
+
+\clearpage 
+
+
+Here, we plot the distribution sample mean scores of each school (left), along with the sample mean scores as a function of the sample size from the school (right). What do we notice here?
+
+```{r}
+p1 <- school |>
+  group_by(school_id) |>
+  summarise(mean_score = mean(score), n = n()) |>
+  ggplot(aes(x = mean_score)) +
+  geom_histogram(bins = 20, col = "white") +
+  labs(x = expression(paste("Sample mean score" ~  bar(y)[j])))
+p2 <- school |>
+  group_by(school_id) |>
+  summarise(mean_score = mean(score), n = n()) |>
+  ggplot(aes(x = n, y = mean_score)) +
+  geom_point() +
+  labs(x = expression(paste("Sample size" ~  n[j])), y = expression(paste("Sample mean score" ~  bar(y)[j])))
+p1 + p2
+```
+
+
+```{r}
+set.seed(1)
+school_sum <- school |>
+  group_by(school_id) |>
+  summarise(mean_score = mean(score), n = n(), s = sd(score)) 
+id <- school$school_id
+y <- school$score
+n <- length(y)
+ybar_vec <- school_sum$mean_score
+n_vec <- school_sum$n
+J <- length(ybar_vec)
+```
+
+## Prior solitication
+
+Set priors based on the information provided by ELS: the math exam was designed to give a mean of 50 and a nationwide variance of 100. *Note: this variance includes both within-school and between-school variance.*
+
+Let's brainstorm how to translate these into sensible prior parameter values for the unknown parameters! We need to put things in context. Recall:
+
+$$\theta \sim N(\mu_{0}, \sigma^{2}_{0})$$
+$$1/\sigma^2 \sim \text{Gamma}(a, b)$$
+$$1/\tau^2 \sim \text{Gamma}(c, d)$$
+
+```{r gibbs, cache = T}
+a_s2 <- 3
+b_s2 <- 100
+
+a_tau2 <- 3
+b_tau2 <- 100
+
+mu0 <- 50
+s20 <- 25
+
+set.seed(1)
+B <- 5000
+S <- 5000
+THETA <- S2 <- TAU2 <- rep(NA, S)
+THETA_J <- matrix(NA, nrow = S, ncol = J)
+
+# init: which would be most difficult to initialize? 
+theta <- mean(ybar_vec)
+s2 <- var(y)
+theta_vec <- ybar_vec
+tau2 <- var(ybar_vec)
+count <- 1
+for(s in 1:(S+B)){
+  # sample theta_j
+  for(j in 1:J){
+    s2_theta_j <- 1/(n_vec[j]/s2 + 1/tau2)
+    mu_theta_j <- s2_theta_j * (ybar_vec[j] * n_vec[j]/s2 + theta/tau2)
+    theta_vec[j] <- rnorm(1, mu_theta_j, sqrt(s2_theta_j) )
+  }
+  
+  # sample s2
+  a_new <- a_s2 + n/2
+  b_new <- b_s2
+  for(j in 1:J){
+    b_new <- b_new + 0.5*sum((y[id == j] - theta_vec[j])^2)
+  }
+  s2 <- 1/rgamma(1, a_new, b_new)
+  
+  # sample theta
+  s2_theta <- 1/(J/s2 + 1/s20)
+  mu_theta <- s2_theta * (J*mean(theta_vec)/s2 + mu0/s20)
+  theta <- rnorm(1, mu_theta, sqrt(s2_theta))
+  
+  # sample tau2
+  a_new <- a_tau2 + J/2
+  b_new <- b_tau2 + 0.5*sum((theta_vec - theta)^2)
+  tau2 <- 1/rgamma(1, a_new, b_new)
+  
+  # store
+  if (s > B){
+    THETA[count] <- theta
+    THETA_J[count,] <- theta_vec
+    S2[count] <- s2
+    TAU2[count] <- tau2
+    count <- count + 1
+  }
+
+}
+```
+
+\clearpage 
+
+
+## Some MCMC diagnostics
+
+Ran chain with burn-in of `r B` and then retained `r S` samples. The following plots are another way to determine stationarity/convergence. We can produce boxplots of sequential groups of MCMC samples. In the following, each of the 10 boxplots represents 1/10th of the MCMC samples. If convergence has been achieved, then the distribution of samples in any one boxplot should be the same as that in any other (for a given parameter).
+
+```{r}
+colnames(THETA_J) <- paste0("theta", as.character(1:J))
+post_df <- data.frame(THETA_J, theta = THETA, s2 = S2, tau2 = TAU2) |>
+  mutate(iteration = row_number()) |>
+  pivot_longer(cols = all_of(1:(J + 3)), names_to = "parameter", values_to = "val") |>
+  mutate(box = case_when(
+    iteration <= 500 ~ "500",
+    iteration <= 1000 ~ "1000",
+    iteration <= 1500 ~ "1500",
+    iteration <= 2000 ~ "2000",
+    iteration <= 2500 ~ "2500",
+    iteration <= 3000 ~ "3000",
+    iteration <= 3500 ~ "3500",
+    iteration <= 4000 ~ "4000",
+    iteration <= 4500 ~ "4500",
+    T ~ "5000"
+  ),
+  box = factor(box, levels = as.character(seq(500, 5000, 500))))
+  
+axis_labels <- seq(500, 5000, 500)
+axis_labels[axis_labels%%1000 == 0] <- NA
+axis_labels <- as.character(axis_labels)
+axis_labels[is.na(axis_labels)] <- ""
+post_df |>
+  filter(parameter %in% c("theta", "s2", "tau2")) |>
+  ggplot(aes(x = box, y = val)) +
+  geom_boxplot() +
+  facet_wrap(~parameter, scales = "free_y") +
+  labs(x = "Iteration", y = "Value") +
+  scale_x_discrete(labels = axis_labels)
+```
+
+Showing a subset of the $\theta_{j}$ (first 9 schools) for illustrative purposes:
+
+```{r fig.height=4.5}
+post_df |>
+  filter(parameter %in% paste0("theta", 1:9)) |>
+  ggplot(aes(x = box, y = val)) +
+  geom_boxplot() +
+  facet_wrap(~parameter, scales = "free_y") +
+  labs(x = "Iteration", y = "Value") +
+  scale_x_discrete(labels = axis_labels)
+```
+
+```{r}
+ess_theta <- round(effectiveSize(THETA), 2)
+ess_theta_j <- round(effectiveSize(THETA_J), 2)
+ess_s2 <- round(effectiveSize(S2), 2)
+ess_tau2 <- round(effectiveSize(TAU2), 2)
+```
+
+Effective sample sizes from `r S` iterations post burn-in for $\theta$, $\sigma^2$, $\tau^2$ are: `r ess_theta`, `r ess_s2`, `r ess_tau2`. The ESS for the $\theta_{j}$ chains range from `r min(ess_theta_j)` to `r max(ess_theta_j)`.
+
+
+\clearpage 
+
+## Posterior inference
+
+```{r}
+post_means <- c(mean(THETA), mean(sqrt(S2)), mean(sqrt(TAU2)))
+
+post_lbs <- c(quantile(THETA, 0.025), quantile(sqrt(S2), 0.025), quantile(sqrt(TAU2), 0.025)) 
+
+post_ubs <- c(quantile(THETA, 0.975), quantile(sqrt(S2), 0.975), quantile(sqrt(TAU2), 0.975)) 
+
+
+```
+
+Posterior means and 95% credible intervals of $\theta$, $\sigma$, and $\tau$ are as follows. Let's think about their interpretation.
+
+```{r}
+tab <- data.frame(post_means, post_lbs, post_ubs) 
+tab <- round(tab, 3)
+rownames(tab) <- c("$\\theta$", "$\\sigma$", "$\\tau$")
+kableExtra::kable(tab, col.names = c("Posterior mean", "2.5\\%", "97.5\\%"),
+                    row.names = T,
+                  format = "latex", escape = F, booktabs = T)
+```
+
+The following displays the posterior distributions of the school-specific mean scores $\theta_{j}$, in order of smallest to largest:
+
+```{r echo = F}
+post_df <- data.frame(THETA_J) |>
+  mutate(iteration = row_number()) |>
+  pivot_longer(cols = all_of(1:(J)), names_to = "parameter", values_to = "val") |>
+  mutate(parameter = factor(parameter, levels = paste0("theta", 1:J)))
+  
+
+post_df |>
+  ggplot(aes(y = val, x = fct_reorder(parameter, val, .fun = median))) +
+  geom_boxplot(outlier.size = 0.25) +
+  # facet_wrap(~parameter, scales = "free_y") +
+  labs(x = "School", y = expression(theta[j]),
+       title = "Posterior distribution") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+
+This plot illustrates the notion of "shrinkage" or "borrowing information". Let's interpret!
+
+```{r fig.width = 5}
+# shrinkage
+post_df |>
+  filter(! parameter %in% c("theta", "s2", "tau2")) |>
+  group_by(parameter) |>
+  summarise(post_mean = mean(val)) |>
+  ungroup() |>
+  add_column(ybar = ybar_vec,
+             n = n_vec) |>
+  mutate(diff = ybar - post_mean) |>
+  ggplot(aes(x = n, y = diff)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = (expression(paste(bar(y[j]) ~  "-" ~  E(theta[j] ~  "|"  ~ y[1],..,y[n]) ))),
+       x = expression(paste("Sample size" ~  n[j])),
+       title = "Shrinkage")
+```

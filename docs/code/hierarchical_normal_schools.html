@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Schedule – STAT 412</title>
+<title>Hierarchical modeling: Normal data – STAT 412</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +23,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,19 +69,48 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">STAT 412</span>
     </a>
   </div>
@@ -92,19 +121,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./schedule.html" aria-current="page"> 
+    <a class="nav-link" href="../schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./handouts.html"> 
+    <a class="nav-link" href="../handouts.html"> 
 <span class="menu-text">Handouts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./case_study.html"> 
+    <a class="nav-link" href="../case_study.html"> 
 <span class="menu-text">Case Studies</span></a>
   </li>  
 </ul>
@@ -118,13 +147,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="hierarchical_normal_schools.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Schedule</h1>
+<h1 class="title">Hierarchical modeling: Normal data</h1>
 </div>
 
 
@@ -141,275 +171,92 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><em>This page is frequently updated!</em></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Week</th>
-<th style="text-align: center;">Date</th>
-<th>Topic</th>
-<th>Assignments</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;"><strong>1</strong></td>
-<td style="text-align: center;">M 9/08</td>
-<td><ul>
-<li>Welcome!</li>
-<li>What is a statistical model?</li>
-</ul></td>
-<td><ul>
-<li><a href="homework/review.pdf">Problem Set 0</a> (due next class 9/10)</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/10</td>
-<td><ul>
-<li>Bayes’ rule, Bayes modeling
-<ul>
-<li>Likelihood, prior, posterior</li>
-<li><a href="./code/binom_discrete_prior.html">Code</a> and <a href="handouts/binom_prob_discrete.pdf">worksheet</a></li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw1.pdf">Problem Set 1</a> (due next class 9/15)</li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>2</strong></td>
-<td style="text-align: center;">M 9/15</td>
-<td><ul>
-<li>Beta-Binomial model
-<ul>
-<li><a href="./code/proportionality.html">Proportionality</a></li>
-</ul></li>
-<li>Posterior predictive distribution</li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw2.pdf">Problem Set 2</a> (due 9/24)</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/17</td>
-<td><ul>
-<li>Bayes estimators/estimates
-<ul>
-<li>Some <a href="./handouts/bayes_est.html">proofs</a></li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><a href="homework/412_hw2.pdf">Problem Set 2</a> (due 9/24)</li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>3</strong></td>
-<td style="text-align: center;">M 9/22</td>
-<td><ul>
-<li>Confidence regions</li>
-<li>Posterior quantities and posterior predictive checks via simulation
-<ul>
-<li><a href="./code/post_pred_checks.html">Code</a></li>
-</ul></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 9/24</td>
-<td><ul>
-<li>Conjugacy</li>
-<li>Normal sampling model</li>
-</ul></td>
-<td><ul>
-<li><p><a href="homework/412_hw3.pdf">Problem Set 3</a> (complete!)</p>
-<p><a href="./code/hpd_code.html">Code for HW 3</a></p></li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>4</strong></td>
-<td style="text-align: center;">M 9/29</td>
-<td><ul>
-<li>Markov chain basics</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/01</td>
-<td><ul>
-<li>Normal model (cont.) with Gibbs sampling!
-<ul>
-<li>Data under <a href="./handouts.html">Handouts</a></li>
-<li><a href="./code/gibbs_normal_model_walkthrough.html">Code</a> from class</li>
-</ul></li>
-</ul></td>
-<td><ul>
-<li><p>For <strong>Monday</strong>, read the article <em>Explaining the Gibbs Sampler</em> under Handouts and prepare to discuss!</p></li>
-<li><p><a href="homework/412_hw4.pdf">Problem Set 4</a></p></li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>5</strong></td>
-<td style="text-align: center;">M 10/06</td>
-<td><ul>
-<li>Discuss <em>Explaining the Gibbs Sampler</em></li>
-<li>MCMC diagnostics
-<ul>
-<li>Code <a href="./code/mixture_normals.pdf">here</a></li>
-</ul></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/06</td>
-<td><ul>
-<li>Finish MCMC diagnostics</li>
-<li>Jeffrey’s prior</li>
-<li>Introduce Case Study 1</li>
-</ul></td>
-<td><ul>
-<li>Work on <a href="./case_study.html">Case Study 1</a></li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>6</strong></td>
-<td style="text-align: center;">M 10/13</td>
-<td><p><em>Becky out of town; Prof.&nbsp;Christian Stratton will be here in my stead!</em></p>
-<ul>
-<li>Work on Case Study 1</li>
-<li>Work on midterm review</li>
-</ul></td>
-<td><ul>
-<li>Work on Case Study 1</li>
-</ul></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/15</td>
-<td><ul>
-<li>Present Case Study 1</li>
-</ul></td>
-<td><ul>
-<li>Study for midterm!</li>
-</ul></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>7</strong></td>
-<td style="text-align: center;">M 10/20</td>
-<td><ul>
-<li>Bayesian hierarchical modeling
-<ul>
-<li><a href="./code/hierarchical_normal_schools.pdf">Handout</a></li>
-</ul></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/22</td>
-<td><ul>
-<li>Bayesian hierarchical modeling (cont.)</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>8</strong></td>
-<td style="text-align: center;">M 10/27</td>
-<td><ul>
-<li>Metropolis</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 10/29</td>
-<td><ul>
-<li>Metropolis (cont.)</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>9</strong></td>
-<td style="text-align: center;">M 11/03</td>
-<td><ul>
-<li>Bayesian linear regression</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 11/05</td>
-<td><ul>
-<li>Bayesian linear regression (cont.)</li>
-<li>Introduce Case Study 2</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>10</strong></td>
-<td style="text-align: center;">M 11/10</td>
-<td><ul>
-<li>JAGS</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 11/12</td>
-<td><ul>
-<li><p>Case Study 2 presentations</p></li>
-<li><p>JAGS (cont.)</p></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><strong>11</strong></td>
-<td style="text-align: center;">M 11/17</td>
-<td><ul>
-<li>Real-data analysis (ecology!)</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 11/19</td>
-<td><ul>
-<li>Introduce Case Study 3</li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"></td>
-<td style="text-align: center;"></td>
-<td>THANKSGIVING</td>
-<td></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"><strong>12</strong></td>
-<td style="text-align: center;">M 12/01</td>
-<td><ul>
-<li><p>Introduce final project</p></li>
-<li><p>Work on Case Study 3</p></li>
-</ul></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">W 12/03</td>
-<td><ul>
-<li><p>Case Study 3 presentations</p></li>
-<li><p>CRFs</p></li>
-</ul></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+<section id="data-and-eda" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-eda">Data and EDA</h2>
+<p>We have data from the 2002 Educational Longitudinal Study (ELS), a survey of students from a large sample of schools across the United States. This dataset includes a population of schools as well as a population of students within each school. <em>Note that this is a nested/hierarchical structure.</em> This survey included 10th grade children from 100 diﬀerent large urban public high schools, all having a 10th grade enrollment of 400 or greater. Note that the number of students sampled from each school differs.</p>
+<p>In particular, we have data from math scores from a math exam on the ELS, which was standardized to produce a nationwide mean of 50 and a standard deviation of 10.</p>
+<p>The following displays boxplots of the distribution of math scores by school. The pink line displays the overall sample mean score, averaged across all schools and students. What do we notice?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here, we plot the distribution sample mean scores of each school (left), along with the sample mean scores as a function of the sample size from the school (right). What do we notice here?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="prior-solitication" class="level2">
+<h2 class="anchored" data-anchor-id="prior-solitication">Prior solitication</h2>
+<p>Set priors based on the information provided by ELS: the math exam was designed to give a mean of 50 and a nationwide variance of 100. <em>Note: this variance includes both within-school and between-school variance.</em></p>
+<p>Let’s brainstorm how to translate these into sensible prior parameter values for the unknown parameters! We need to put things in context. Recall:</p>
+<p><span class="math display">\[\theta \sim N(\mu_{0}, \sigma^{2}_{0})\]</span> <span class="math display">\[1/\sigma^2 \sim \text{Gamma}(a, b)\]</span> <span class="math display">\[1/\tau^2 \sim \text{Gamma}(c, d)\]</span></p>
+</section>
+<section id="some-mcmc-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="some-mcmc-diagnostics">Some MCMC diagnostics</h2>
+<p>Ran chain with burn-in of 5000 and then retained 5000 samples. The following plots are another way to determine stationarity/convergence. We can produce boxplots of sequential groups of MCMC samples. In the following, each of the 10 boxplots represents 1/10th of the MCMC samples. If convergence has been achieved, then the distribution of samples in any one boxplot should be the same as that in any other (for a given parameter).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Showing a subset of the <span class="math inline">\(\theta_{j}\)</span> (first 9 schools) for illustrative purposes:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Effective sample sizes from 5000 iterations post burn-in for <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\sigma^2\)</span>, <span class="math inline">\(\tau^2\)</span> are: 3733.74, 4849.7, 2734.02. The ESS for the <span class="math inline">\(\theta_{j}\)</span> chains range from 4119.69 to 5526.92.</p>
+</section>
+<section id="posterior-inference" class="level2">
+<h2 class="anchored" data-anchor-id="posterior-inference">Posterior inference</h2>
+<p>Posterior means and 95% credible intervals of <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\sigma\)</span>, and <span class="math inline">\(\tau\)</span> are as follows. Let’s think about their interpretation.</p>
+<div class="cell">
+<div class="cell-output-display">
+
+</div>
+</div>
+<p>The following displays the posterior distributions of the school-specific mean scores <span class="math inline">\(\theta_{j}\)</span>, in order of smallest to largest:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot illustrates the notion of “shrinkage” or “borrowing information”. Let’s interpret!</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hierarchical_normal_schools_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
