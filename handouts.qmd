@@ -26,3 +26,5 @@ format:
     -   {{< downloadthis handouts/school1.Rda dname="school1" label="school1" id=mtcars-btn >}} Load code in as `readRDS("filepath/school1.Rda")`
 
     -   {{< downloadthis handouts/divorce.Rda dname="divorce" label="divorce" id=mtcars-btn >}} Load code in as `readRDS("filepath/divorce.Rda")`
+
+    -   {{< downloadthis handouts/mathscores.Rda dname="mathscores" label="mathscores" id=mtcars-btn >}} Load code in as `readRDS("filepath/mathscores.Rda")`
