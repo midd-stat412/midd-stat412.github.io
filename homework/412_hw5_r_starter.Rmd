@@ -1,0 +1,133 @@
+---
+title: "STAT 412: Homework 5 (R)"
+author: "Your name here"
+output: pdf_document
+date: "2025-10-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.width = 5, fig.height = 2.5)
+```
+
+## Exercise 1
+
+```{r ex1-setup, echo = F, eval = F}
+# read in the data: SET eval = T once you've changed file path
+tennis_dat <- readRDS("file_path/tennis_serves.Rda")
+
+# get players
+players <- unique(tennis_dat$player)
+J <- length(players)
+
+# obtain separate vectors for each player, and store into a list Y_ls
+Y_ls <- list()
+for(j in 1:J){
+  Y_ls[[j]] <- tennis_dat |>
+    filter(player ==  players[j]) |>
+    pull(Speed_MPH)
+}
+names(Y_ls) <- players
+
+# to access a specific players' vector, we need to use double brackets for the index
+# e.g. data for Nadal can be accessed as:  Y_ls[[1]]
+
+# obtain a vector of each player's number of observations
+n_j <- unlist(lapply(Y_ls, length))
+
+# obtain a vector of each player's sample mean
+ybar_j <- unlist(lapply(Y_ls, mean))
+```
+
+## Part a
+
+```{r part-1a}
+# specifying priors
+
+```
+
+## Part b
+
+```{r part-1b}
+# gibbs sampler here
+
+```
+
+## Part c
+
+```{r part-1c, echo = F}
+# assess convergence
+
+```
+
+## Part d
+
+```{r part-1d, echo = F}
+# posterior summaries
+
+```
+
+## Part e
+
+```{r part-1e, eval = F, echo = F}
+# shrinkage
+
+## Set eval = T once you've reached this part!
+library(tidyverse)
+# define the following
+theta_post_means <- _____ # vector of posterior means of your theta_j's
+mu_post_mean <- ____ # posterior mean of grand mean (mu or theta)
+ybar_all <- ___ # sample/observed mean serve speed across all players
+data.frame(player = players, ybar = ybar_j, post_mean = theta_post_means) |>
+  pivot_longer(cols = -player, names_to = "model", values_to = "mean") |>
+  mutate(model= factor(model, levels = c("ybar", "post_mean"))) %>%
+  ggplot(., aes(x = model, y = mean, col = player, group = player)) +
+  geom_point() +
+  geom_line() +
+  geom_hline(aes(yintercept = ybar_all, linetype = "Sample mean"), col= "black") +
+  geom_hline(aes(yintercept = mu_post_mean, linetype = "Posterior mean \n of grand mean"), col = "red")+
+  scale_linetype_manual(name = "limit", values = c(2, 2), 
+                      guide = guide_legend(override.aes = list(color = c("red", "black"))))+
+  labs(title = "Shrinkage", y = "Serve speed")
+```
+
+
+
+## Part f
+
+```{r part1-f, echo = F}
+# sources of variability
+```
+
+# Exercise 2
+
+## Part b
+
+```{r part-2b}
+# model 1 PPC
+```
+
+## Part e
+
+```{r part-2e}
+# model 2 Gibbs
+```
+
+## Part f
+
+```{r part-2f}
+# model 2 posterior summary
+```
+
+## Part g
+
+```{r part-2g}
+# model 2 posterior summary
+```
+
+# Exercise  3 
+
+## Part e (optional)
+
+```{r part-3e}
+
+```

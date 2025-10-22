@@ -13,6 +13,8 @@ format:
 
 -   Constrained normal sampling [code](handouts/constrained_normal.qmd)
 
+-   Problem Set 5 starter template: {{< downloadthis homework/412_hw5_r_starter.qmd dname="hw5_r" label=".qmd" id=mtcars-btn >}} or {{< downloadthis homework/412_hw5_r_starter.Rmd dname="hw5_r" label=".Rmd" id=mtcars-btn >}}
+
 -   Data
 
     -   
@@ -28,3 +30,7 @@ format:
     -   {{< downloadthis handouts/divorce.Rda dname="divorce" label="divorce" id=mtcars-btn >}} Load code in as `readRDS("filepath/divorce.Rda")`
 
     -   {{< downloadthis handouts/mathscores.Rda dname="mathscores" label="mathscores" id=mtcars-btn >}} Load code in as `readRDS("filepath/mathscores.Rda")`
+
+    -   {{< downloadthis handouts/tennis_serves.Rda dname="tennis_serves" label="tennis_serves" id=mtcars-btn >}} Load code in as `readRDS("filepath/tennis_serves.Rda")`
+
+    -   {{< downloadthis handouts/bbs.Rda dname="bbs" label="bbs" id=mtcars-btn >}} Load code in as `readRDS("filepath/bbs.Rda")`
