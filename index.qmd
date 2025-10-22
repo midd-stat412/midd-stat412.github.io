@@ -6,9 +6,11 @@ Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this we
 
 ## Announcements
 
--   Midterm on Friday 10/17 from 2:30-4:30pm in WNS 011 (our usual classroom)
+-   Midterm revisions due Friday 10/24 at 5pm (leave in box outside office or hand in directly)
 
-    -   Some practice problems [here](handouts/midterm_review.pdf)
+    -   Problems 2 and 4 are eligible for revision: on a separate sheet of paper, please re-do the problem parts you're revising in their entirety (e.g. all of part (a) or part (b), even if you only made a mistake towards the end). Attach revisions to original midterm.
+
+    -   Please don't consult any resource beside your notes and Becky!!
 
 ## Course details
 

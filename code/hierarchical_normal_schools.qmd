@@ -66,7 +66,7 @@ n_vec <- school_sum$n
 J <- length(ybar_vec)
 ```
 
-## Prior solitication
+## Prior solicitation
 
 Set priors based on the information provided by ELS: the math exam was designed to give a mean of 50 and a nationwide variance of 100. *Note: this variance includes both within-school and between-school variance.*
 
@@ -113,8 +113,8 @@ for(s in 1:(S+B)){
   s2 <- 1/rgamma(1, a_new, b_new)
   
   # sample theta
-  s2_theta <- 1/(J/s2 + 1/s20)
-  mu_theta <- s2_theta * (J*mean(theta_vec)/s2 + mu0/s20)
+  s2_theta <- 1/(J/tau2 + 1/s20)
+  mu_theta <- s2_theta * (J*mean(theta_vec)/tau2 + mu0/s20)
   theta <- rnorm(1, mu_theta, sqrt(s2_theta))
   
   # sample tau2
