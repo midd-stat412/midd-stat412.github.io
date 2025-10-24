@@ -18,7 +18,7 @@
     "href": "index.html#announcements",
     "title": "STAT 412: Bayesian Statistics",
     "section": "Announcements",
-    "text": "Announcements\n\nMidterm revisions due Friday 10/24 at 5pm (leave in box outside office or hand in directly)\n\nProblems 2 and 4 are eligible for revision: on a separate sheet of paper, please re-do the problem parts you’re revising in their entirety (e.g. all of part (a) or part (b), even if you only made a mistake towards the end). Attach revisions to original midterm.\nPlease don’t consult any resource beside your notes and Becky!!"
+    "text": "Announcements\n\nMidterm revisions due Monday 10/27 in class (leave in box outside office or hand in directly)\n\nProblems 2 and 4 are eligible for revision: on a separate sheet of paper, please re-do the problem parts you’re revising in their entirety (e.g. all of part (a) or part (b), even if you only made a mistake towards the end). Attach revisions to original midterm.\nPlease don’t consult any resource beside your notes and Becky!!"
   },
   {
     "objectID": "index.html#course-details",
@@ -425,5 +425,82 @@
     "title": "Hierarchical modeling: Normal data",
     "section": "Posterior inference",
     "text": "Posterior inference\nPosterior means and 95% credible intervals of \\(\\theta\\), \\(\\sigma\\), and \\(\\tau\\) are as follows. Let’s think about their interpretation.\n\n\n\n\n\nThe following displays the posterior distributions of the school-specific mean scores \\(\\theta_{j}\\), in order of smallest to largest:\n\n\n\n\n\n\n\n\n\nThis plot illustrates the notion of “shrinkage” or “borrowing information”. Let’s interpret!"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-a",
+    "href": "homework/412_hw5_r_starter.html#part-a",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part a",
+    "text": "Part a\n\n# specifying priors"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-b",
+    "href": "homework/412_hw5_r_starter.html#part-b",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part b",
+    "text": "Part b\n\n# gibbs sampler here"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-c",
+    "href": "homework/412_hw5_r_starter.html#part-c",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part c",
+    "text": "Part c"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-d",
+    "href": "homework/412_hw5_r_starter.html#part-d",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part d",
+    "text": "Part d"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-e",
+    "href": "homework/412_hw5_r_starter.html#part-e",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part e",
+    "text": "Part e"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-f",
+    "href": "homework/412_hw5_r_starter.html#part-f",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part f",
+    "text": "Part f"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-b-1",
+    "href": "homework/412_hw5_r_starter.html#part-b-1",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part b",
+    "text": "Part b\n\n# model 1 PPC"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-e-1",
+    "href": "homework/412_hw5_r_starter.html#part-e-1",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part e",
+    "text": "Part e\n\n# model 2 Gibbs"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-f-1",
+    "href": "homework/412_hw5_r_starter.html#part-f-1",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part f",
+    "text": "Part f\n\n# model 2 posterior summary"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-g",
+    "href": "homework/412_hw5_r_starter.html#part-g",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part g",
+    "text": "Part g\n\n# model 2 posterior summary"
+  },
+  {
+    "objectID": "homework/412_hw5_r_starter.html#part-e-optional",
+    "href": "homework/412_hw5_r_starter.html#part-e-optional",
+    "title": "STAT 412: Homework 5 (R)",
+    "section": "Part e (optional)",
+    "text": "Part e (optional)"
   }
 ]

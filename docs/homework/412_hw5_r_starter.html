@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Your name here">
+<meta name="dcterms.date" content="2025-10-29">
 
-<title>STAT 412: Bayesian Statistics – STAT 412</title>
+<title>STAT 412: Homework 5 (R) – STAT 412</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +22,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea1d7ac60288e0f1efdbc993fd8432ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9423d4216d63e9e1d82d0138c0dc7e47.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,16 +109,16 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">STAT 412</span>
     </a>
   </div>
@@ -92,19 +129,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./schedule.html"> 
+    <a class="nav-link" href="../schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./handouts.html"> 
+    <a class="nav-link" href="../handouts.html"> 
 <span class="menu-text">Handouts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./case_study.html"> 
+    <a class="nav-link" href="../case_study.html"> 
 <span class="menu-text">Case Studies</span></a>
   </li>  
 </ul>
@@ -118,20 +155,33 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="412_hw5_r_starter.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">STAT 412: Bayesian Statistics</h1>
+<h1 class="title">STAT 412: Homework 5 (R)</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Your name here </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 29, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -141,29 +191,67 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this website you will find the course syllabus, schedule, and assignments. The website is frequently updated throughout the semester, so please make a habit of refreshing the page.</p>
-<section id="announcements" class="level2">
-<h2 class="anchored" data-anchor-id="announcements">Announcements</h2>
-<ul>
-<li><p>Midterm revisions due <strong>Monday 10/27 in class</strong> (leave in box outside office or hand in directly)</p>
-<ul>
-<li><p>Problems 2 and 4 are eligible for revision: on a separate sheet of paper, please re-do the problem parts you’re revising in their entirety (e.g.&nbsp;all of part (a) or part (b), even if you only made a mistake towards the end). Attach revisions to original midterm.</p></li>
-<li><p>Please don’t consult any resource beside your notes and Becky!!</p></li>
-</ul></li>
-</ul>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
 </section>
-<section id="course-details" class="level2">
-<h2 class="anchored" data-anchor-id="course-details">Course details</h2>
-<p><strong>Instructor</strong>: Becky Tang (she/her)</p>
-<ul>
-<li><p>Office: WNS 214</p></li>
-<li><p>Email: btang@middlebury.edu</p></li>
-</ul>
-<p><strong>Meeting times and location</strong>: Mondays and Wednesdays 9:45-11am in WNS 011</p>
-<p><strong>Office hours</strong>: Monday 3-4pm, Tuesday 3:30-4:30pm, Friday 11am-12pm</p>
-<p><strong>Syllabus</strong> (most recent update 9/1/2025): our <a href="stat412_syllabus.pdf">syllabus</a> outlines our course policies and a rough schedule. Once classes begin, you should follow the schedule and due dates found on this website.</p>
+<section id="part-a" class="level2">
+<h2 class="anchored" data-anchor-id="part-a">Part a</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specifying priors</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="part-b" class="level2">
+<h2 class="anchored" data-anchor-id="part-b">Part b</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gibbs sampler here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="part-c" class="level2">
+<h2 class="anchored" data-anchor-id="part-c">Part c</h2>
+</section>
+<section id="part-d" class="level2">
+<h2 class="anchored" data-anchor-id="part-d">Part d</h2>
+</section>
+<section id="part-e" class="level2">
+<h2 class="anchored" data-anchor-id="part-e">Part e</h2>
+</section>
+<section id="part-f" class="level2">
+<h2 class="anchored" data-anchor-id="part-f">Part f</h2>
+</section>
+<section id="exercise-2" class="level1">
+<h1>Exercise 2</h1>
+<section id="part-b-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-b-1">Part b</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model 1 PPC</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="part-e-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-e-1">Part e</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model 2 Gibbs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="part-f-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-f-1">Part f</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model 2 posterior summary</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="part-g" class="level2">
+<h2 class="anchored" data-anchor-id="part-g">Part g</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model 2 posterior summary</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="exercise-3" class="level1">
+<h1>Exercise 3</h1>
+<section id="part-e-optional" class="level2">
+<h2 class="anchored" data-anchor-id="part-e-optional">Part e (optional)</h2>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
