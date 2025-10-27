@@ -183,10 +183,53 @@ To do this, as before, for some number $K$ times:
 2. Simulate $y_{i}^*$ from its corresponding Normal distribution using the posterior values from 1.
 3. Obtain $e_{i} = y_{i} - y_{i}^*$
 
-*Because the predicted values are random, so are the residuals $e_{i}$. So, unlike in frequentist methods, we don't plot the "usual" residual plot of fitted vs residuals.* We will instead plot credible intervals of the residuals for each observation $i$! Thus, in this diagnostic, we should choose $K$ large (e.g. the total number of iterations after burn-in) so we get good approximations of the CIs.
+*Because the predicted values are random, so are the residuals $e_{i}$. So, our residual plot will look different from the usual, frequentist residual plot.* We can plot credible intervals of the residuals for each observation $i$! Thus, in this diagnostic, we should choose $K$ large (e.g. the total number of iterations after burn-in) so to get good approximations of the variablity.
 
 
-```{r fig.width = 7, echo = T}
+```{r echo = T}
+set.seed(1)
+resids_ls <- list()
+for(i in 1:n){
+  y_preds_i <- rnorm(G, POSTS[,1] + POSTS[,2] * x[i], sqrt(POSTS[,3]))
+  resids <- y[i] - y_preds_i
+  resids_ls[[i]] <- data.frame(resid = resids, obs = i, years = x[i])
+}
+resids_df_all <- do.call(rbind, resids_ls)
+```
+
+Snapshot of `resids_df_all`:
+
+```{r}
+resids_df_all |>
+  slice(1:3) |>
+  kable(digits = 5)
+```
+\vspace{-1cm}
+$$\vdots$$
+
+```{r}
+resids_df_all |>
+  slice_tail(n = 3) |>
+  kable(digits = 5)
+```
+
+
+```{r fig.width=7}
+resids_df_all |>
+  group_by(obs, years) |> # grouping by observation, and keep years for later
+  summarise(lb = quantile(resid, 0.025), ub = quantile(resid, 0.975)) |>
+  arrange(years) |>
+  ungroup() |>
+  mutate(plot_id = row_number()) |> # plotting mechanism
+  ggplot(aes(group = factor(plot_id))) +
+  geom_segment(aes(x = years, y = lb, xend = years, yend = ub),
+               position = position_jitter(height = 0, width = 0.2)) + 
+  labs(x = "Years", y = "Predictive residual",
+       caption = "95% CI for residual") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+```{r fig.width = 7, echo = F, eval = F}
 set.seed(1)
 resids_ls <- list()
 for(s in 1:G){
@@ -207,7 +250,8 @@ do.call(rbind, resids_ls) |>
   ggplot(aes(group = factor(plot_id))) +
   geom_segment(aes(x = years, y = lb, xend = years, yend = ub),
                position = position_jitter(height = 0, width = 0.2)) + 
-  labs(x = "Years", y = "Predictive residual") +
+  labs(x = "Years", y = "Predictive residual",
+       caption = "95% CI for residual") +
   geom_hline(yintercept = 0, linetype = "dashed")
 ```
 
