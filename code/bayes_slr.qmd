@@ -36,7 +36,7 @@ teachers |>
   kable()
 ```
 
-Suppose I'm a teacher who is moving to Michican, and I'm interested in learning what kind of salary I could expect to earn. I know that salaries are related in some way to years of experience, so let's do some EDA to see the empirical relationship between years of experience and base salary at this public school:
+Suppose I'm a teacher who is moving to Michigan, and I'm interested in learning what kind of salary I could expect to earn. I know that salaries are related in some way to years of experience, so let's do some EDA to see the empirical relationship between years of experience and base salary at this public school:
 
 ```{r}
 ggplot(teachers, aes(x = years, y = base)) +
@@ -52,7 +52,7 @@ I will fit a SLR model to these data, regressing base salary on years of experie
 
 $$\text{base}_{i} = \beta_{0} + \beta_{1} \text{years}_{i} + \epsilon_{i}
 $$
-$$\epsilon_{i} \overset{iid}{\sim} N(0, \sigma^2) \qquad \quad i = 1,\ldots, n = 46$$
+$$\epsilon_{i} \overset{iid}{\sim} N(0, \sigma^2) \qquad \quad i = 1,\ldots, n = `r nrow(teachers)$$
 
 ### Prior solicitation 1
 
@@ -271,7 +271,7 @@ POSTS2[,3] <- sqrt(POSTS2[,3])
 post_means <- colMeans(POSTS2)
 
 post_lbs <- apply(POSTS2, 2, function(x){quantile(x, 0.025)})
-post_ubs <- apply(POSTS2, 2, function(x){quantile(x, 0.075)})
+post_ubs <- apply(POSTS2, 2, function(x){quantile(x, 0.975)})
 tab <- data.frame(post_means, post_lbs, post_ubs) 
 tab <- round(tab, 3)
 rownames(tab) <- c("$\\beta_{0}$", "$\\beta_{1}$", "$\\sigma$")
