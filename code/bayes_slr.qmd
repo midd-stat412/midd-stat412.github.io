@@ -1,0 +1,290 @@
+---
+title: "Bayes Simple Linear Regression"
+format: pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r message=F, echo = F}
+knitr::opts_chunk$set(fig.width = 4,fig.height = 3, echo = F, message = F)
+library(tidyverse)
+teachers <- readRDS("~/Desktop/teachers.Rda") |>
+  filter(years <= 15) |>
+  select(id, degree, fte, years, base)
+set.seed(1)
+teachers$base <- teachers$base + rnorm(nrow(teachers), 0, sd = 250)
+library(kableExtra)
+library(patchwork)
+```
+
+## Data and EDA
+
+We have data that contains teacher salaries from 2009-2010 for teachers employed by the St. Louis Public School in Michigan. The dataset has been filtered to retain only teachers with at most 15 years of service and who have a full teaching load (FTE). This leaves in total `r nrow(teachers)` teachers. *I have modified the data slightly to make this analysis more interesting.*
+
+We have the following variables:
+
+- `id`: Identification code for each teacher, assigned randomly
+- `degree`: Highest educational degree attained: BA (bachelor's degree) or MA (master's degree)
+- `years`: Number of years employed by the school district
+- `base`: Base annual salary, in dollars.
+
+We have the following snapshot of the data:
+
+```{r}
+teachers |>
+  slice(1:5) |>
+  kable()
+```
+
+Suppose I'm a teacher who is moving to Michican, and I'm interested in learning what kind of salary I could expect to earn. I know that salaries are related in some way to years of experience, so let's do some EDA to see the empirical relationship between years of experience and base salary at this public school:
+
+```{r}
+ggplot(teachers, aes(x = years, y = base)) +
+  geom_point() +
+  labs(x = "Years of experience", y = "Base salary ($)") 
+```
+
+What do we notice?
+
+## Fitting a SLR
+
+I will fit a SLR model to these data, regressing base salary on years of experience (ignoring degree for now). Thus, in context, my SLR looks like the following:
+
+$$\text{base}_{i} = \beta_{0} + \beta_{1} \text{years}_{i} + \epsilon_{i}
+$$
+$$\epsilon_{i} \overset{iid}{\sim} N(0, \sigma^2) \qquad \quad i = 1,\ldots, n = 46$$
+
+### Prior solicitation 1
+
+My priors might be specified as follows:
+
+$$\beta_{0} \sim N(0, 100^2)$$
+$$\beta_{1} \sim N(0, 100^2)$$
+$$\frac{1}{\sigma^2} \sim \text{Gamma}(1,1)$$
+
+What's possibly wrong with this prior specification??
+
+### Prior solicitation 2
+
+Let's choose the following new priors:
+
+$$\beta_{0} \sim N(50000, 10000^2)$$
+$$\beta_{1} \sim N(0, 10000^2)$$
+
+```{r}
+G <- 10000
+B <- 10000
+```
+
+To approximate the joint posterior distribution, I will run a Gibbs sampler for `r G + B` iterations, throwing the first half away to burn-in.
+
+```{r}
+set.seed(412)
+mu0 <- 50000
+mu1 <- 0
+s20 <- 10000^2
+s21 <- 10000^2
+a <- b <- 1
+
+y <- teachers$base
+x <- teachers$years
+n <- length(y)
+
+beta0 <- mean(y)
+beta1 <- 0
+
+
+count <- 1
+POSTS <- matrix(NA, nrow = G, ncol = 3)
+for(g in 1:(B + G)){
+  # sample s2
+  a_n <- a + n/2
+  b_n <- b + 0.5 * sum(( y - beta0 - beta1 * x)^2)
+  s2 <- 1/rgamma(1, a_n, b_n)
+  
+  # sample beta0
+  v_n <- 1/(n/s2 + 1/s20)
+  m_n <- v_n * (sum(y - beta1 * x)/s2 + mu0/s20)
+  beta0 <- rnorm(1, m_n, sqrt(v_n))
+  
+  # sample beta1
+  v_n <- 1/(sum(x^2)/s2 + 1/s21)
+  m_n <- v_n *(sum(x *(y-beta0))/s2 + mu1/s21)
+  beta1 <- rnorm(1, m_n, sqrt(v_n))
+  
+  # store
+  if(g > B){
+    POSTS[count,] <- c(beta0, beta1, s2)
+    count <- count + 1
+  }
+}
+post_df <- data.frame(POSTS) |> 
+  rename("beta0" = 1, "beta1" = 2, "s2" = 3) |>
+  mutate(iteration = row_number())
+```
+
+### Diagnostics
+
+Here are some traceplots:
+
+```{r fig.width=8}
+post_df |>
+  pivot_longer(cols = all_of(1:3), names_to = "param", values_to = "value") |>
+  ggplot(aes(x = iteration, y = value)) +
+  geom_line() +
+  facet_wrap(~param, scales = "free")
+
+ess <- coda::effectiveSize(POSTS)
+```
+
+The effective sample sizes of $\beta_{0}, \beta_{1}, \sigma^2$ from these `r G` iterations are: `r round(ess, 2)`. Why do we think some of these are so low?
+
+## Model assessment
+
+### Posterior predictive check
+
+To assess the fit of a SLR model, one approach is to generate PPDs and compare them (visually) to the original data. Once again, we want the observed response values to be consistent with predicted responses generated from the fitted model. So, as before, let's generate some PPDs. For $k \in 1:K$:
+
+1. Obtain/sample posterior values of $\beta_{0}, \beta_{1}, \sigma_{2}$, call these $\beta^*_{0}, \beta^{*}_{1}, \sigma^{2*}$.
+2. Sample $\mathbf{y}^{*} = \{y^{*}_{1},\ldots,y_{n}^{*} \}$ where $n$ is the sample size $n= `r n`$ and $y_{i}^{*} \sim N(\beta^*_{0}+ \beta^{*}_{1} x_{i}, \sigma^{2*})$. Note that these $x_{i}$ are the same as in the original data, as they are assumed fixed!
+
+```{r echo = T}
+set.seed(1)
+K <- 8
+samp_ids <- sample(1:G, K) # G is number of iterations post burn-in
+ppd_ls <- list() 
+# POSTS is matrix with columns [beta0, beta1, s2]
+# y is vector of base salary, x is vector of years of experience
+for (k in 1:K){
+  ppd_y <- rnorm(n, POSTS[samp_ids[k],1] + POSTS[samp_ids[k],2] * x,
+               sqrt(POSTS[samp_ids[k],3]))
+  ppd_ls[[k]] <- data.frame(base = ppd_y,
+                   years = x, 
+                   dist = paste0("PPD", k)) # variable for plotting
+}
+# append on original/true y
+ppd_ls[[k+1]] <- data.frame(base = y, years = x, dist = "Original")
+
+do.call(rbind, ppd_ls) |>
+  ggplot(aes(x = years, y = base)) +
+  geom_point() +
+  facet_wrap(~ dist)
+```
+
+What do we notice?
+
+### Residuals
+
+When fitting a linear regression model, a very common way of assessing model fit is to look at the *residuals*: $e_{i} = y_{i} - \hat{y}_{i}$ where $\hat{y}_{i}$ is the fitted/estimated value of the $i$-th response. We should ideally have residuals close to 0. Additionally, residuals shouldn't "look" very different from different values of $x_{i}$ (i.e. we don't want to do better at predicting certain observations than others).
+
+To do this, as before, for some number $K$ times:
+
+1. Obtain/sample parameter values from the posterior
+2. Simulate $y_{i}^*$ from its corresponding Normal distribution using the posterior values from 1.
+3. Obtain $e_{i} = y_{i} - y_{i}^*$
+
+*Because the predicted values are random, so are the residuals $e_{i}$. So, unlike in frequentist methods, we don't plot the "usual" residual plot of fitted vs residuals.* We will instead plot credible intervals of the residuals for each observation $i$! Thus, in this diagnostic, we should choose $K$ large (e.g. the total number of iterations after burn-in) so we get good approximations of the CIs.
+
+
+```{r fig.width = 7, echo = T}
+set.seed(1)
+resids_ls <- list()
+for(s in 1:G){
+  y_preds <- rnorm(n, POSTS[s,1] + POSTS[s,2] * x, sqrt(POSTS[s,3]))
+  resids_ls[[s]] <- data.frame(resid = y - y_preds,
+                               years = x,
+                               obs = 1:n) 
+  # obs is variable to identify observation for plotting and grouping purposes
+}
+
+# a lot of this code is needed because of the repeated values of x_i
+do.call(rbind, resids_ls) |>
+  group_by(obs, years) |> # grouping by observation, and keep years for later
+  summarise(lb = quantile(resid, 0.025), ub = quantile(resid, 0.975)) |>
+  arrange(years) |>
+  ungroup() |>
+  mutate(plot_id = row_number()) |> # plotting mechanism
+  ggplot(aes(group = factor(plot_id))) +
+  geom_segment(aes(x = years, y = lb, xend = years, yend = ub),
+               position = position_jitter(height = 0, width = 0.2)) + 
+  labs(x = "Years", y = "Predictive residual") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+What do we notice here?
+
+## Posterior inference
+
+Regardless of what we determined above about model fit, let's continue with doing some posterior inference.
+
+### Posterior summaries
+
+Here are some posterior summaries of the three parameters:
+
+```{r}
+POSTS2 <- POSTS
+POSTS2[,3] <- sqrt(POSTS2[,3])
+post_means <- colMeans(POSTS2)
+
+post_lbs <- apply(POSTS2, 2, function(x){quantile(x, 0.025)})
+post_ubs <- apply(POSTS2, 2, function(x){quantile(x, 0.075)})
+tab <- data.frame(post_means, post_lbs, post_ubs) 
+tab <- round(tab, 3)
+rownames(tab) <- c("$\\beta_{0}$", "$\\beta_{1}$", "$\\sigma$")
+kableExtra::kable(tab, col.names = c("Posterior mean", "2.5\\%", "97.5\\%"),
+                    row.names = T,
+                  format = "latex", escape = F, booktabs = T)
+```
+
+Let's give some interpretation!
+
+### Line of best fit
+
+Let's obtain *a* line of "best fit" (note that *a* is italicized because there is not a notion of a single best line). One might obtain such a line by taking the posterior mean estimates $(\hat{\beta}_{0}, \hat{\beta}_{1})$ of $(\beta_{0}, \beta_{1})$, and use them to plot the line $\hat{y} = \hat{\beta}_{0} + \hat{\beta}_{1} x$.
+
+If we use the posterior means as the estimates, then this "best line" represents the most likely value of the line $\beta_{0} + \beta_{1} x$   from the posterior distribution. To include some notion of uncertainty of this "best line", we might also plot some number of $J$ line estimates where we take samples $(\beta_{0}^{(j)}, \beta_{1}^{(j)})$ from the posterior (i.e. Gibbs sampler) and plot $\beta_{0}^{(j)} + \beta_{1}^{(j)} x$.
+
+
+```{r echo = T}
+set.seed(1)
+J <- 10
+iter_samps <- sample(1:G, J) 
+post_means <- colMeans(POSTS)
+
+ggplot(teachers, aes(x = years, y = base)) +
+  geom_point(size=2) +
+  geom_abline(data=post_df[iter_samps, ], aes(intercept=beta0, slope=beta1),
+              alpha = 0.2, col = "magenta") +
+  geom_abline(intercept = post_means[1],
+              slope = post_means[2], col = "blue") +
+  ylab("Base salary ($)") + xlab("Years") +
+  labs(caption = "Blue line: a line of best fit \n Pink lines: posterior samples of line")
+```
+
+What do we notice?
+
+```{r}
+# Since there is inferential uncertainty about the intercept  and slope one sees variation among the ten fits from the posterior of the linear regression line  
+
+# This variation about the best-fitting line is understandable since the size of our sample of data is the relatively small value
+
+# A larger sample size would help to reduce the posterior variation for the intercept and slope parameters and result in posterior samples of fits that are more tightly clustered about the best fitting line
+```
+
+### Predicted responses
+
+I have approximately 3.5 years of teaching experience and my friend has approximately 8.5 years. I might like to know what sort of ranges of base salaries we might expect to earn. To answer this question, why not obtain the posterior density of base salaries for each of $x^{(new)} = 3.5$ and $x^{(new)} = 8.5$? Do the following for $k = 1,\ldots K$ (once again, with $K$ large):
+
+1. Use the posterior samples of $\beta_{0}, \beta_{1}$ to simulate the expected earnings at a given level $x^{(new)}$ of years of experience
+2. Randomly sample the earnings at this mean using the Normal model and a posterior sample of $\sigma^2$
+
+
+```{r fig.height=2.5}
+x_preds <- c(3.5, 8.5)
+data.frame(preds = c(rnorm(G, POSTS[,1] + POSTS[,2] * x_preds[1], sqrt(POSTS[,3])), rnorm(G, POSTS[,1] + POSTS[,2] * x_preds[2], sqrt(POSTS[,3]))),
+           years = rep(x_preds, each = G)) |>
+  mutate(years = factor(years) ) |>
+  ggplot(aes(x = preds,  group = years, fill = years)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Predicted salary")
+```
