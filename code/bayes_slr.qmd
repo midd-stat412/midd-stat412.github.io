@@ -8,7 +8,7 @@ editor_options:
 ```{r message=F, echo = F}
 knitr::opts_chunk$set(fig.width = 4,fig.height = 3, echo = F, message = F)
 library(tidyverse)
-teachers <- readRDS("~/Desktop/teachers.Rda") |>
+teachers <- readRDS("teachers.Rda") |>
   filter(years <= 15) |>
   select(id, degree, fte, years, base)
 set.seed(1)

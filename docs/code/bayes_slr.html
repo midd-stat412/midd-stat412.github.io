@@ -269,7 +269,7 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<p>Suppose I’m a teacher who is moving to Michican, and I’m interested in learning what kind of salary I could expect to earn. I know that salaries are related in some way to years of experience, so let’s do some EDA to see the empirical relationship between years of experience and base salary at this public school:</p>
+<p>Suppose I’m a teacher who is moving to Michigan, and I’m interested in learning what kind of salary I could expect to earn. I know that salaries are related in some way to years of experience, so let’s do some EDA to see the empirical relationship between years of experience and base salary at this public school:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -285,7 +285,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="fitting-a-slr">Fitting a SLR</h2>
 <p>I will fit a SLR model to these data, regressing base salary on years of experience (ignoring degree for now). Thus, in context, my SLR looks like the following:</p>
 <p><span class="math display">\[\text{base}_{i} = \beta_{0} + \beta_{1} \text{years}_{i} + \epsilon_{i}
-\]</span> <span class="math display">\[\epsilon_{i} \overset{iid}{\sim} N(0, \sigma^2) \qquad \quad i = 1,\ldots, n = 46\]</span></p>
+\]</span> <span class="math display">\[\epsilon_{i} \overset{iid}{\sim} N(0, \sigma^2) \qquad \quad i = 1,\ldots, n = `r nrow(teachers)\]</span></p>
 <section id="prior-solicitation-1" class="level3">
 <h3 class="anchored" data-anchor-id="prior-solicitation-1">Prior solicitation 1</h3>
 <p>My priors might be specified as follows:</p>
@@ -317,12 +317,32 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="model-assessment">Model assessment</h2>
 <section id="posterior-predictive-check" class="level3">
 <h3 class="anchored" data-anchor-id="posterior-predictive-check">Posterior predictive check</h3>
-<p>To assess the fit of a SLR model, one approach is to generate PPDs and compare them (visually) to the original data. Once again, we want the observed response values to be consistent with predicted responses generated from the fitted model. So, as before, let’s generate some PPDs. For <span class="math inline">\(k in 1:K\)</span>:</p>
+<p>To assess the fit of a SLR model, one approach is to generate PPDs and compare them (visually) to the original data. Once again, we want the observed response values to be consistent with predicted responses generated from the fitted model. So, as before, let’s generate some PPDs. For <span class="math inline">\(k \in 1:K\)</span>:</p>
 <ol type="1">
-<li>Obtain posterior values of <span class="math inline">\(\beta_{0}, \beta_{1}, \sigma_{2}\)</span>, call these <span class="math inline">\(\beta^*_{0}, \beta^{*}_{1}, \sigma^{2*}\)</span></li>
-<li>Sample <span class="math inline">\(\mathbf{y}^{*} = \{y^{*}_{1},\ldots,y_{n}^{*} \}\)</span> where the sample size <span class="math inline">\(n= 39\)</span> and <span class="math inline">\(y_{i}^{*} \sim N(\beta^*_{0}+ \beta^{*}_{1} x_{i}, \sigma^{2*})\)</span>. Note that these <span class="math inline">\(x_{i}\)</span> are the same as in the original data, as they are assumed fixed!</li>
+<li>Obtain/sample posterior values of <span class="math inline">\(\beta_{0}, \beta_{1}, \sigma_{2}\)</span>, call these <span class="math inline">\(\beta^*_{0}, \beta^{*}_{1}, \sigma^{2*}\)</span>.</li>
+<li>Sample <span class="math inline">\(\mathbf{y}^{*} = \{y^{*}_{1},\ldots,y_{n}^{*} \}\)</span> where <span class="math inline">\(n\)</span> is the sample size <span class="math inline">\(n= 39\)</span> and <span class="math inline">\(y_{i}^{*} \sim N(\beta^*_{0}+ \beta^{*}_{1} x_{i}, \sigma^{2*})\)</span>. Note that these <span class="math inline">\(x_{i}\)</span> are the same as in the original data, as they are assumed fixed!</li>
 </ol>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>samp_ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>G, K) <span class="co"># G is number of iterations post burn-in</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ppd_ls <span class="ot">&lt;-</span> <span class="fu">list</span>() </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># POSTS is matrix with columns [beta0, beta1, s2]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># y is vector of base salary, x is vector of years of experience</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  ppd_y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, POSTS[samp_ids[k],<span class="dv">1</span>] <span class="sc">+</span> POSTS[samp_ids[k],<span class="dv">2</span>] <span class="sc">*</span> x,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">sqrt</span>(POSTS[samp_ids[k],<span class="dv">3</span>]))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  ppd_ls[[k]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">base =</span> ppd_y,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">years =</span> x, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dist =</span> <span class="fu">paste0</span>(<span class="st">"PPD"</span>, k)) <span class="co"># variable for plotting</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># append on original/true y</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>ppd_ls[[k<span class="sc">+</span><span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">base =</span> y, <span class="at">years =</span> x, <span class="at">dist =</span> <span class="st">"Original"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(rbind, ppd_ls) <span class="sc">|&gt;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> years, <span class="at">y =</span> base)) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> dist)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -338,16 +358,88 @@ window.Quarto = {
 <p>When fitting a linear regression model, a very common way of assessing model fit is to look at the <em>residuals</em>: <span class="math inline">\(e_{i} = y_{i} - \hat{y}_{i}\)</span> where <span class="math inline">\(\hat{y}_{i}\)</span> is the fitted/estimated value of the <span class="math inline">\(i\)</span>-th response. We should ideally have residuals close to 0. Additionally, residuals shouldn’t “look” very different from different values of <span class="math inline">\(x_{i}\)</span> (i.e.&nbsp;we don’t want to do better at predicting certain observations than others).</p>
 <p>To do this, as before, for some number <span class="math inline">\(K\)</span> times:</p>
 <ol type="1">
-<li>Obtain parameter values from the posterior</li>
+<li>Obtain/sample parameter values from the posterior</li>
 <li>Simulate <span class="math inline">\(y_{i}^*\)</span> from its corresponding Normal distribution using the posterior values from 1.</li>
 <li>Obtain <span class="math inline">\(e_{i} = y_{i} - y_{i}^*\)</span></li>
 </ol>
-<p><em>Because the predicted values are random, so are the residuals <span class="math inline">\(e_{i}\)</span>. So, unlike in frequentist methods, we don’t plot the “usual” residual plot of fitted vs residuals.</em> We will instead plot credible intervals of the residuals for each observation <span class="math inline">\(i\)</span>! Thus, in this diagnostic, we should choose <span class="math inline">\(K\)</span> large (e.g.&nbsp;the total number of iterations after burn-in) so we get good approximations of the CIs.</p>
+<p><em>Because the predicted values are random, so are the residuals <span class="math inline">\(e_{i}\)</span>. So, our residual plot will look different from the usual, frequentist residual plot.</em> We can plot credible intervals of the residuals for each observation <span class="math inline">\(i\)</span>! Thus, in this diagnostic, we should choose <span class="math inline">\(K\)</span> large (e.g.&nbsp;the total number of iterations after burn-in) so to get good approximations of the variablity.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>resids_ls <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  y_preds_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(G, POSTS[,<span class="dv">1</span>] <span class="sc">+</span> POSTS[,<span class="dv">2</span>] <span class="sc">*</span> x[i], <span class="fu">sqrt</span>(POSTS[,<span class="dv">3</span>]))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  resids <span class="ot">&lt;-</span> y[i] <span class="sc">-</span> y_preds_i</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  resids_ls[[i]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">resid =</span> resids, <span class="at">obs =</span> i, <span class="at">years =</span> x[i])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>resids_df_all <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, resids_ls)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Snapshot of <code>resids_df_all</code>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">resid</th>
+<th style="text-align: right;">obs</th>
+<th style="text-align: right;">years</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">-254.1278</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">-1330.9272</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1347.9132</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><span class="math display">\[\vdots\]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">resid</th>
+<th style="text-align: right;">obs</th>
+<th style="text-align: right;">years</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2007.4218</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">5.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">731.1135</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">5.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4374.1961</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">5.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="bayes_slr_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="384"></p>
+<p><img src="bayes_slr_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -370,27 +462,26 @@ window.Quarto = {
 </section>
 <section id="line-of-best-fit" class="level3">
 <h3 class="anchored" data-anchor-id="line-of-best-fit">Line of best fit</h3>
-<p>Let’s obtain <em>a</em> line of “best fit” (note that <em>a</em> is italicized because there is not a notion of a single best line). One might obtain such a line by taking the posterior mean estimates <span class="math inline">\((\hat{\beta}_{0}, \hat{\beta}_{1})\)</span> of <span class="math inline">\((\beta_{0}, \beta_{1})\)</span>, and use them to plot the line <span class="math inline">\(\hat{y} = \hat{\beta}_{0} + \hat{\beta}_{1} x\)</span></p>
-<p>If we use the posterior means as the estimates, then this “best line” represents the most likely value of the line <span class="math inline">\(\beta_{0} + \beta_{1} x\)</span> from the posterior distribution. To include some notion of uncertainty of this “best line”, we might also plot some number of <span class="math inline">\(J\)</span> line estimates where we take samples <span class="math inline">\((\beta_{0}^{(j)}, \beta_{1}^{(j)})\)</span> from the posterior (i.e.&nbsp;Gibbs sampler) and plot <span class="math inline">\(\beta_{0}^{(j)} + \beta_{1}^{(j)} x\)</span></p>
+<p>Let’s obtain <em>a</em> line of “best fit” (note that <em>a</em> is italicized because there is not a notion of a single best line). One might obtain such a line by taking the posterior mean estimates <span class="math inline">\((\hat{\beta}_{0}, \hat{\beta}_{1})\)</span> of <span class="math inline">\((\beta_{0}, \beta_{1})\)</span>, and use them to plot the line <span class="math inline">\(\hat{y} = \hat{\beta}_{0} + \hat{\beta}_{1} x\)</span>.</p>
+<p>If we use the posterior means as the estimates, then this “best line” represents the most likely value of the line <span class="math inline">\(\beta_{0} + \beta_{1} x\)</span> from the posterior distribution. To include some notion of uncertainty of this “best line”, we might also plot some number of <span class="math inline">\(J\)</span> line estimates where we take samples <span class="math inline">\((\beta_{0}^{(j)}, \beta_{1}^{(j)})\)</span> from the posterior (i.e.&nbsp;Gibbs sampler) and plot <span class="math inline">\(\beta_{0}^{(j)} + \beta_{1}^{(j)} x\)</span>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>J <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>iter_samps <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>G, J)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>post_means <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(POSTS)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(teachers, <span class="fu">aes</span>(<span class="at">x =</span> years, <span class="at">y =</span> base)) <span class="sc">+</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">data=</span>post_df[iter_samps, ],</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">intercept=</span>beta0, <span class="at">slope=</span>beta1),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">col =</span> <span class="st">"magenta"</span>) <span class="sc">+</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> post_means[<span class="dv">1</span>],</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">slope =</span> post_means[<span class="dv">2</span>], <span class="at">col =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Base salary ($)"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Years"</span>) <span class="sc">+</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">"Blue line: a line of best fit </span><span class="sc">\n</span><span class="st"> Pink lines: posterior samples of line"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>J <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>iter_samps <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>G, J) </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>post_means <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(POSTS)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(teachers, <span class="fu">aes</span>(<span class="at">x =</span> years, <span class="at">y =</span> base)) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">data=</span>post_df[iter_samps, ], <span class="fu">aes</span>(<span class="at">intercept=</span>beta0, <span class="at">slope=</span>beta1),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">col =</span> <span class="st">"magenta"</span>) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> post_means[<span class="dv">1</span>],</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">slope =</span> post_means[<span class="dv">2</span>], <span class="at">col =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Base salary ($)"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Years"</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">"Blue line: a line of best fit </span><span class="sc">\n</span><span class="st"> Pink lines: posterior samples of line"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="bayes_slr_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="384"></p>
+<p><img src="bayes_slr_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="384"></p>
 </figure>
 </div>
 </div>
@@ -399,16 +490,16 @@ window.Quarto = {
 </section>
 <section id="predicted-responses" class="level3">
 <h3 class="anchored" data-anchor-id="predicted-responses">Predicted responses</h3>
-<p>I have approximately 3.5 years of teaching experience and my friend has approximately 8.5 years. I might like to know what sort of ranges of base salaries we might expect to earn. To answer this question, why not obtain the posterior density of base salaries for each of <span class="math inline">\(x^{*} = 3.5\)</span> and <span class="math inline">\(x^{*} = 8.5\)</span>? Let us do that by doing the following for <span class="math inline">\(k = 1,\ldots K\)</span> (once again, with <span class="math inline">\(K\)</span> large):</p>
+<p>I have approximately 3.5 years of teaching experience and my friend has approximately 8.5 years. I might like to know what sort of ranges of base salaries we might expect to earn. To answer this question, why not obtain the posterior density of base salaries for each of <span class="math inline">\(x^{(new)} = 3.5\)</span> and <span class="math inline">\(x^{(new)} = 8.5\)</span>? Do the following for <span class="math inline">\(k = 1,\ldots K\)</span> (once again, with <span class="math inline">\(K\)</span> large):</p>
 <ol type="1">
-<li>Simulate the expected earnings at a given level of years of experience: <span class="math display">\[\mathbb{E}[Y | \beta_{0}^{(k)} + \beta_{1}^{(k)} \times x^{*}]^{(k)} \equiv \mu^{(k)}\]</span></li>
-<li>Sample the earnings at this mean: <span class="math display">\[Y^{*(k)} \sim N(\mu^{(k)}, {\sigma^{2}}^{(k)})\]</span></li>
+<li>Use the posterior samples of <span class="math inline">\(\beta_{0}, \beta_{1}\)</span> to simulate the expected earnings at a given level <span class="math inline">\(x^{(new)}\)</span> of years of experience</li>
+<li>Randomly sample the earnings at this mean using the Normal model and a posterior sample of <span class="math inline">\(\sigma^2\)</span></li>
 </ol>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="bayes_slr_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="384"></p>
+<p><img src="bayes_slr_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="384"></p>
 </figure>
 </div>
 </div>
