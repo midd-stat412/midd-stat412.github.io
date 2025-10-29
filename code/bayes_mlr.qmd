@@ -201,6 +201,14 @@ kable(tab, col.names = c("Posterior mean", "2.5\\%", "97.5\\%"),
 
 Let's give some interpretation! Do you think the length of stay and x-ray ratio are helpful in explaining the probability of getting an infection while in the hospital?
 
+-   For a hospital with an average the patient stay of 0 days that conducts 0 xrays, the expected probability of infection is `r means[1]` (not realistic!).
+
+-   Holding the xray ratio constant, we expect the probability of infection to increase by `r means[2]` for every one extra day in the hospital.
+
+-   Holding the length of stay constant, we expect the probability of infection to increase by `r means[3]` for every one-unit increase in xray ratio.
+
+-   Because the credible intervals for $\beta_{1}$ and $\beta_{2}$ exclude zero, I do think that they are both useful for helping us explain the probability of hospital infection.
+
 ## Posterior predictions
 
 If we have another hospital whose average length of `Stay` is 10 days `Xray` ratio is 100, we can easily obtain predictions of the infection risk as we did in SLR. Repeat the following many times:
