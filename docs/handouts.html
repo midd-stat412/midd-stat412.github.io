@@ -232,6 +232,15 @@ ul.task-list li input[type="checkbox"] {
       window.URL.revokeObjectURL(downloadURL);
       document.body.removeChild(a);
         });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> bbs </button></a> Load code in as <code>readRDS("filepath/bbs.Rda")</code></p></li>
+<li><p><a href="#mtcars-btn" onclick="fetch('data:application/x-gzip;base64,H4sIAAAAAAAAA12WT2gcdRTHp8luTVbTpskmbULcnX/ZpFQDkks9lPzwT2LoxnZn9s+k3ZYu1Vystc1GpHrxUg8i5KAXPYhQEU9F8BIPgijYiz0UD0HwYC9ezEHQFopinJn3eQs7A+HNe7/35/u+7/1mExUsyxq0coMHrMF8/GrlG/Xlp0/GtvH0wLIOxX/XzehG+iw9+jh5PjF55KTYzeRPyXPXFNHHkBP4HVlMHzOFHM/YS8SPYB9Fn7TSx4whpzLn4Orp4+Qr4q/6KPphdM03rDiQikvji+SdIO4Y9aYydQ5m+la+/s70NYY+RFyPP+0TfVrPRS79q/0qL/j1+EMvow/hp/2OZPjO8vA4us5xIsOL9qnxau/1xfkTSMVpZXjM1lP9sexeaF360nPN3+NL8i79o3PO+Cte3YOjSD0HX29OOmeVOeocIq/mGUA/RlwOqfX0fkzrXvT3ufQQu6XzRCo+7f8oknn27uPMzdJO7Y+bxrm1Wzh17XNj3y6+fX/ltnF+l7wV8nv4ee35B99vt00F6bTisFu7xiGu4pGHese3U0dTioNLO4FxwV9Jw48bm/O5JEvhlHHTMmXjfs0+ovtJ9uI7xsPfo54LPs3jfir+dmcl8TBzVeHDu5OoL5nK4f74uffTwubEgugedfwvBZ/3ZwLruinTr49u04+dWOcfmtlrYle+fPqxvxXp478IzlnmVFK+kzQPfjAV8rlviqzck7h5eHWew4++ZpRf+J7VuCSstmf8XZmPzqu8kwIxHnjKyjd+fkH4cJiPd1L8bXh7knozxHvY/Smpb7M30/TnIH1waZ++4v0oJdyUsZd0H5mLzVxc8pfZU595uvSjPDnozq/sJ33ZugfkdYpS16GP+bzULSte9de9p57yfYI+3fuyZ7P0o+c2PM5h99h7/X16hj1yBXfvPj7P+eovEhe8K3EXuQ/NZ8UeyRfHhN+JbHQ5x6/+heC7SHz9L7FfIL4JnhBez1B3nTwRevBIzuta9xuRbVl009LzDyWu9qPY28si10Oxr8FDdBA7/K2/JzIgXxVc5/ekfoj/OflgmtCmX+rWqLNGXIvvXou8IXhDcDU4X4W39hWpUyPfC5w3iKvD34vsQ3RD7Ofoqwp/AfYAns+Sd505Rehr5DuNXwTOSPmDlzN8R1rEK88N5tL4mXlTv7rYX7fxGzwRX8/0FYI3XOzfqyp9tuD75Q9EXwF3lf0IwR9Sp4l/k70LqKs4Auam/hrfBG/9M7HXLsEXeE53+/enzj6cfwqc7M2lryRujbpV7sEy92gFu+5/DR7OwmtT8ezx+5gbiN0PWDlrOJb5q53XX+3GL6NW+l9uahxavbpxeSvovoaeC7c6N/Q92ozfM0kuX+l0NYkaC690tjoLG5tx/oz78OYbby1o3ZH4byAZwf7+/nYs/vsf9uf4sXALAAA=').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'hosp_infection.Rda'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> hosp_infection </button></a></p></li>
 </ul></li>
 </ul>
 

@@ -34,3 +34,5 @@ format:
     -   {{< downloadthis handouts/tennis_serves.Rda dname="tennis_serves" label="tennis_serves" id=mtcars-btn >}} Load code in as `readRDS("filepath/tennis_serves.Rda")`
 
     -   {{< downloadthis handouts/bbs.Rda dname="bbs" label="bbs" id=mtcars-btn >}} Load code in as `readRDS("filepath/bbs.Rda")`
+
+    -   {{< downloadthis code/hosp_infection.Rda dname="hosp_infection" label="hosp_infection" id=mtcars-btn >}}

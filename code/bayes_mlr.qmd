@@ -1,0 +1,243 @@
+---
+title: "Bayesian Multiple Linear Regression"
+editor_options: 
+  chunk_output_type: console
+format: pdf
+---
+
+```{r message = F}
+knitr::opts_chunk$set(message = F, warning = F, fig.width = 5, fig.height = 2)
+library(mvtnorm) # install if necessary
+library(tidyverse)
+library(kableExtra)
+```
+
+```{r dat}
+hosp_dat <- readRDS("hosp_infection.Rda")
+```
+
+In the 1970s, the Centers for Disease Control conducted a nationwide study of hospitals to assess the current status of hospital based infections. The purpose of the study was to evaluate what hospitals were doing to prevent the spread of infection and whether those steps were helpful.The project was started out of a concern of whether the steps taken by individual infection control specialists in hospitals were actually reducing infections.
+
+The data come from the Study on the Efficacy of Nosocomial Infection Control. It consists of a random sample of 113 hospitals from the original 338 hospitals surveyed. We are looking at only three variables from the study:
+
+-   `InfctRsk`: the average estimated probability of acquiring infection in hospital
+-   `Stay`: the average length of stay of all patients in the hospital (in days)
+-   `Xray`: ratio of number of X-rays performed:number of patients without signs/symptoms of pneumonia, times 100
+
+Here's a snapshot of the data:
+
+```{r echo = F}
+hosp_dat |>
+  slice(1:4) |>
+  kable()
+```
+
+```{r echo = F}
+hosp_dat |>
+  pivot_longer(cols = all_of(2:3), names_to = "var", values_to = "val") |>
+  ggplot(aes(x = val, y = InfctRsk)) +
+  geom_point() +
+  facet_wrap(~ var, scales = "free")
+```
+
+Perhaps we'd like to understand how the infection risk is related to the length of stay and number of x-rays given in a hospital, so we fit the following regression model: $$\text{InfctRisk}_{i} = \beta_{0} + \beta_{1} \text{Stay}_{i} + \beta_{2} \text{Xray}_{i} + \epsilon_{i}, \qquad i = 1,\ldots,n$$ where the $\epsilon_{i} \overset{iid}{\sim} N(0,\sigma^2)$ are iid.
+
+Letting $Y_{i} = \text{InfctRisk}_{i}$, $\mathbf{x}_{i} = (1, \text{Stay}_{i}, \text{Xray}_{i})'$, and $\vec{\beta} = (\beta_{0}, \beta_{1}, \beta_{2})'$, this translates to the following sampling model:
+
+$$
+y_{i}|\mathbf{x}_{i}, \vec{\beta}, \sigma^2 \overset{ind}{\sim} N(\mathbf{x}_{i}' \vec{\beta}, \sigma^2), \qquad i = 1,\ldots, n
+$$
+
+## Prior option 1
+
+We might choose the following (independent) priors:
+
+$$\vec{\beta} \sim MVN_{3}(\vec{\mu}_{0}, \boldsymbol{\Sigma}_{0})$$ $$\frac{1}{\sigma^2} \sim \text{Gamma}(a,b)$$
+
+And in particular, we might choose $\vec{\mu}_{0} = (0,0,0)'$ (the scale of the $Y_{i}$ are small, and *a priori* assume no relationship). We might also assume $\Sigma_{0} = 100^2 \mathbf{I}_{3}$ (i.e. the coefficients are independent and have a s.d. of 100). Then, I will choose $a = b = 1$.
+
+We can approximate the posteriors of $\vec{\beta}$ and $\sigma^2$ using a Gibbs sampler.
+
+### Data set-up
+
+We need to do just a small amount of work to specify the data matrix $\mathbf{X}$, where each row corresponds to each observation $i$'s predictors, and we have a column of 1's for the intercept:
+
+```{r echo = T}
+# option 1 (manally add column of 1s for intercept)
+X <- cbind(1, hosp_dat$Stay, hosp_dat$Xray)
+head(X)
+
+# option 2 (uses syntax like lm())
+X <- model.matrix(~ Stay + Xray, hosp_dat)
+head(X)
+```
+
+Then we set-up the rest of the necessary data components:
+
+```{r}
+y <- hosp_dat$InfctRsk
+n <- length(y)
+p <- ncol(X) # sorry, this is p + 1 in our notes, but it's easier to call it p!
+```
+
+\clearpage
+
+### Running Gibbs sampler
+
+```{r}
+set.seed(12)
+# prior mean vector mu0
+mu0 <- rep(0, p)
+
+# prior mean covariance Sigma0
+Sigma0 <- 100^2 * diag(p)
+## more flexible coding-wise: Sigma0 <- c(100^2, 100^2 , 100^2) * diag(p) 
+
+## terrible but works: 
+# Sigma0 <- matrix(c(100^2, 0,0, 0, 100^2, 0, 0,0,100^2), nrow = p, ncol = p, byrow = T)
+
+a <- 1; b <- 1
+G <- 10000
+BETAS <- matrix(NA, nrow = G, ncol = p)
+S2 <- rep(NA, G)
+
+# initialize sigma2
+s2 <- a/b
+for(g in 1:G){
+  ## update beta
+  
+  # solve() takes inverse of matrix, %*% does matrix multiplication, t() takes transpose
+  V <- solve(t(X)%*%X/s2 + solve(Sigma0))
+  m <- V %*% (t(X) %*% y/s2 + solve(Sigma0) %*% mu0)
+  beta_vec <- t(rmvnorm(1, m, V))
+    # Syntax: rmvnorm(n, mean vector, covariance matrix)
+  # rmvnorm() defaults to returning a row vector, so we take t() to get column
+  
+  ## update sigma2
+  ssr <- t(y - X %*% beta_vec) %*% (y - X %*% beta_vec) # ssr = sum of squared residuals
+  s2 <- 1/rgamma(1, a + 0.5*n, b + 0.5*ssr)
+  
+  # store
+  BETAS[g,] <- beta_vec
+  S2[g] <- s2
+}
+# burn
+BETAS <- BETAS[-(1:G/2),]
+S2 <- S2[-(1:G/2)]
+```
+
+### Diagnostics + Model assessment
+
+Check traceplots to assess convergence:
+
+```{r fig.width=8, fig.height=3, echo = T}
+par(mfrow = c(2,2), mar = c(4,4,1,1))
+for(i in 1:p){
+  plot(BETAS[,i], type = "l", ylab = paste0("beta", i-1), xlab = "Iteration")
+}
+plot(S2, type = "l", xlab = "Iteration")
+```
+
+```{r echo = T}
+library(coda)
+apply(BETAS, 2, effectiveSize)
+effectiveSize(S2)
+```
+
+*How does this compare to ESS from SLR? Why do we think that is?*
+
+Check sample lag-2 autocorrelation:
+
+```{r echo = F}
+acfs <- t(apply(cbind(BETAS, S2), 2, function(x){unlist(acf(x, lag = 2, plot = F)$acf)}))
+rownames(acfs) <- c("Intercept", "stay", "xray", "s2")
+colnames(acfs) <- paste0("lag-", 0:2)
+acfs
+```
+
+Time to check the residuals. When we had SLR, we plotted residuals against the explanatory variable. However, in the case of MLR we have more the one predictor. So here, we plot the posterior mean of the fitted/estimated values $\hat{y}_{i}$ on the x-axis (you're welcome for the code!):
+
+```{r fig.width=8, fig.height=3, echo = T}
+set.seed(1)
+resids_ls <- list()
+for(i in 1:n){
+  fitted <- mean(BETAS %*% X[i,]) # posterior mean fitted
+  y_preds_i <- rnorm(G/2, BETAS %*% X[i,], sqrt(S2)) # post_pred
+  resids <- y[i] - y_preds_i # residual
+  resids_ls[[i]] <- data.frame(resid = resids, obs = i, fitted = fitted)
+}
+resids_df_all <- do.call(rbind, resids_ls)
+resids_df_all |>
+  group_by(obs, fitted) |> # grouping by obs, and keep fitted for later
+  summarise(lb = quantile(resid, 0.025), ub = quantile(resid, 0.975)) |>
+  ungroup() |>
+  ggplot() +
+  geom_segment(aes(x = fitted, y = lb, xend = fitted, yend = ub),
+               position = position_jitter(height = 0, width = 0.1)) + 
+  labs(x = "Fitted values (posterior mean)", y = "Predictive residual",
+       caption = "95% CI for residual") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+*What do we think about our choice of model?*
+
+\clearpage
+
+### Posterior inference
+
+The following displays posterior mean and 95% credible intervals:
+
+```{r echo = F}
+means <- c(colMeans(BETAS), mean(sqrt(S2)))
+cis <- cbind(apply(BETAS, 2, function(x){quantile(x, c(0.025, 0.975))}),
+             quantile(sqrt(S2), c(0.025, 0.975)))
+tab <- t(rbind(means, cis))
+tab <- round(tab, 3)
+rownames(tab) <- c("$\\beta_{0}$", "$\\beta_{stay}$", "$\\beta_{xray}$", "$\\sigma$")
+kable(tab, col.names = c("Posterior mean", "2.5\\%", "97.5\\%"),
+                    row.names = T,
+                  format = "latex", escape = F, booktabs = T)
+```
+
+Let's give some interpretation! Do you think the length of stay and x-ray ratio are helpful in explaining the probability of getting an infection while in the hospital?
+
+## Posterior predictions
+
+If we have another hospital whose average length of `Stay` is 10 days `Xray` ratio is 100, we can easily obtain predictions of the infection risk as we did in SLR. Repeat the following many times:
+
+1.  Use the posterior samples of $\beta_{0}, \beta_{1}, \beta_{3}$ to simulate the expected infection risk at a given level $\mathbf{x}^{(new)} = (1, 10, 100)$.
+2.  Randomly sample the infection risk at this mean using the Normal model and a posterior sample of $\sigma^2$
+
+```{r echo = F}
+x_new <- c(1, 10, 100)
+data.frame(preds = c(rnorm(G/2, BETAS %*% x_new , sqrt(S2)))) |>
+  ggplot(aes(x = preds)) +
+  geom_density() +
+  labs(x = "Predicted infection risk")
+
+```
+
+Sometimes, when we have multiple variables, we might want to visually inspect how changing one variable effects the predicted response, holding others constant. *This is especially usual when we have interactions, polynomial predictors, or a generalized linear regression model.* In the following, we display uncertainty in our posterior predicted infection risks at different levels of `Xray` for fixed `Stay` of 10 days:
+
+```{r echo = F,  fig.height=3}
+xray_new <- seq(40, 130, 10)
+stay_new <- 10
+df_ls <- list()
+for(i in 1:length(xray_new)){
+  y_pred <- rnorm(G/2, BETAS %*% c(1, stay_new, xray_new[i]) , sqrt(S2))
+  df_ls[[i]] <- data.frame(infection = y_pred, Xray = xray_new[i])
+}
+do.call(rbind, df_ls) |>
+  group_by(Xray) |>
+  summarise(lb = quantile(infection, 0.025), 
+            ub = quantile(infection, 0.975),
+            median = median(infection),
+            lower = quantile(infection, 0.25),
+            upper = quantile(infection, 0.75)) |>
+  ungroup() |>
+  mutate(Xray = factor(Xray)) |>
+  ggplot(aes(x = Xray)) +
+  geom_boxplot(aes(ymin = lb, lower = lower, middle = median, upper = upper , ymax = ub), stat = "identity") +
+  labs(y = "Infection risk", x = "X-ray ratio",
+       caption = "0.025 - 0.25 - 0.5 - 0.75 - 0.975 posterior predictive percentiles")
+```
