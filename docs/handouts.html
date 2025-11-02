@@ -259,6 +259,15 @@ ul.task-list li input[type="checkbox"] {
       window.URL.revokeObjectURL(downloadURL);
       document.body.removeChild(a);
         });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> ProfessorSalary </button></a></p></li>
+<li><p><a href="#mtcars-btn" onclick="fetch('data:text/csv;base64,77u/c2Vhc29uLHNub3dmYWxsDQp5MDRfMDUsODkuNw0KeTA1XzA2LDcwLjQNCnkwNl8wNyw5NC42DQp5MDdfMDgsMTIwLjINCnkwOF8wOSw5MS40DQp5MDlfMTAsOTYuNQ0KeTEwXzExLDEyOC40DQp5MTFfMTIsMzcuNw0KeTEyXzEzLDgyLjkNCnkxM18xNCw4Ni41DQp5MTRfMTUsODMuNA0KeTE1XzE2LDM0LjMNCnkxNl8xNywxMDAuNA0KeTE3XzE4LDg4LjcNCnkxOF8xOSwxMDMuNg0KeTE5XzIwLDY5LjcNCnkyMF8yMSw2My4xDQp5MjFfMjIsNzAuNw0KeTIyXzIzLDcyLjgNCnkyM18yNCw2MC44').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'burlington_snow.csv'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> burlington_snow </button></a></p></li>
 </ul></li>
 </ul>
 

@@ -35,8 +35,18 @@ format:
 
     -   {{< downloadthis handouts/bbs.Rda dname="bbs" label="bbs" id=mtcars-btn >}} Load code in as `readRDS("filepath/bbs.Rda")`
 
-    -   {{< downloadthis code/hosp_infection.Rda dname="hosp_infection" label="hosp_infection" id=mtcars-btn >}}
+    -   
 
-    -   {{< downloadthis handouts/olympic_butterfly.Rda dname="olympic_butterfly" label="olympic_butterfly" id=mtcars-btn >}}
+        {{< downloadthis code/hosp_infection.Rda dname="hosp_infection" label="hosp_infection" id=mtcars-btn >}}
 
-    -   {{< downloadthis handouts/ProfessorSalary.Rda dname="ProfessorSalary" label="ProfessorSalary" id=mtcars-btn >}}
+    -   
+
+        {{< downloadthis handouts/olympic_butterfly.Rda dname="olympic_butterfly" label="olympic_butterfly" id=mtcars-btn >}}
+
+    -   
+
+        {{< downloadthis handouts/ProfessorSalary.Rda dname="ProfessorSalary" label="ProfessorSalary" id=mtcars-btn >}}
+
+    -   
+
+        {{< downloadthis handouts/burlington_snow.csv dname="burlington_snow" label="burlington_snow" id=mtcars-btn >}}
