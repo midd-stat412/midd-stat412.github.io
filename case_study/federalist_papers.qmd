@@ -1,0 +1,79 @@
+---
+title: "Untitled"
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(tidyverse)
+federalist <- ProbBayes::federalist_word_study |>
+  select(Name, Total, word, N, Authorship, Disputed)
+ham_df <- federalist |>
+  filter(word == "upon") |>
+  filter(Authorship == "Hamilton")
+mad_df <- federalist |>
+  filter(word == "upon") |>
+  filter(Authorship == "Madison")
+
+n1_vec <- ham_df$Total
+n2_vec <- mad_df$Total
+y1_vec <- ham_df$N
+y2_vec <- mad_df$N
+
+G <- 10000
+a_alpha <- 5
+b_alpha <- 0.5
+
+a_beta <- 2
+b_beta <- 0.5
+
+hist(rgamma(10000, a_alpha, b_alpha) / rgamma(10000, a_beta, b_beta))
+
+alpha_sd <-5
+beta_sd <- 0.6
+alpha <- a_alpha/b_alpha; 
+beta <- a_beta/b_beta; 
+p_vec <- beta / (beta+n1_vec/1000)
+alpha_acc <- beta_acc <- rep(0, G)
+ALPHA <- BETA <- rep(NA, G)
+for(g in 1:G){
+  alpha_prop <- rnorm(1, alpha, alpha_sd)
+  if(alpha_prop > 0){
+    r <- sum(dnbinom(y1_vec, alpha_prop, p_vec, log = T)) -
+    sum(dnbinom(y1_vec, alpha, p_vec, log = T)) +
+    dgamma(alpha_prop, a_alpha, b_alpha, log = T) -
+    dgamma(alpha, a_alpha, b_beta, log = T)
+    if(log(runif(1)) < r){
+      alpha <- alpha_prop
+      alpha_acc[g] <- 1
+    }
+  }
+
+  beta_prop <- rnorm(1, beta, beta_sd)
+  if(beta_prop > 0){
+    p_prop_vec <- beta_prop/(beta_prop + n1_vec/1000)
+    r <- sum(dnbinom(y1_vec, alpha, p_prop_vec, log = T)) -
+      sum(dnbinom(y1_vec, alpha, p_vec, log = T)) +
+      dgamma(beta_prop, a_beta, b_beta, log = T) -
+      dgamma(beta, a_beta, b_beta, log = T)
+    if(log(runif(1)) < r){
+      beta <- beta_prop
+      beta_acc[g] <- 1
+      p_vec <- p_prop_vec
+    }
+  }
+
+  
+  ALPHA[g] <- alpha
+  BETA[g] <- beta
+}
+ALPHA <- ALPHA[(G-5000):G]
+BETA <- BETA[(G-5000):G]
+plot(ALPHA/BETA, type = "l")
+plot(BETA, type = "l")
+hist(ALPHA/BETA)
+mean(alpha_acc)
+mean(beta_acc)
+coda::effectiveSize(ALPHA/BETA)
+```

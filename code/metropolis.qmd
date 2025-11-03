@@ -62,7 +62,7 @@ samp_theta <- function(delta){
 
 ## Data
 
-Maybe I'm thinking about moving to Burlington and I'd like to know the average amount of snowfall $\theta$ I should expect in a given year. Luckily, there is some historic data about the observed total snowfall in Burlington from  each winter season since 20004, courtesy of [NOAA](https://www.weather.gov/btv/historicalsnow). Before taking a look at the data, we should formulate a prior. Let me first graph the data for you (hiding the values themselves):
+Maybe I'm thinking about moving to Burlington and I'd like to know the average amount of snowfall $\theta$ I should expect in a given year. Luckily, there is some historic data about the observed total snowfall in Burlington from  each winter season since 2004, courtesy of [NOAA](https://www.weather.gov/btv/historicalsnow). Before taking a look at the data, we should formulate a prior. Let me first graph the data for you (hiding the values themselves):
 
 
 
