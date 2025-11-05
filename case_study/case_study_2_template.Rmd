@@ -1,0 +1,87 @@
+---
+title: "STAT 412: Case Study 2"
+author: "Your name(s)"
+date: "Due: November 12, 2025"
+output: pdf_document
+---
+
+DELETE ALL THE TEXT PROVIDED BY BECKY BEFORE SUBMITTING!
+
+```{r setup, message = F, eval = FALSE}
+# if you need packages, load them here
+
+# the following line of code sets the size of the figures when knitting for all code chunks. 
+# You can also change the figure size in each specific chunk's header
+knitr::opts_chunk$set(fig.height = 3, fig.width = 5)
+
+# load your data here
+# Once you've set your file path, change the R chunk header to eval = TRUE
+marriage <- read_csv()
+```
+
+## Introduction
+
+Briefly recap the research task at hand.
+
+## Model description
+
+Clearly state your model (address questions 1 and 2). I encourage you to type up your model in math notation using Latex. For example:
+
+$$Y_{1}, \ldots, Y_{n} |\theta \overset{iid}{\sim} f(y | \theta)$$
+### Methods for answering research question
+
+Clearly describe how you will use the model to address the research question. This includes providing some derivations or explanation for the reader (address question 3).
+
+## Implementation
+
+Clearly state how you will implement your model (address question 4). You should provide enough detail such that someone else could implement your analysis.
+
+## MCMC code
+
+```{r mcmc-function, eval = F}
+# DELETE BECKY's COMMENTS BEFORE SUBMITTING!
+
+
+# if you'd like to make a function, it looks like this:
+my_function <- function(x, y, n, ...){
+  # code you'd like to run in your function
+  a <- sum(y)/n
+  b <- sum(x)/n
+  
+  # this is a way to return multiple values from a function. The following code will return the a and b created above as objects called v1 and v2.
+  ret <- list(v1 = a, v2 = b,...)
+  return(ret)
+}
+
+# then, if you'd like to call your function and access the returned value, you could do the following (delete before running your own code):
+mcmc1 <- my_function(x = x1, y = y1, n = n1,...)
+v1_1 <- mcmc1$v1
+```
+
+```{r mcmc}
+# code for your MCMC should go here
+# remember to only keep display code necessary for submission!
+# I highly recommend making a your sampler into a function and putting it in the chunk above when you're ready
+```
+
+### Diagnostics
+
+```{r}
+
+```
+
+
+## Results
+
+
+### Findings
+
+Provide results with interpretation (address question 5). You should alternate between R code and text!
+
+```{r}
+
+```
+
+## Conclusion
+
+Give a conclusion that answers the research question and expands on the findings (address question 6).

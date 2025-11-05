@@ -1,0 +1,176 @@
+---
+title: "Metropolis: Logistic regression"
+format: pdf
+editor_options: 
+  chunk_output_type: console
+---
+\vspace{-2cm}
+## Logistic regression model
+
+Younger male sparrows may or may not nest during a
+mating season, perhaps depending on their physical characteristics.
+Researchers have recorded the nesting success of 43 young male sparrows
+of the same age, as well as their wingspan.
+
+We'll view $Y_{i}$ as the binary outcome that sparrow $i$ successfully nests. So $Y_{i}$ is naturally modeled as Bernoulli. We will try to understand the variability in nesting success using its wingspan $x_i$.  We'll fit a **logistic regression model**, which is the following *generalized linear* model:
+
+$$Y_{i} | p_{i} \overset{ind}{\sim} \text{Bern}(p_{i}) \qquad i = 1,\ldots,n$$
+$$\log \left(\frac{p_{i}}{1- p_{i}} \right) = \beta_{0} + \beta_{1} x_{i}$$
+Note: $\mathbb{E}[Y_{i} | x_{i}, \beta_{0}, \beta_{1}] = p_{i}$. 
+
+The log-odds $\log(\frac{p_{i}}{1 - p_{i}})$ is known as the "logit link". Note that this is a "generalized linear" model because some function of the conditional mean is linear in the predictors, as opposed to the mean itself.
+
+Note that in the model above, $\beta_{0}$ and $\beta_{1}$ are the unknown parameters. Once we know $\beta_{0}$ and $\beta_{1}$, $p_{i}$ is deterministic:
+
+
+\begin{align*}
+\log \left(\frac{p_{i}}{1- p_{i}} \right) &= \beta_{0} + \beta_{1} x_{i} \\
+\frac{p_{i}}{1 - p_i} &= e^{\beta_{0} + \beta_{1}x_{i}} \\
+p_{i} &= (1-p_{i})e^{\beta_{0} + \beta_{1}x_{i}} \\
+p_{i}(1 + e^{\beta_{0} + \beta_{1}x_{i}}) &= e^{\beta_{0} + \beta_{1}x_{i}} \\
+p_{i} &= \frac{1}{1 + e^{-(\beta_{0} + \beta_{1}x_{i})}}
+\end{align*}
+
+## Priors and likelihood
+
+We might take the following independent priors for the two coefficients:
+$$\beta_{0} \sim N(\mu_{0}, \sigma_{0}^2)$$
+$$\beta_{1} \sim N(\mu_{1}, \sigma_{1}^2)$$
+
+Now that we have the sampling model and priors, we should try to get the posterior to understand the effect of wingspan on probability of successfully nesting. In order to do so, we will use the Metropolis Algorithm to obtain samples from $f(\beta_{0}, \beta_{1} | \mathbf{y})$.
+
+Let's try to write the likelihood and then the log-likelihood to later use in the acceptance ratio step. To make things clearer, note that $f(y_{i} | x_{i}, p_{i}) \equiv f(y_{i} | x_{i}, \beta_{0}, \beta_{1})$.
+
+$$
+f(\mathbf{y} | \mathbf{x}, \beta_{0}, \beta_{1}) = f(\mathbf{y} | \mathbf{x}, \mathbf{p}) = \prod_{i=1}^{n} f(y_{i} | x_{i}, p_{i}) = \prod_{i=1}^{n} p_i^{y_{i}} \left( 1 - p_{i}\right)^{1-y_{i}} 
+$$
+So the log-likelihood is:
+$$
+\log f(\mathbf{y} | \mathbf{x}, \beta_{0}, \beta_{1}) = \log \prod_{i=1}^{n} p_i^{y_{i}} \left( 1 - p_{i}\right)^{1-y_{i}}  = \sum_{i=1}^{n}\left[y_{i}\log p_{i} + (1-y_{i}) \log(1-p_{i})\right]
+$$
+
+## Metropolis for 2D (or > 1D) case
+
+To go from the 1D case to multivariate case for the Metropolis Algorithm, we will be like a Gibbs sampler where we iterate through Metropolis updates for each parameter, conditioning on the current values of the remaining parameters. That is, we will alternate between:
+
+1. Doing a Metropolis update/step for $\beta_{0}$, holding $\beta_{1}$ fixed. That is, proposing $\beta_{0}^*$ given the current value of $\beta_{0}$. 
+
+2. Doing a Metropolis update/step for $\beta_{1}$, holding $\beta_{0}$ fixed.
+
+We might call this "component-wise" Metropolis. 
+
+Note that in our model under the choice of independent priors, the acceptance ratio is quite easy to calculate! For example, if we are currently at the $s$-th iteration and proposing $\beta_{0}^*$, we want to evaluate the following acceptance ratio (which we will log in the code):
+
+\begin{align*}
+r = \frac{f(\beta_{0}^*, \beta_{1}^{(s-1)} | \mathbf{y})}{f(\beta_{0}^{(s-1)}, \beta_{1}^{(s-1)} | \mathbf{y})} &= \frac{f(\mathbf{y} | \beta_{0}^*, \beta_{1}^{(s-1)}) f(\beta_{0}^*)f( \beta_{1}^{(s-1)})}{f(\mathbf{y})} \times \frac{f(\mathbf{y})}{f(\mathbf{y} | \beta_{0}^{(s-1)}, \beta_{1}^{(s-1)}) f(\beta_{0}^{(s-1)})f( \beta_{1}^{(s-1)})} \\
+&= \frac{f(\mathbf{y} | \beta_{0}^*, \beta_{1}^{(s-1)})}{f(\mathbf{y} | \beta_{0}^{(s-1)}, \beta_{1}^{(s-1)})} \times \frac{f(\beta_{0}^*)}{f(\beta_{0}^{(s-1)})}
+\end{align*}
+
+## Code
+
+```{r message = F}
+library(tidyverse)
+sparrow <- read_csv("../handouts/sparrows.csv")
+# when fitting logistic regression, we like to standardize predictors
+x <- scale(sparrow$wingspan) 
+y <- sparrow$nest
+
+# set prior values
+mu0 <- 0
+mu1 <- 0
+sigma0 <- 5
+sigma1 <- 5
+
+# initialize
+beta0 <- 0
+beta1 <- 0
+
+# get p based on initial values of beta0, beta1
+p <- 1 / (1 + exp(-(beta0 + beta1 * x)))
+prop_sd0 <- 1 # proposal sd for beta0
+prop_sd1 <- 1 # proposal sd for beta1
+S <- 5000
+BETA <- matrix(NA, nrow = S, ncol= 2) 
+beta_acc <- matrix(0, nrow = S, ncol = 2)  # col1 = beta0 accept, col2 = beta1 accept
+set.seed(412)
+for(s in 1:S){
+  # propose beta0
+  beta0_prop <- rnorm(1, beta0, prop_sd0)
+  # evaluate p at proposed value of beta0, holding beta1 where it currently is
+  p_prop <- 1/(1 + exp(- (beta0_prop + beta1 * x)))
+  # get acceptance ratio (log scale)
+  log_r <- sum(y*log(p_prop) + (1-y)*log(1-p_prop)) -
+    (sum(y*log(p) + (1-y)*log(1-p))) +
+    dnorm(beta0_prop, mu0, sigma0, log = T) - 
+    dnorm(beta0, mu0, sigma0, log = T)
+  # decide
+  if(log(runif(1)) < log_r){
+    beta0 <- beta0_prop
+    p <- p_prop # update p as well!
+    beta_acc[s,1] <- 1
+  }
+  
+  # do it all again, but now for beta1
+  beta1_prop <- rnorm(1, beta1, prop_sd1)
+  p_prop <- 1/(1 + exp(- (beta0 + beta1_prop * x)))
+  log_r <- sum(y*log(p_prop) + (1-y)*log(1-p_prop)) -
+    (sum(y*log(p) + (1-y)*log(1-p))) +
+    dnorm(beta1_prop, mu1, sigma1, log = T) - 
+    dnorm(beta1, mu1, sigma1, log = T)
+  if(log(runif(1)) < log_r){
+    beta1 <- beta1_prop
+    p <- p_prop
+    beta_acc[s,2] <- 1
+  }
+  
+  # store
+  BETA[s,] <- c(beta0, beta1)
+}
+BETA <- BETA[-c(1:(S/2)),]
+```
+
+Diagnose acceptance probabilities for $\beta_{0}$ and $\beta_{1}$ proposals:
+
+```{r echo = F, fig.width=8, fig.height=2.5}
+colMeans(beta_acc) # acceptance probabilities for beta0, beta1
+par(mfrow = c(1,2))
+plot(BETA[,1], type = "l", ylab = "beta0", xlab = "Iteration")
+plot(BETA[,2], type = "l",  ylab = "beta1", xlab = "Iteration")
+```
+
+## Posterior inference
+
+As before, we can approximate posterior quantities:
+
+```{r echo = F}
+post_means <- colMeans(BETA)
+post_lbs <- c(quantile(BETA[,1], 0.025), quantile(BETA[,2], 0.025))
+post_ubs <- c(quantile(BETA[,1], 0.975), quantile(BETA[,2], 0.975))
+
+tab <- data.frame(post_means, post_lbs, post_ubs) 
+tab <- round(tab, 3)
+rownames(tab) <- c("$\\beta_0$", "$\\beta_1$")
+kableExtra::kable(tab, col.names = c("Posterior mean", "2.5\\%", "97.5\\%"),
+                    row.names = T,
+                  format = "latex", escape = F, booktabs = T)
+```
+
+Lastly, as an example of a **derived quantity**, I can obtain (the posterior distribution of) the probability of nesting success for a bird with a wingspan of 14cm. That is, I can obtain the distribution of $\text{Pr}(Y_{i} = 1 | x_{i} = 14, \beta_{0}, \beta_{1})$ using my MCMC samples and the formula for $p_{i}$:
+$$p_{i} = \frac{1}{1 + e^{-(\beta_{0} + \beta_{1} \times 14^{*})}}$$
+* Note, it's actually the standarized version of 14cm we want given our previous work.
+
+```{r}
+xbar <- mean(sparrow$wingspan)
+s_x <- sd(sparrow$wingspan)
+xi_scaled <- (14 - xbar)/s_x # standardize wingspan of 14cm 
+prob_i <- (1 + exp(-(BETA[,1] + BETA[,2] * xi_scaled)))^(-1)
+```
+
+```{r echo = F, fig.width=4, fig.height=2.5}
+data.frame(prob = prob_i) |>
+  ggplot(aes(x = prob)) + 
+  geom_density() +
+  labs(x = "Probability of nesting success",
+       title = "Posterior distribution",
+       caption = "For wingspan of 14cm")
+```

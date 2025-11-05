@@ -5,6 +5,22 @@ format:
     css: styles.css
 ---
 
+## Case study 2
+
+Your second case study will once again be performed in pairs of Becky's choosing! Each group will submit 1 report in the form of both a `.Rmd` (or `.qmd`) and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by Wednesday, 11/12 at 11:59pm.
+
+**I anticipate you will run into questions/concerns – this is good. Don't hesitate to come ask Becky!**
+
+The description of the case study and the data are found here:
+
+-   [Description](case_study/federalist_description.pdf)
+
+-   Data: {{< downloadthis case_study/federalist_papers.csv dname="federalist_papers" label="federalist_papers" id=mtcars-btn >}}
+
+-   Optional `.Rmd` template: {{< downloadthis case_study/case_study_2_template.Rmd dname="caseStudy2" label="caseStudy2" id=mtcars-btn >}}
+
+------------------------------------------------------------------------
+
 ## Case study 1
 
 Your first case study will be performed in pairs! You should work together; don't just divy up the work. A large part of modeling is bouncing ideas back and forth and checking in to make sure things "make sense". Each group will submit 1 report in the form of both a `.Rmd` and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by beginning of class 10/15.
@@ -17,7 +33,7 @@ The description of the case study and the data are found here:
 
 -   Optional `.Rmd` template: {{< downloadthis case_study/case_study_1_template.Rmd dname="caseStudy1" label="caseStudy1" id=mtcars-btn >}}
 
-#### **Presentation** 
+#### **Presentation**
 
 -   Each group will give a brief 5 minute presentation of their work to the class on 10/15. Presentation order will be randomized.
 

@@ -50,3 +50,7 @@ format:
     -   
 
         {{< downloadthis handouts/burlington_snow.csv dname="burlington_snow" label="burlington_snow" id=mtcars-btn >}}
+        
+    -   
+
+        {{< downloadthis handouts/sparrows.csv dname="sparrows" label="sparrows" id=mtcars-btn >}}
