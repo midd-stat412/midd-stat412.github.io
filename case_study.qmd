@@ -19,6 +19,37 @@ The description of the case study and the data are found here:
 
 -   Optional `.Rmd` template: {{< downloadthis case_study/case_study_2_template.Rmd dname="caseStudy2" label="caseStudy2" id=mtcars-btn >}}
 
+#### **Presentation**
+
+-   Each group will give a brief 5 minute presentation of their work to the class on 11/12. Presentation order will be randomized.
+
+-   Your presentation should be accompanied by a *brief* set of slides. As we are all aware of the data and the sampling model, these slides should focus mostly on your approach to answering the research question, as well as results (with interpretation).
+
+    -   Think about embedding LaTex equations and R plots for your statistical model. These should be presented in an *effective* manner.
+
+    -   Your presentation of results should answer the research question in an *effective* manner. Please include the required (at least one) visualization that answers the research question.
+
+-   You should be prepared to answer questions from the audience. You should also be prepared to ask questions of presenters.
+
+-   You *don't* need to submit your slides for this case study! Just be prepared to present from a laptop!
+
+-   This presentation is worth 5 points, in addition to the 40 points of the written portion. However, the presentation will be graded on an individual basis, rather than the entire group. A **general rubric** is:
+
+    -   1 point: slides and presenter *effectively* share approach to answering the research question
+    -   1 point: slides and presenter *effectively* share results that answer the research question(s)
+        -   For results tables/plots/CIs, etc: this includes describing what you're showing (e.g. what exactly are you visualizing or calculating) and then interpreting and telling us the important things to take away from that item.
+    -   1 point: speaker appears practiced and shares speaking time.
+        -   Because this presentation is short and you're so close to your model, you shouldn't be reading off any sort of notes!
+    -   0.5 point: speaker is able to thoughtfully answer questions from audience
+    -   1.5 points: asks at least one interesting/thoughtful/relevant question to other speakers, or gives at least one piece of useful and implementable feedback for improvement before submission of the written report
+
+-   "Effective" is a broad term that I use to cover:
+
+    -   Presenting equations/distributions/slides in a logical order
+    -   Having font (both text and on figures/tables) be large enough for the audience to see
+    -   Slides have enough text to be generally understood without a speaker, but each slide's content is elevated/made complete by the speaker's additions/commentary
+    -   No errors in terms of spelling, typesetting, and notation
+
 ------------------------------------------------------------------------
 
 ## Case study 1

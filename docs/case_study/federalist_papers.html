@@ -226,56 +226,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  alpha_acc <span class="ot">&lt;-</span> beta_acc <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, G)</span>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  ALPHA <span class="ot">&lt;-</span> BETA <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, G)</span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(g <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>G){</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    alpha_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, alpha, alpha_sd)</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(alpha_prop <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>      r <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha_prop, p_vec, <span class="at">log =</span> T)) <span class="sc">-</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_vec, <span class="at">log =</span> T)) <span class="sc">+</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dgamma</span>(alpha_prop, a_alpha, b_alpha, <span class="at">log =</span> T) <span class="sc">-</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dgamma</span>(alpha, a_alpha, b_beta, <span class="at">log =</span> T)</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> r){</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        alpha <span class="ot">&lt;-</span> alpha_prop</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        alpha_acc[g] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    log_alpha_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="fu">log</span>(alpha), alpha_sd)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    alpha_prop <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_alpha_prop)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha_prop, p_vec, <span class="at">log =</span> T)) <span class="sc">-</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_vec, <span class="at">log =</span> T)) <span class="sc">+</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dgamma</span>(alpha_prop, a_alpha, b_alpha, <span class="at">log =</span> T) <span class="sc">-</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dgamma</span>(alpha, a_alpha, b_beta, <span class="at">log =</span> T) <span class="sc">+</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      log_alpha_prop <span class="sc">-</span> <span class="fu">log</span>(alpha) <span class="co"># jacobian</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> r){</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>      alpha <span class="ot">&lt;-</span> alpha_prop</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>      alpha_acc[g] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    beta_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, beta, beta_sd)</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(beta_prop <span class="sc">&gt;</span> <span class="dv">0</span>){</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>      p_prop_vec <span class="ot">&lt;-</span> beta_prop<span class="sc">/</span>(beta_prop <span class="sc">+</span> n_vec<span class="sc">/</span><span class="dv">1000</span>)</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>      r <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_prop_vec, <span class="at">log =</span> T)) <span class="sc">-</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_vec, <span class="at">log =</span> T)) <span class="sc">+</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dgamma</span>(beta_prop, a_beta, b_beta, <span class="at">log =</span> T) <span class="sc">-</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dgamma</span>(beta, a_beta, b_beta, <span class="at">log =</span> T)</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> r){</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        beta <span class="ot">&lt;-</span> beta_prop</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        beta_acc[g] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        p_vec <span class="ot">&lt;-</span> p_prop_vec</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    log_beta_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="fu">log</span>(beta), beta_sd)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    beta_prop <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_beta_prop)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    p_prop_vec <span class="ot">&lt;-</span> beta_prop<span class="sc">/</span>(beta_prop <span class="sc">+</span> n_vec<span class="sc">/</span><span class="dv">1000</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_prop_vec, <span class="at">log =</span> T)) <span class="sc">-</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(<span class="fu">dnbinom</span>(y_vec, alpha, p_vec, <span class="at">log =</span> T)) <span class="sc">+</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dgamma</span>(beta_prop, a_beta, b_beta, <span class="at">log =</span> T) <span class="sc">-</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>      <span class="fu">dgamma</span>(beta, a_beta, b_beta, <span class="at">log =</span> T) <span class="sc">+</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>      log_beta_prop <span class="sc">-</span> <span class="fu">log</span>(beta) <span class="co"># jacobian</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> r){</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>      beta <span class="ot">&lt;-</span> beta_prop</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>      beta_acc[g] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>      p_vec <span class="ot">&lt;-</span> p_prop_vec</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    ALPHA[g] <span class="ot">&lt;-</span> alpha</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    BETA[g] <span class="ot">&lt;-</span> beta</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  ALPHA <span class="ot">&lt;-</span> ALPHA[(G<span class="dv">-5000</span>)<span class="sc">:</span>G]</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  BETA <span class="ot">&lt;-</span> BETA[(G<span class="dv">-5000</span>)<span class="sc">:</span>G]</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">ALPHA =</span> ALPHA, <span class="at">BETA =</span> BETA, <span class="at">MU =</span> ALPHA<span class="sc">/</span>BETA, <span class="at">accept_vec =</span> <span class="fu">c</span>(<span class="fu">mean</span>(alpha_acc), <span class="fu">mean</span>(beta_acc))))</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    ALPHA[g] <span class="ot">&lt;-</span> alpha</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    BETA[g] <span class="ot">&lt;-</span> beta</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  ALPHA <span class="ot">&lt;-</span> ALPHA[(G<span class="dv">-5000</span>)<span class="sc">:</span>G]</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  BETA <span class="ot">&lt;-</span> BETA[(G<span class="dv">-5000</span>)<span class="sc">:</span>G]</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">ALPHA =</span> ALPHA, <span class="at">BETA =</span> BETA, <span class="at">MU =</span> ALPHA<span class="sc">/</span>BETA, <span class="at">accept_vec =</span> <span class="fu">c</span>(<span class="fu">mean</span>(alpha_acc), <span class="fu">mean</span>(beta_acc))))</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>alpha_sd <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>beta_sd <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>ret_ham <span class="ot">&lt;-</span> <span class="fu">fed_metropolis</span>(y1_vec, n1_vec, G, a_alpha, b_alpha, a_beta, b_beta, <span class="at">alpha_sd =</span> <span class="dv">3</span>, <span class="at">beta_sd =</span> <span class="fl">0.75</span>)</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>ret_ham<span class="sc">$</span>accept_vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>alpha_sd <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>beta_sd <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>ret_ham <span class="ot">&lt;-</span> <span class="fu">fed_metropolis</span>(y1_vec, n1_vec, G, a_alpha, b_alpha, a_beta, b_beta, <span class="at">alpha_sd =</span> <span class="fl">0.2</span>, <span class="at">beta_sd =</span> <span class="fl">0.2</span>)</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>ret_ham<span class="sc">$</span>accept_vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5381 0.4388</code></pre>
+<pre><code>[1] 0.2961 0.2992</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ret_mad <span class="ot">&lt;-</span> <span class="fu">fed_metropolis</span>(y2_vec, n2_vec, G, a_alpha, b_alpha, a_beta, b_beta, <span class="at">alpha_sd =</span> <span class="dv">5</span>, <span class="at">beta_sd =</span> <span class="fl">0.5</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ret_mad <span class="ot">&lt;-</span> <span class="fu">fed_metropolis</span>(y2_vec, n2_vec, G, a_alpha, b_alpha, a_beta, b_beta, <span class="at">alpha_sd =</span> .<span class="dv">5</span>, <span class="at">beta_sd =</span> <span class="fl">0.5</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ret_mad<span class="sc">$</span>accept_vec</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5160 0.7269</code></pre>
+<pre><code>[1] 0.1984 0.1931</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ret_ham<span class="sc">$</span>MU, <span class="at">type =</span> <span class="st">"l"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
