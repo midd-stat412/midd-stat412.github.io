@@ -1,0 +1,308 @@
+---
+title: "Introduction to JAGS"
+format: pdf
+---
+
+\vspace{-2cm}
+*This document draws heavily from* \url{https://nthobbs50.github.io/BayesNSF/content/lectures/JAGSPrimerMCMCVis.pdf}
+
+In the following, you will most just read the code and accompanying text. Then, whenever you see a section header with **\color{purple}{this color}**, you should copy/paste or write/run code into your own `.Rmd` or `.qmd` file as practice.
+
+**Solutions to checks and practice are found at the end of the document!**
+
+
+```{r echo = F}
+tennis_dat <- readRDS("tennis_serves.Rda")
+```
+
+# \color{purple}{Installing JAGS (Just Another Gibbs Sampler)}
+
+### MAC OS
+
+Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.0.dmg` to get the disk mounting image. Click on the GREEN button to download the package, and go through the installation as you would any other Mac software.
+
+Once the installation process has completed, install the package `rjags` either in the Console using `install.packages("rjags")` or in the Packages pane. Then load the package as usual:
+
+```{r message = F, warning = F}
+library(rjags)
+```
+
+### Windows
+
+Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.0.exe`. Occasionally, Windows users have problems loading `rjags` from R after everything has been installed properly. This problem usually occurs because they have more than one version of R resident on their computers (wisely, Mac OS will not allow that). So, if you can’t seem to get `rjags` to run after a proper install, then uninstall all versions of R, re-install the latest version, install the latest version of `rjags` and the version of JAGS that matches it.
+
+Then load the package as you would any other package:
+
+```{r message = F}
+library(rjags)
+```
+
+# Motivation
+
+Suppose we would like to fit a Bayesian model to our tennis serve data (treating all players as coming from the same population), where both the mean and standard deviation are unknown, and we place independent priors on both parameters. We have learned that for specific choices of priors for the mean $\theta$ and variance $\sigma^2$, we can derive full conditionals and run a Gibbs sampler to approximate the joint posterior of $(\theta, \sigma^2)$. However, what happens if we'd like use a different set of priors? We could instead turn to Metropolis instead of the Gibbs sampler. But as we've seen, sometimes the parameter space isn't convenient to work with for a symmetric proposal distribution, or "tuning" the algorithm takes a lot of work. Is there a way to get around some of these issues?
+
+We will leverage `JAGS` which will automatically select an appropriate MCMC sampling algorithm for a particular Bayesian model. This is so nice! We will demonstrate with the following model.
+
+Suppose we have the following sampling model: $$Y_{i} | \theta, \sigma^2 \overset{iid}{\sim} N(\theta, \sigma^2), \qquad i = 1,\ldots, n$$
+
+I will use independent priors for $\theta$ and $\sigma^2$:
+
+$$\theta \sim N(\mu_{0}, \sigma_{0}^2) \qquad \sigma^2 \sim \text{Gamma}(a,b)$$ (Note, this isn't allowing for semi-conjugacy as it's the variance $\sigma^2$ that's getting the Gamma prior, not the precision $1/\sigma^2$.)
+
+
+How do we tell JAGS that we have the Normal sampling model with this choice of priors? We will have to write a script in syntax particular to JAGS, though it looks quite similar to that of `R`.
+
+
+*Check 1: based on this model statement, is this a complete pooling, no pooling, or hierarchical model?*
+
+\clearpage
+
+# Defining a JAGS model
+
+### Describe the model by a script
+
+To begin, we write a script that corresponds to our model. *The curly braces and quotes all matter here!* The particular statistical model goes in the `model{ <this stuff> }` section of the following code.
+
+As in usual `R`, the pound signs are comments, so we can clearly see where in the script I am defining the sampling model and where I am defining my priors.
+
+```{r eval = F}
+{
+sink("normal_mod.R")
+cat("
+model {
+## sampling model
+for (i in 1:N) {
+   y[i] ~ dnorm(theta, tau2)
+}
+
+## priors
+theta ~ dnorm(mu0, phi0)
+sigma2 ~ dgamma(a, b)
+tau2 <- 1/sigma2
+}
+", fill = T)
+sink()
+}
+```
+
+The `sink()` function means that this code is saved as an `R` file called `normal_mod.R` in the current working directory. **When you write your own JAGS model, you should only change 1) the name of the file (i.e. `sink(<file name>)`), and 2) the code within `model{  }`.** Every time you run this code, you will save over any file with the same file name (in this case, `normal_mod.R`).
+
+Note that this script closely resembles the statement of the model. In the sampling model part of the script, the loop structure starting with `for (i in 1:N)` is used to assign the distribution of each value in the data vector `y` the same Normal distribution (i.e. our sampling model), represented by `dnorm`. The tilde `~` is read as "is distributed as". Notice that we have to index `y` using the `[i]` to tell JAGS the specific distribution for $y_{i}$. JAGS isn't vectorized.
+
+Then, we come to the part of the script where I specify priors. Here, we define the priors for $\mu$ and $\sigma^2$ using `dnorm` and `dgamma`, respectively. Note the code `tau2 <- 1/sigma2`. The arrow terminology tells JAGS to create `tau2` as $\tau^2 = \frac{1}{\sigma^2}$. Why do I do this? This is because JAGS parameterizes the Normal distribution in terms of **precision**, not standard deviation nor variance. That's why in the sampling model portion, I write `dnorm(theta, tau2)` instead of `dnoram(theta, sigma2)`. You should also notice that the prior for $\theta$ has a *precision* of `phi0`.
+
+### Define the data and prior parameters
+
+Great! Now we're ready to actually run this model on our data. We have to define pass in relevant quantities from the data and provide values for the parameters of the priors. In particular, JAGS is expecting inputs for the following: `y`, `N`, `mu0`, `phi0`, `a`, `b`. The list below, named `data_ls`, is used to collect all of these inputs (using the tennis serves data from a previous homework). 
+
+```{r eval = F}
+y <- tennis_dat$Speed_MPH
+n_y <- length(y)
+
+data_ls <- list("y" = y, "N" = n_y, 
+                 "mu0" = 100, "phi0" = 0.04,
+                 "a" = 25, "b" = 1)
+```
+
+Note the use of quotes. It's important to recognize that the terms in quotes on the left hand side of the equation correspond to the values in the JAGS script, and the terms on the right-hand side correspond to values in `R`. For example, our JAGS script has `N` as the number of observations, but I've defined that in `R` as `n_y`.
+
+*Check 2: based on this code, what exactly are the priors I am choosing for this model?*
+
+Note: I could have totally specified the prior parameter values in the script itself. However, specifying `a` and `b` and the other prior values in `data_ls` to be passed into the script makes my code more reproducible! 
+
+# Running JAGS
+
+## Initialize
+
+All MCMC algorithms needs to be initialized. You can specify intitial values if you'd like. If no initial values are specified, then JAGS will select initial values based on the prior. For now, we won't worry about setting initial values and will let JAGS do it for us. However, in certain problems/models, where you start the sampler is extremely important! This is especially true in models where latent variables are involved.
+
+## Let JAGS determine MCMC algorithm
+
+Now that the model and data have been defined, we are ready for MCMC.
+
+```{r eval = F}
+n_chain <- 2
+jm <- jags.model("normal_mod.R",
+                 data = data_ls,
+                 n.chains = n_chain)
+```
+
+The `jm <- jags.model...` statement sets up the MCMC chain. Its first argument is the name of the file containing the JAGS code. *Note that my file resides in the current working directory in this example. Otherwise, you would need to specify the full path name.* The next two expressions specify where the data come from (i.e. `data_ls` which we created) and how many chains `n.chains` to create (i.e., how many independent samplers we should run). We have thus far been running a single chain for convenience. Specifying more than one chain is typically good, because each chain gets initialized at a different value so we have more opportunities to explore the parameter space (and ensure that we reach convergence).
+
+During this stage, JAGS figures out which MCMC sampling algorithm it will use to (approximate) the posterior. It might do exact posterior sampling, Gibbs, Metropolis, or something else depending on the combination of prior and data model.
+
+## Burn-in
+
+After JAGS has determined the appropriate sampler, we actually run the code for some amount of burn-in. This code below specifies the burn-in amount via `n.iter`, i.e. how many samples to throw away before beginning to save values in each chain. This code "updates" the `jm` object by executing the burn-in.
+
+```{r eval = F}
+B <- 5000
+update(jm, n.iter = B)
+```
+
+## Sampling from the posterior
+
+After burn-in, we are finally ready to draw/store samples from the posterior distribution.
+
+```{r eval = F}
+jags_out <- coda.samples(jm, 
+                         variable.names = c("mu", "sigma2"),
+                         n.iter = B)
+```
+
+This code actually runs the MCMC using the `coda.samples()` function, and stores the output as an MCMC list (more about that soon) called `jags_out`. The first argument is the name of the model from the previous step, `jm`. The second argument, `variable.names`, tells JAGS which values you'd like to "monitor", i.e. which variables you would like the posteriors of. This is to save memory. If you don't specify any variables, you won't be able to do much! Note that that the names of the variables must be exactly as written in the your script defining the model. In this case, I want the posteriors of $\mu$ and $\sigma^2$. I could have also asked for the precision $\tau^2$.
+
+Finally, `n.iter` specifies how many iterations we'd like to run in *each* chain after burn-in. Although the argument name `n.iter` is used in both `update()` and `coda.samples()`, you can specify different numbers of iterations for both.
+
+*Check 3: after running the code, how many samples should we have of each parameter?*
+
+
+# \color{purple}{Run it yourself}
+
+So now, in total, we have the following code. Go ahead and copy and paste this into an `.Rmd` or `.qmd` file, and run it all by knitting the document or simply running locally (note you'll have to load in the tennis data beforehand). If you just run locally, you'll notice that as your run the `jags.model()` and `update()` and `coda.samples()` functions, you'll get little progress bars in your console. That's good! That means things are running!
+
+Comment the code as you'd like! 
+
+
+*After running the code, you should see a file called `normal_mod.R` in the folder where your working directory is pointing to.*
+
+
+\clearpage
+
+
+```{r eval = T}
+library(rjags)
+{
+sink("normal_mod.R")
+cat("
+model {
+## sampling model
+for (i in 1:N) {
+   y[i] ~ dnorm(theta, tau2)
+}
+
+## priors
+theta ~ dnorm(mu0, phi0)
+sigma2 ~ dgamma(a, b)
+tau2 <- 1/sigma2
+}
+", fill = T)
+sink()
+}
+tennis_dat <- readRDS("tennis_serves.Rda")
+y <- tennis_dat$Speed_MPH
+n_y <- length(y)
+data_ls <- list("y" = y, "N" = n_y, 
+                 "mu0" = 100, "phi0" = 0.04,
+                 "a" = 25, "b" = 1)
+n_chain <- 2
+jm <- jags.model("normal_mod.R", data = data_ls, n.chains = n_chain)
+B <- 5000
+update(jm, n.iter = B)
+jags_out <- coda.samples(jm,
+                         variable.names = c("theta", "sigma2"),
+                         n.iter = B)
+```
+
+
+
+\clearpage
+
+# Output from JAGS
+
+The `coda.samples()` function in the last line produces output in the form of an `mcmc.list` object, sometimes referred to as a coda object. What does this mean? Let's take a look at the first few values:
+
+```{r}
+head(jags_out)
+```
+
+The output of coda is a list of matrices, where each matrix contains the output of a single chain for all parameters being estimated. Parameter values are stored in the columns of the matrix; values for one iteration of the chain are stored in each row. Since we specified we wanted 2 chains, the output produces a list of two matrices.
+
+
+### \color{purple}{Practice}
+
+Load in `tidyverse` first!
+
+1.  Convert your coda object `jags_out` into a data frame using the following code:
+
+    `posts_df <- data.frame(do.call(rbind, jags_out)) |> add_column(chain = factor(rep(1:n_chain, each = B)))`.
+
+    This code means "row bind all the matrices in `jags_out` (in this case just one) into one large matrix, then convert into a data frame". So the samples from the second chain get appended to the end of the samples from the first chain. Then I'm adding another column to specify the chain.
+
+2.  Assess convergence via traceplots, coloring by the chain.
+
+3.  Compute the approximate posterior probability that $\theta < 106$.
+
+4.  Obtain a 90% credible interval for `sigma`.
+
+
+## \color{purple}{Summarizing coda objects with `MCMCvis`}
+
+In general, I prefer for you to work with the output of JAGS as described above, but many people have created tools to make it easier to work with coda objects. One such tool is the `MCMCvis` package. Go ahead and install the package then load it in:
+
+```{r}
+library(MCMCvis)
+```
+
+We will look at two functions from this package: `MCMCsummary()` and `MCMCtrace()`.
+
+####  \color{purple}{`MCMCsummary()`}
+
+You can obtain a summary of the MCMC chains contained in a coda object by using the `MCMCsummary()` function. You may get a warning if/when you've only run one chain; that's fine! All of the variables in the `variable.names` argument to the `coda.samples()` function will be summarized. Note: these summary quantities are taken over all the chains combined.
+
+```{r}
+MCMCsummary(jags_out)
+```
+
+You get posterior mean, standard deviation, quantiles, a convergence diagnostic called `Rhat` (don't worry about this yet), and the number of effective samples `n.eff`. The output is a data frame, which you can wrangle or index as you'd like! If you have particular parameter/derived quantity of interest, you can access its specific summary by specifying the `params` argument of `MCMCsummary()`:
+
+```{r}
+MCMCsummary(jags_out, params = "theta")
+```
+
+####  \color{purple}{`MCMCtrace()`}
+
+We can obtain trace plots and posterior density plots using the `MCMCtrace()` function. By default, this function will create two plots (one traceplot and one density plot) for every parameter. The `pdf = F` just tells `R` to not automatically save the plot as a PDF to your machine. Notice that the two colors in the traceplots represent the two different chains.
+
+```{r fig.height=3}
+MCMCtrace(jags_out, pdf = F)
+```
+
+\clearpage
+
+# Solutions
+
+### Checks
+
+Check 1: Complete pooling: we're treating all players as coming from same sampling model!
+
+Check 2: $\theta \sim N(100, 25)$ independent of $\sigma^2 \sim \text{Gamma}(25,1)$.
+
+Check 3: Since we have two chains and said we wanted to store 5000 iterations, we should have 10000 samples in total for each parameter/derived quantity.
+
+### Practice
+
+```{r message = F, fig.height=2, fig.width=8}
+library(tidyverse)
+
+# Question 1
+posts_df <- data.frame(do.call(rbind, jags_out)) |>
+  add_column(chain = factor(rep(1:2, each = B)))
+
+# Question 2
+posts_df |>
+  group_by(chain) |>
+  mutate(iteration = row_number()) |>
+  ungroup() |>
+  pivot_longer(cols = all_of(1:2), names_to = "param", values_to = "value") |>
+  ggplot(aes(x = iteration, y = value, col = chain)) +
+  geom_line() +
+  facet_wrap(~ param, scales = "free")
+## seems like we've converged!
+
+# Question 3
+mean(posts_df$theta < 106)
+
+# Question 4
+quantile(sqrt(posts_df$sigma2), c(0.05, 0.95))
+```
