@@ -1,0 +1,83 @@
+---
+title: "JAGS logistic regression"
+format: pdf
+---
+\vspace{-2cm}
+
+## Data
+
+Hein et. al (2013) investigate how environmental conditions influence coexistence between brown trout (Salmo trutta) and pike (Esox lucius) in Swedish lakes. One-hundred and fifty one (151) lakes consisting of brown trout are introduced to pike by human intervention, and whether or not the two species coexist was recorded. For each lake, five environmental conditions deemed relevant to coexistence patterns are considered:
+
+- `elev`: elevation
+- `catcharea`: upstream catchment area
+- `lakearea`: maximum area
+- `maxdepth`: maximum depth
+- `temp`: mean annual air temperature at outlet
+
+For each lake, we also record whether or not the two species coexisted in the variable called `coexist` (1 = coexisted, 0 = did not coexist). 
+
+The data are stored in `coexist.csv`. Note that the explanatory variables have already been standardized to have 0 mean and standard deviation of 1.
+
+## Your task
+
+
+```{r eval = F, echo = F}
+library(rjags)
+library(MCMCvis)
+# change file path as necessary
+coexist <- read_csv("../handouts/coexist.csv")
+```
+
+Write a JAGS script named `coexist_mod.R` that fits a logistic regression model for the coexistence of these two species, using all five explanatory variables as predictors (plus an intercept). Use independent $N(0,3)$ priors for each of the coefficients.
+
+- `dbern()` will be useful to you; it accepts the probability of success as its input
+- You can make derived quantities in `JAGS` like we do in regular `R`
+- Indexing of matrices works in `JAGS` just like it does in regular `R`
+
+Then run your model on the data using two chains, each burning in for 5000 iterations and then retaining 10000 samples. Using the appropriate function from `MCMCvis`, assess convergence. 
+
+Then, because the predictors are on the same scale we can directly compare their coefficients. Using the appropriate function from the `MCMCvis` package, which explanatory variable appears to be the most important for understanding coexistance of these two species, and why? **Come to class prepared to answer this question!**
+
+
+```{r eval = F, echo = F}
+# least reproducible/flexible
+{
+sink("coexist_mod.R")
+cat("
+model {
+## sampling model
+for (i in 1:n) {
+   y[i] ~ dbern(p[i])
+   p[i] = 1/(1 + exp(-(beta0 + beta1*X[i,2] + beta2*X[i,3] + beta3*X[i,4] + beta4*X[i,5] + beta5*X[i,6])))
+}
+
+## priors
+beta0 ~ dnorm(0, 1/3)
+beta1 ~ dnorm(0, 1/3)
+beta2 ~ dnorm(0, 1/3)
+beta3 ~ dnorm(0, 1/3)
+beta4 ~ dnorm(0, 1/3)
+beta5 ~ dnorm(0, 1/3)
+}
+", fill = T)
+sink()
+}
+```
+
+
+```{r eval = F, echo = F}
+y <- coexist$coexist
+X <- model.matrix(coexist ~ ., data= coexist)
+n <- length(y)
+data_ls <- list("y" = y, "X" = X, "n" = n)
+n_chain <- 2
+jm <- jags.model("coexist_mod.R",
+                 data = data_ls,
+                 n.chains = n_chain)
+update(jm, n.iter = 5000)
+jags_out <- coda.samples(jm, 
+                         variable.names = c("beta0", "beta1", "beta2", "beta3", "beta4", "beta5"),
+                         n.iter = 10000)
+MCMCtrace(jags_out, pdf = F)
+MCMCsummary(jags_out)
+```
