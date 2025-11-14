@@ -1,0 +1,32 @@
+---
+title: "Untitled"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+mn_cty <- read.delim("~/Desktop/ARM_Data/radon/srrs2.dat", sep = ",") |>
+  filter(state == "MN") 
+mn_radon <- mn_cty |>
+  rename("radon" = "activity") |>
+  mutate(radon2 = if_else(radon == 0, 0.01, radon)) |>
+  mutate(log_radon = log(radon2)) |>
+  mutate(floor = if_else(floor == 0, "basement", "first")) |>
+  select(idnum, state, zip, county, floor, county, radon, radon2, log_radon)
+
+ggplot(mn_radon, aes(x = log_radon)) +
+  geom_histogram()
+
+ggplot(mn_radon, aes(x = county, y = log_radon, col = floor)) +
+  geom_boxplot() +
+  geom_hline(yintercept = mean(mn_radon$log_radon), linetype = "dashed") +
+  theme(axis.text.x = element_blank())
+  
+y <- mn_radon$log_radon
+X <- model.matrix(~floor, mn_radon) 
+n <- length(y)
+# need to index counties with a number
+county_index <- as.numeric(as.factor(mn_radon$county))
+J <- length(unique(county_index))
+```

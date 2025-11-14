@@ -146,7 +146,7 @@ After burn-in, we are finally ready to draw/store samples from the posterior dis
 
 ```{r eval = F}
 jags_out <- coda.samples(jm, 
-                         variable.names = c("mu", "sigma2"),
+                         variable.names = c("theta", "sigma2"),
                          n.iter = B)
 ```
 
