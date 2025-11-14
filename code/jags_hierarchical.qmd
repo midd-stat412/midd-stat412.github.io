@@ -6,11 +6,14 @@ editor_options:
 
 ```{r}
 library(tidyverse)
+library(rjags)
+library(MCMCvis)
 mn_cty <- read.delim("~/Desktop/ARM_Data/radon/srrs2.dat", sep = ",") |>
-  filter(state == "MN") 
+  filter(state == "MO") |>
+  mutate(county = str_replace_all(county, " ", ""))
 mn_radon <- mn_cty |>
   rename("radon" = "activity") |>
-  mutate(radon2 = if_else(radon == 0, 0.01, radon)) |>
+  mutate(radon2 = if_else(radon == 0, 0.1, radon)) |>
   mutate(log_radon = log(radon2)) |>
   mutate(floor = if_else(floor == 0, "basement", "first")) |>
   select(idnum, state, zip, county, floor, county, radon, radon2, log_radon)
@@ -24,9 +27,164 @@ ggplot(mn_radon, aes(x = county, y = log_radon, col = floor)) +
   theme(axis.text.x = element_blank())
   
 y <- mn_radon$log_radon
-X <- model.matrix(~floor, mn_radon) 
+x <- model.matrix(~floor, mn_radon)[,2] 
 n <- length(y)
 # need to index counties with a number
 county_index <- as.numeric(as.factor(mn_radon$county))
 J <- length(unique(county_index))
 ```
+
+
+```{r pooled-model}
+{
+sink("../handouts/lm_no_pool.R")
+cat("
+model {
+## sampling model
+for (i in 1:N) {
+    y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], tau2)
+}
+
+## priors
+for(j in 1:J){
+  beta0[j] ~ dnorm(mu0, 1/s20)
+  beta1[j] ~ dnorm(mu1, 1/s21)
+}
+sigma2 ~ dgamma(a, b)
+tau2 <- 1/sigma2
+}
+", fill = T)
+sink()
+}
+data_ls <- list("y" = y, "N" = n, "x" = x,
+                "county_id" = county_index, "J" = J,
+                 "mu0" = 1, "s20" = 5,
+                "mu1" = 0, "s21" = 5,
+                 "a" = 10, "b" = 1)
+n_chain <- 2
+jm <- jags.model("../handouts/lm_no_pool.R",
+                 data = data_ls,
+                 n.chains = n_chain)
+B <- 5000
+update(jm, n.iter = B)
+jags_out <- coda.samples(jm, 
+                         variable.names = c("beta0","beta1", "sigma2"),
+                         n.iter = B)
+# MCMCtrace(jags_out, pdf = F, params=c("beta0", "sigma2"))
+
+```
+
+```{r}
+# mat <- do.call(rbind, jags_out)[,1:J]
+# colnames(mat) <- unique(mn_radon$county)
+# mat |>
+#   data.frame() |>
+#   select(all_of(1:J)) |>
+#   # mutate(iteration = row_number()) |>
+#   pivot_longer(cols = all_of(1:J), names_to = "county", values_to = "value") |>
+#   group_by(county) |>
+#   ggplot(aes(x = fct_reorder(county, value, .fun = median), y = value)) +
+#   geom_boxplot() +
+#   ggtitle("No pooling") +
+#   labs(x = "County", y = "County-specific mean log-radon (basement)")
+```
+
+```{r}
+# can use the Normal model from primer! Or we'll make a new one here!
+{
+sink("../handouts/lm_hierarchical.R")
+cat("
+model {
+## sampling model
+for (i in 1:N) {
+   y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], tau2)
+}
+
+## priors
+for(j in 1:J){
+  beta0[j] ~ dnorm(mu_beta0, 1/s2_beta0)
+  beta1[j] ~ dnorm(mu_beta1, 1/s2_beta1)
+}
+mu_beta0 ~ dnorm(mu0, 1/s20)
+s2_beta0 ~ dgamma(a0, b0)
+
+mu_beta1 ~ dnorm(mu1, 1/s21)
+s2_beta1 ~ dgamma(a1, b1)
+
+sigma2 ~ dgamma(a, b)
+tau2 <- 1/sigma2
+
+## derived quantities/predictions
+for(i in 1:N){
+  y_pred[i] ~ dnorm(beta0[county_id[i]], tau2)
+}
+}
+", fill = T)
+sink()
+}
+data_ls <- list("y" = y, "N" = n,  "x" = x,
+                "J" = J, "county_id" = county_index,
+                 "mu0" = 1, "s20" = 5,
+                "mu1" = 0, "s21" = 5,
+                "a0" = 4, "b0" = 1,
+                "a1" = 4, "b1" = 1,
+                 "a" = 10, "b" = 1)
+n_chain <- 2
+jm2 <- jags.model("../handouts/lm_hierarchical.R",
+                 data = data_ls,
+                 n.chains = n_chain)
+B <- 5000
+update(jm2, n.iter = B)
+jags_out2 <- coda.samples(jm2, 
+                         variable.names = c("beta0", "beta1", "mu_beta0", "s2_beta0", "mu_beta1", "s2_beta1", "sigma2"),
+                         n.iter = B)
+# MCMCtrace(jags_out2, pdf = F, params=c("beta1", "mu", "s2_beta0", "sigma2"))
+# MCMCsummary(jags_out2, params = "beta0")
+```
+
+```{r}
+
+# mat <- do.call(rbind, jags_out2)[,1:J]
+# colnames(mat) <- unique(mn_radon$county)
+# mat |>
+#   data.frame() |>
+#   select(all_of(1:J)) |>
+#   # mutate(iteration = row_number()) |>
+#   pivot_longer(cols = all_of(1:J), names_to = "county", values_to = "value") |>
+#   group_by(county) |>
+#   ggplot(aes(x = fct_reorder(county, value, .fun = median), y = value)) +
+#   geom_boxplot() +
+#   ggtitle("Hierarchical model") +
+#   labs(x = "County", y = "County-specific mean log-radon (basement)")
+```
+
+```{r}
+mod1 <- do.call(rbind, jags_out)[,1:J]
+colnames(mod1) <- unique(mn_radon$county)
+mod1_df <- data.frame(mod1) |>
+  pivot_longer(everything()) |>
+  mutate(model = "no_pool")
+mod2 <- do.call(rbind, jags_out2)[,1:J]
+colnames(mod2) <- unique(mn_radon$county)
+mod2_df <- data.frame(mod2) |>
+  pivot_longer(everything()) |>
+  mutate(model = "hierarchical")
+
+rbind(mod1_df, mod2_df) |>
+  rename("county" = "name") |>
+  group_by(county, model) |>
+  # summarise(est = median(value), lb = quantile(value, 0.05), ub=quantile(value, 0.95)) |>
+  summarise(est = mean(value), lb =mean(value) - sd(value) , ub= mean(value) + sd(value)) |>
+  left_join(data.frame(county = unique(mn_radon$county),  n = as.numeric(table((mn_radon$county)))), by = "county") |>
+  mutate(model = factor(model, levels = c("no_pool", "hierarchical"))) |>
+  ggplot(aes(x = n, y = est, group = county, col = county)) +
+  geom_point(position=position_dodge(width=0.5)) +
+  # geom_segment(mapping = aes(x = n, xend = n, y = lb, yend = ub), position=position_dodge(width=0.5)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub), position = position_dodge(width = 0.5)) +
+  facet_wrap(~ model) +
+  # scale_x_log10()  +
+  scale_x_continuous(transform = "log2") +
+  guides(col = "none") +
+  geom_hline(yintercept = mean(y), linetype = "dashed")
+```
+

@@ -4,12 +4,12 @@ format: pdf
 ---
 
 \vspace{-2cm}
+
 *This document draws heavily from* \url{https://nthobbs50.github.io/BayesNSF/content/lectures/JAGSPrimerMCMCVis.pdf}
 
-In the following, you will most just read the code and accompanying text. Then, whenever you see a section header with **\color{purple}{this color}**, you should copy/paste or write/run code into your own `.Rmd` or `.qmd` file as practice.
+In the following, you will most just read the code and accompanying text. Then, whenever you see a section header with \color{purple}{this color}, you should copy/paste or write/run code into your own `.Rmd` or `.qmd` file as practice.
 
 **Solutions to checks and practice are found at the end of the document!**
-
 
 ```{r echo = F}
 tennis_dat <- readRDS("tennis_serves.Rda")
@@ -19,7 +19,7 @@ tennis_dat <- readRDS("tennis_serves.Rda")
 
 ### MAC OS
 
-Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.0.dmg` to get the disk mounting image. Click on the GREEN button to download the package, and go through the installation as you would any other Mac software.
+Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.2.dmg` (or whatever the version number is) to get the disk mounting image. Click on the GREEN button to download the package, and go through the installation as you would any other Mac software.
 
 Once the installation process has completed, install the package `rjags` either in the Console using `install.packages("rjags")` or in the Packages pane. Then load the package as usual:
 
@@ -29,7 +29,7 @@ library(rjags)
 
 ### Windows
 
-Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.0.exe`. Occasionally, Windows users have problems loading `rjags` from R after everything has been installed properly. This problem usually occurs because they have more than one version of R resident on their computers (wisely, Mac OS will not allow that). So, if you can’t seem to get `rjags` to run after a proper install, then uninstall all versions of R, re-install the latest version, install the latest version of `rjags` and the version of JAGS that matches it.
+Go to \url{https://sourceforge.net/projects/mcmc-jags/files/} and download `JAGS-4.3.2.exe` (or whatever the version number is). Occasionally, Windows users have problems loading `rjags` from R after everything has been installed properly. This problem usually occurs because they have more than one version of R resident on their computers (wisely, Mac OS will not allow that). So, if you can’t seem to get `rjags` to run after a proper install, then uninstall all versions of R, re-install the latest version, install the latest version of `rjags` and the version of JAGS that matches it.
 
 Then load the package as you would any other package:
 
@@ -49,9 +49,7 @@ I will use independent priors for $\theta$ and $\sigma^2$:
 
 $$\theta \sim N(\mu_{0}, \sigma_{0}^2) \qquad \sigma^2 \sim \text{Gamma}(a,b)$$ (Note, this isn't allowing for semi-conjugacy as it's the variance $\sigma^2$ that's getting the Gamma prior, not the precision $1/\sigma^2$.)
 
-
 How do we tell JAGS that we have the Normal sampling model with this choice of priors? We will have to write a script in syntax particular to JAGS, though it looks quite similar to that of `R`.
-
 
 *Check 1: based on this model statement, is this a complete pooling, no pooling, or hierarchical model?*
 
@@ -93,7 +91,7 @@ Then, we come to the part of the script where I specify priors. Here, we define 
 
 ### Define the data and prior parameters
 
-Great! Now we're ready to actually run this model on our data. We have to define pass in relevant quantities from the data and provide values for the parameters of the priors. In particular, JAGS is expecting inputs for the following: `y`, `N`, `mu0`, `phi0`, `a`, `b`. The list below, named `data_ls`, is used to collect all of these inputs (using the tennis serves data from a previous homework). 
+Great! Now we're ready to actually run this model on our data. We have to define pass in relevant quantities from the data and provide values for the parameters of the priors. In particular, JAGS is expecting inputs for the following: `y`, `N`, `mu0`, `phi0`, `a`, `b`. The list below, named `data_ls`, is used to collect all of these inputs (using the tennis serves data from a previous homework).
 
 ```{r eval = F}
 y <- tennis_dat$Speed_MPH
@@ -108,7 +106,7 @@ Note the use of quotes. It's important to recognize that the terms in quotes on 
 
 *Check 2: based on this code, what exactly are the priors I am choosing for this model?*
 
-Note: I could have totally specified the prior parameter values in the script itself. However, specifying `a` and `b` and the other prior values in `data_ls` to be passed into the script makes my code more reproducible! 
+Note: I could have totally specified the prior parameter values in the script itself. However, specifying `a` and `b` and the other prior values in `data_ls` to be passed into the script makes my code more reproducible!
 
 # Running JAGS
 
@@ -156,19 +154,15 @@ Finally, `n.iter` specifies how many iterations we'd like to run in *each* chain
 
 *Check 3: after running the code, how many samples should we have of each parameter?*
 
-
 # \color{purple}{Run it yourself}
 
 So now, in total, we have the following code. Go ahead and copy and paste this into an `.Rmd` or `.qmd` file, and run it all by knitting the document or simply running locally (note you'll have to load in the tennis data beforehand). If you just run locally, you'll notice that as your run the `jags.model()` and `update()` and `coda.samples()` functions, you'll get little progress bars in your console. That's good! That means things are running!
 
-Comment the code as you'd like! 
-
+Comment the code as you'd like!
 
 *After running the code, you should see a file called `normal_mod.R` in the folder where your working directory is pointing to.*
 
-
 \clearpage
-
 
 ```{r eval = T}
 library(rjags)
@@ -204,8 +198,6 @@ jags_out <- coda.samples(jm,
                          n.iter = B)
 ```
 
-
-
 \clearpage
 
 # Output from JAGS
@@ -217,7 +209,6 @@ head(jags_out)
 ```
 
 The output of coda is a list of matrices, where each matrix contains the output of a single chain for all parameters being estimated. Parameter values are stored in the columns of the matrix; values for one iteration of the chain are stored in each row. Since we specified we wanted 2 chains, the output produces a list of two matrices.
-
 
 ### \color{purple}{Practice}
 
@@ -235,7 +226,6 @@ Load in `tidyverse` first!
 
 4.  Obtain a 90% credible interval for `sigma`.
 
-
 ## \color{purple}{Summarizing coda objects with `MCMCvis`}
 
 In general, I prefer for you to work with the output of JAGS as described above, but many people have created tools to make it easier to work with coda objects. One such tool is the `MCMCvis` package. Go ahead and install the package then load it in:
@@ -246,7 +236,7 @@ library(MCMCvis)
 
 We will look at two functions from this package: `MCMCsummary()` and `MCMCtrace()`.
 
-####  \color{purple}{`MCMCsummary()`}
+#### \color{purple}{`MCMCsummary()`}
 
 You can obtain a summary of the MCMC chains contained in a coda object by using the `MCMCsummary()` function. You may get a warning if/when you've only run one chain; that's fine! All of the variables in the `variable.names` argument to the `coda.samples()` function will be summarized. Note: these summary quantities are taken over all the chains combined.
 
@@ -260,7 +250,7 @@ You get posterior mean, standard deviation, quantiles, a convergence diagnostic 
 MCMCsummary(jags_out, params = "theta")
 ```
 
-####  \color{purple}{`MCMCtrace()`}
+#### \color{purple}{`MCMCtrace()`}
 
 We can obtain trace plots and posterior density plots using the `MCMCtrace()` function. By default, this function will create two plots (one traceplot and one density plot) for every parameter. The `pdf = F` just tells `R` to not automatically save the plot as a PDF to your machine. Notice that the two colors in the traceplots represent the two different chains.
 
