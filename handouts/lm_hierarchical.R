@@ -1,8 +1,8 @@
 
 model {
 ## sampling model
-for (i in 1:N) {
-   y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], tau2)
+for (i in 1:n) {
+   y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], 1/sigma2)
 }
 
 ## priors
@@ -17,11 +17,5 @@ mu_beta1 ~ dnorm(mu1, 1/s21)
 s2_beta1 ~ dgamma(a1, b1)
 
 sigma2 ~ dgamma(a, b)
-tau2 <- 1/sigma2
-
-## derived quantities/predictions
-for(i in 1:N){
-  y_pred[i] ~ dnorm(beta0[county_id[i]], tau2)
-}
 }
 

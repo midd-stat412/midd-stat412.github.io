@@ -15,6 +15,8 @@ format:
 
 -   Problem Set 5 starter template: {{< downloadthis homework/412_hw5_r_starter.qmd dname="hw5_r" label=".qmd" id=mtcars-btn >}} or {{< downloadthis homework/412_hw5_r_starter.Rmd dname="hw5_r" label=".Rmd" id=mtcars-btn >}}
 
+-   My [JAGS code](handouts/jags_coexist_solns.qmd) for the logistic regression for co-existence data
+
 -   Data
 
     -   
