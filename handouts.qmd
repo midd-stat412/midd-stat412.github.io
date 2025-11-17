@@ -60,3 +60,7 @@ format:
     -   
 
         {{< downloadthis handouts/coexist.csv dname="coexist" label="coexist" id=mtcars-btn >}}
+
+    -   
+
+        {{< downloadthis code/mn_radon.Rda dname="mn_radon" label="mn_radon" id=mtcars-btn >}}

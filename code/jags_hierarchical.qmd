@@ -1,15 +1,26 @@
 ---
-title: "Untitled"
+title: "JAGS: hierarchical model"
+format: pdf
 editor_options: 
   chunk_output_type: console
 ---
 
-```{r}
+\vspace{-2cm}
+
+```{r echo = F}
+knitr::opts_chunk$set(fig.width = 5, fig.height = 2.75, message = F)
+```
+
+Radon is a naturally occurring radioactive gas. Fun fact that I learned: there is no known safe level of exposure to radon. You should always aim to have the lowest level possible. That being said, the EPA recommends homes be fixed if the radon level is 4 pCi/L (picocuries per liter) or higher. It's also been known that most indoor radon comes from the naturally occurring radon in the soil. Thus, basements probably have higher levels of radon compared to floors higher up in a house.
+
+We have observed radon levels from households in Minnesota. For each house, we take a measurement of radon from either the first floor or the basement. We also record the county in which the house is located. Note that houses within a county are physically/geographically close to each other.
+
+From an environmental protection and resources perspective, we are interested in learning if certain counties have higher levels of radon than others, and if this differs by basement levels versus floor at or above ground-level.
+
+```{r echo = F, eval = F}
 library(tidyverse)
-library(rjags)
-library(MCMCvis)
 mn_cty <- read.delim("~/Desktop/ARM_Data/radon/srrs2.dat", sep = ",") |>
-  filter(state == "MO") |>
+  filter(state == "MN") |>
   mutate(county = str_replace_all(county, " ", ""))
 mn_radon <- mn_cty |>
   rename("radon" = "activity") |>
@@ -18,31 +29,114 @@ mn_radon <- mn_cty |>
   mutate(floor = if_else(floor == 0, "basement", "first")) |>
   select(idnum, state, zip, county, floor, county, radon, radon2, log_radon)
 
-ggplot(mn_radon, aes(x = log_radon)) +
-  geom_histogram()
+```
 
-ggplot(mn_radon, aes(x = county, y = log_radon, col = floor)) +
+## EDA
+
+```{r message = F}
+library(tidyverse)
+library(rjags)
+library(MCMCvis)
+mn_radon <- readRDS("mn_radon.Rda")
+```
+
+```{r echo = F, fig.height=2}
+library(kableExtra)
+mn_radon |>
+  slice(1:6) |>
+  kable()
+```
+
+As you see, the observed radon values are right-skewed with some very large values. We will work the log-transformed versions (a common technique for skewed data) to obtain a roughly normal-looking distribution on the log scale. However, there were some observed radon values of 0, so we first convert observed radon levels of 0 to 0.1 prior to logging. (This data manipulation "technique" of adding a positive jitter to the 0s is a bit controversial in the modeling world.)
+
+```{r echo = F, fig.height=2}
+library(patchwork)
+p1 <- ggplot(mn_radon, aes(x = radon)) +
+  geom_histogram()
+p2 <- ggplot(mn_radon, aes(x = log_radon)) +
+  geom_histogram()
+p1 + p2
+```
+
+Let's examine the observed distribution of log radon levels by county:
+
+```{r echo = F}
+ggplot(mn_radon, aes(x = county, y = log_radon)) +
   geom_boxplot() +
-  geom_hline(yintercept = mean(mn_radon$log_radon), linetype = "dashed") +
-  theme(axis.text.x = element_blank())
-  
+  geom_hline(yintercept = mean(mn_radon$log_radon), linetype = "dashed", col = "orange") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  labs(caption = "Dashed line at observed sample mean")
+```
+
+Might this vary by the `floor` type?
+
+```{r echo = F, fig.width=8}
+county_both <- mn_radon |>
+  group_by(county) |>
+  summarise(n_basement = sum(floor == "basement"),
+            n_first = sum(floor == "first")) |>
+  ungroup() |>
+  filter(n_basement > 0 & n_first > 0) |>
+  pull(county)
+ggplot(mn_radon |> filter(county %in% county_both), aes(x = county, y = log_radon, col = floor)) +
+  geom_boxplot(outlier.size = 0.25) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())  +
+  labs(caption = "Counties with at least one observation of each floor type")
+```
+
+\clearpage
+
+## Simple linear regression
+
+Let $Y_{ij}$ denote the log-radon level in house $i$ in county $j$. We might consider the following simple linear regression model:
+
+$$Y_{ij} | \beta_{0,j}, \beta_{1,j}, \sigma^2, x_{ij} \overset{ind}{\sim} N(\beta_{0,j} + \beta_{1,j} x_{ij}, \sigma^2) \qquad i = 1,\ldots, n_{j}, j = 1,\ldots, J$$ Depending on the priors we choose, we could make this complete pooling model, a no-pooling model\*, or a hierarchical (partial-pooling) model.
+
+-   *We'll consider pooling the variances, but not the regression coefficients.*
+
+These are the first few $n_{j}$:
+
+```{r echo = F}
+table(mn_radon$county)[1:8]
+```
+
+**Check: why might I not want a complete pooling model?**
+
+## No-pool model
+
+To achieve a no-pooling\* model for the coefficients, we'll give county-specific independent priors for the coefficients:
+
+\begin{align*} \beta_{0,j} &\overset{iid}{\sim} N(\mu_{0}, \sigma_{0}^2) \qquad j = 1,\ldots, J\\
+ \beta_{1,j} &\overset{iid}{\sim} N(\mu_{1}, \sigma_{1}^2) \qquad j = 1,\ldots, J
+\end{align*}
+
+and then we'll use the prior $$\sigma^2 \sim \text{Gamma}(a,b)$$
+
+Under this prior specification, there is no information being shared across the $J$ counties in terms of the $\beta_{0,j}$ or $\beta_{1,j}$ (except through $\sigma^2$). We'll choose/set the values of $a$, $b$, $\mu_{0}$, $\mu_{1}$, $\sigma_{0}^2$, and $\sigma_{1}^2$.
+
+We can easily fit this model in JAGS. What we need to create is a variable/mechanism that tells us which county each observation corresponds to. Then we'll leverage indexing when coding up the model.
+
+```{r data-prep}
+# create variables as necessary
 y <- mn_radon$log_radon
 x <- model.matrix(~floor, mn_radon)[,2] 
 n <- length(y)
+
 # need to index counties with a number
 county_index <- as.numeric(as.factor(mn_radon$county))
 J <- length(unique(county_index))
 ```
 
-
-```{r pooled-model}
+```{r no-pool-model}
 {
 sink("../handouts/lm_no_pool.R")
 cat("
 model {
 ## sampling model
-for (i in 1:N) {
-    y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], tau2)
+for (i in 1:n) {
+    y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], 1/sigma2)
 }
 
 ## priors
@@ -51,12 +145,11 @@ for(j in 1:J){
   beta1[j] ~ dnorm(mu1, 1/s21)
 }
 sigma2 ~ dgamma(a, b)
-tau2 <- 1/sigma2
 }
 ", fill = T)
 sink()
 }
-data_ls <- list("y" = y, "N" = n, "x" = x,
+data_ls <- list("y" = y, "n" = n, "x" = x,
                 "county_id" = county_index, "J" = J,
                  "mu0" = 1, "s20" = 5,
                 "mu1" = 0, "s21" = 5,
@@ -71,33 +164,66 @@ jags_out <- coda.samples(jm,
                          variable.names = c("beta0","beta1", "sigma2"),
                          n.iter = B)
 # MCMCtrace(jags_out, pdf = F, params=c("beta0", "sigma2"))
-
+# MCMCsummary(jags_out, params = "beta0")
+# MCMCsummary(jags_out, params = "beta1")
 ```
 
-```{r}
-# mat <- do.call(rbind, jags_out)[,1:J]
-# colnames(mat) <- unique(mn_radon$county)
-# mat |>
-#   data.frame() |>
-#   select(all_of(1:J)) |>
-#   # mutate(iteration = row_number()) |>
-#   pivot_longer(cols = all_of(1:J), names_to = "county", values_to = "value") |>
-#   group_by(county) |>
-#   ggplot(aes(x = fct_reorder(county, value, .fun = median), y = value)) +
-#   geom_boxplot() +
-#   ggtitle("No pooling") +
-#   labs(x = "County", y = "County-specific mean log-radon (basement)")
+```{r echo = F}
+mod1 <- do.call(rbind, jags_out)[,1:J]
+colnames(mod1) <- unique(mn_radon$county)
+mod1_df <- data.frame(mod1) |>
+  pivot_longer(everything()) |>
+  mutate(model = "no_pool") |>
+  rename("county" = "name") 
+
+mod1_df |>
+  group_by(county) |>
+  # summarise(est = median(value), lb = quantile(value, 0.05), ub=quantile(value, 0.95)) |>
+  summarise(est = mean(value), lb =mean(value) - sd(value) , ub= mean(value) + sd(value)) |>
+  # left_join(data.frame(county = unique(mn_radon$county),  n = as.numeric(table((mn_radon$county)))), by = "county") |>
+  # mutate(model = factor(model, levels = c("no_pool", "hierarchical"))) |>
+  ggplot(aes(x = county, y = est)) +
+  geom_point() +
+  # geom_segment(mapping = aes(x = n, xend = n, y = lb, yend = ub), position=position_dodge(width=0.5)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub) )+
+  # scale_x_log10()  +
+  geom_hline(yintercept = mean(y[x == 0]), linetype = "dashed", col = "magenta")+
+  labs(title = expression(beta[0][j] ~ "estimates"),
+       caption = "Posterior means plus/minus 1 SE\nDashed line is observed mean log-radon in basements",
+       y =  expression(beta[0][j] ))  +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "bottom") 
 ```
 
+\clearpage
+
+# Hierarchical model
+
+Let's maintain the same sampling model, but now allow for borrowing of information about the average log-radon level in basements and first-floors of these homes across counties.
+
+Stage 1: \begin{align*} \beta_{0,j} &\overset{iid}{\sim} N(\mu_{\beta_{0}}, \sigma_{\beta_{0}}^2) \qquad j = 1,\ldots, J\\
+ \beta_{1,j} &\overset{iid}{\sim} N(\mu_{\beta_{1}}, \sigma_{\beta_{1}}^2) \qquad j = 1,\ldots, J
+\end{align*}
+
+Stage 2: \begin{align*} \mu_{\beta_{0}} &\sim N(\mu_{0}, \sigma_{0}^2) \\
+ \mu_{\beta_{1}} &\sim N(\mu_{1}, \sigma_{1}^2) \qquad j = 1,\ldots, J \\
+\sigma_{\beta_{0}}^2 &\sim \text{Gamma}(a_{0}, b_{0}) \\
+\sigma_{\beta_{1}}^2 &\sim \text{Gamma}(a_{1}, b_{1})
+\end{align*}
+
+We'll use the same $\sigma^2 \sim \text{Gamma}(a,b)$ prior as before.
+
+We'll choose/set the values of $a$, $b$, $a_{0}$, $b_{0}$, $a_{1}$, $b_{1}$, $\mu_{0}$, $\mu_{1}$, $\sigma_{0}^2$, and $\sigma_{1}^2$.
+
 ```{r}
-# can use the Normal model from primer! Or we'll make a new one here!
 {
 sink("../handouts/lm_hierarchical.R")
 cat("
 model {
 ## sampling model
-for (i in 1:N) {
-   y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], tau2)
+for (i in 1:n) {
+   y[i] ~ dnorm(beta0[county_id[i]] + beta1[county_id[i]]*x[i], 1/sigma2)
 }
 
 ## priors
@@ -112,68 +238,42 @@ mu_beta1 ~ dnorm(mu1, 1/s21)
 s2_beta1 ~ dgamma(a1, b1)
 
 sigma2 ~ dgamma(a, b)
-tau2 <- 1/sigma2
-
-## derived quantities/predictions
-for(i in 1:N){
-  y_pred[i] ~ dnorm(beta0[county_id[i]], tau2)
-}
 }
 ", fill = T)
 sink()
 }
-data_ls <- list("y" = y, "N" = n,  "x" = x,
+data_ls <- list("y" = y, "n" = n,  "x" = x,
                 "J" = J, "county_id" = county_index,
-                 "mu0" = 1, "s20" = 5,
+                "mu0" = 1, "s20" = 5,
                 "mu1" = 0, "s21" = 5,
                 "a0" = 4, "b0" = 1,
                 "a1" = 4, "b1" = 1,
-                 "a" = 10, "b" = 1)
+                "a" = 10, "b" = 1)
 n_chain <- 2
 jm2 <- jags.model("../handouts/lm_hierarchical.R",
                  data = data_ls,
                  n.chains = n_chain)
 B <- 5000
 update(jm2, n.iter = B)
-jags_out2 <- coda.samples(jm2, 
-                         variable.names = c("beta0", "beta1", "mu_beta0", "s2_beta0", "mu_beta1", "s2_beta1", "sigma2"),
+jags_out2 <- coda.samples(jm2, variable.names = c("beta0", "beta1", "mu_beta0",
+                                                  "s2_beta0", "mu_beta1", "s2_beta1",
+                                                  "sigma2"),
                          n.iter = B)
-# MCMCtrace(jags_out2, pdf = F, params=c("beta1", "mu", "s2_beta0", "sigma2"))
-# MCMCsummary(jags_out2, params = "beta0")
+# MCMCtrace(jags_out2, pdf = F)
 ```
 
-```{r}
+Let's see what we gain/learn differently from the hierarchical model compared to the no-pool model:
 
-# mat <- do.call(rbind, jags_out2)[,1:J]
-# colnames(mat) <- unique(mn_radon$county)
-# mat |>
-#   data.frame() |>
-#   select(all_of(1:J)) |>
-#   # mutate(iteration = row_number()) |>
-#   pivot_longer(cols = all_of(1:J), names_to = "county", values_to = "value") |>
-#   group_by(county) |>
-#   ggplot(aes(x = fct_reorder(county, value, .fun = median), y = value)) +
-#   geom_boxplot() +
-#   ggtitle("Hierarchical model") +
-#   labs(x = "County", y = "County-specific mean log-radon (basement)")
-```
-
-```{r}
-mod1 <- do.call(rbind, jags_out)[,1:J]
-colnames(mod1) <- unique(mn_radon$county)
-mod1_df <- data.frame(mod1) |>
-  pivot_longer(everything()) |>
-  mutate(model = "no_pool")
+```{r echo = F, fig.width=8, fig.height=6, warning = F}
 mod2 <- do.call(rbind, jags_out2)[,1:J]
 colnames(mod2) <- unique(mn_radon$county)
 mod2_df <- data.frame(mod2) |>
   pivot_longer(everything()) |>
-  mutate(model = "hierarchical")
+  mutate(model = "hierarchical") |>
+  rename("county" = "name") 
 
 rbind(mod1_df, mod2_df) |>
-  rename("county" = "name") |>
   group_by(county, model) |>
-  # summarise(est = median(value), lb = quantile(value, 0.05), ub=quantile(value, 0.95)) |>
   summarise(est = mean(value), lb =mean(value) - sd(value) , ub= mean(value) + sd(value)) |>
   left_join(data.frame(county = unique(mn_radon$county),  n = as.numeric(table((mn_radon$county)))), by = "county") |>
   mutate(model = factor(model, levels = c("no_pool", "hierarchical"))) |>
@@ -185,6 +285,13 @@ rbind(mod1_df, mod2_df) |>
   # scale_x_log10()  +
   scale_x_continuous(transform = "log2") +
   guides(col = "none") +
-  geom_hline(yintercept = mean(y), linetype = "dashed")
+  geom_hline(yintercept = mean(y[x == 0]), linetype = "dashed") +
+  theme(text =element_text(size = 16)) +
+  labs(title = "Comparison of no-pool and hierarchical models",
+    y =  expression(beta[0][j] ),
+      caption = "Posterior means plus/minus 1 SE\nDashed line is observed mean log-radon in basements",
+       x = expression("Sample size" ~ n[j])
+    )
 ```
 
+**What do we notice?**
