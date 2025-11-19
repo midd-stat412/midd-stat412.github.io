@@ -5,6 +5,22 @@ format:
     css: styles.css
 ---
 
+## Case study 3
+
+Each group will submit 1 report in the form of both a `.Rmd` (or `.qmd`) and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by Wednesday, 12/03 at 11:59pm.
+
+**This focus of this case study is develop your (statistical) modeling skills**. You'll let JAGS do the MCMC :) Please feel free to come to Becky with ideas/aspirations for your model!
+
+The description of the case study and the data are found here:
+
+-   [Description](case_study/heart_attacks_description.pdf)
+
+-   Data: {{< downloadthis case_study/heart_attacks_ny.csv dname="heart_attacks_ny" label="heart_attacks_ny" id=mtcars-btn >}}
+
+#### **Presentation**
+
+-   Each group will give a brief 10 minute presentation of their work to the class on 12/03. Presentation order will be randomized.
+
 ## Case study 2
 
 Your second case study will once again be performed in pairs of Becky's choosing! Each group will submit 1 report in the form of both a `.Rmd` (or `.qmd`) and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by Wednesday, 11/12 at 11:59pm.

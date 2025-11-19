@@ -143,6 +143,30 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="case-study-3" class="level2">
+<h2 class="anchored" data-anchor-id="case-study-3">Case study 3</h2>
+<p>Each group will submit 1 report in the form of both a <code>.Rmd</code> (or <code>.qmd</code>) and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by Wednesday, 12/03 at 11:59pm.</p>
+<p><strong>This focus of this case study is develop your (statistical) modeling skills</strong>. You’ll let JAGS do the MCMC :) Please feel free to come to Becky with ideas/aspirations for your model!</p>
+<p>The description of the case study and the data are found here:</p>
+<ul>
+<li><p><a href="case_study/heart_attacks_description.pdf">Description</a></p></li>
+<li><p>Data: <a href="#mtcars-btn" onclick="fetch('data:text/csv;base64,SG9zcGl0YWwsUmVnaW9uLEJvcm91Z2gsVHlwZSxDYXNlcyxEZWF0aHMsUkFNUixjY2RfYmVkcyx0b3RhbF9iZWRzDQpCcm9va2RhbGVfSG9zcGl0YWxfTWVkaWNhbF9DZW50ZXIsTllDLEJyb29rbHluLFAsMjQyLDIxLDAuMTA1LDYsNTMwDQpCcm9va2x5bl9Ib3NwaXRhbF9Eb3dudG93bixOWUMsQnJvb2tseW4sUCwxNjMsMTksMC4xMDEsNiw0NjQNCktpbmdzX0NvdW50eV9Ib3NwaXRhbF9DZW50ZXIsTllDLEJyb29rbHluLE4sNzAsMSwwLjAyMzMsOCw2MjQNCktpbmdzYnJvb2tfSmV3aXNoX01lZGljYWxfQ2VudGVyLE5ZQyxCcm9va2x5bixOLDg0LDYsMC4wNzEyLDEwLDY0Nw0KTWFpbW9uaWRlc19NZWRpY2FsX0NlbnRlcixOWUMsQnJvb2tseW4sUCw4MDYsNDksMC4wNTI4LDEwLDcxMQ0KTW91bnRfU2luYWlfQnJvb2tseW4sTllDLEJyb29rbHluLE4sODEsNiwwLjAzODYsNiwyMTINCiJOZXdfWW9ya19Db21tdW5pdHlfSG9zcGl0YWxfb2ZfQnJvb2tseW4sX0luYyIsTllDLEJyb29rbHluLE4sNDUsNCwwLjA2NzQsMCwxMzQNCk5ld19Zb3JrX01ldGhvZGlzdF9Ib3NwaXRhbCxOWUMsQnJvb2tseW4sUCwzNjIsMjksMC4wNjk1LDEwLDU3Nw0KTllVX0xhZ25vbmVfSG9zcF9Ccm9va2x5bixOWUMsQnJvb2tseW4sUCwyNjcsMTMsMC4wMDM2Nyw4LDQ0NA0KVW5pdmVyc2l0eV9Ib3NwaXRhbF9vZl9Ccm9va2x5bixOWUMsQnJvb2tseW4sUCwxMjgsMTAsMC4wOTcxLDcsMzQyDQpXeWNrb2ZmX0hlaWdodHNfTWVkaWNhbF9DZW50ZXIsTllDLEJyb29rbHluLE4sMTc0LDksMC4wOTM5LDAsMzI0DQpCZWxsZXZ1ZV9Ib3NwaXRhbF9DZW50ZXIsTllDLE1hbmhhdHRhbixQLDE5MSwxMSwwLjA3MDIsMTIsODk4DQpMZW5veF9IaWxsX0hvc3BpdGFsLE5ZQyxNYW5oYXR0YW4sUCwzMzIsMTgsMC4wNjExLDI3LDYyNg0KTWV0cm9wb2xpdGFuX0hvc3BpdGFsX0NlbnRlcixOWUMsTWFuaGF0dGFuLE4sMzMsMywwLjA0MzIsNiwzMzgNCk1vdW50X1NpbmFpX0JldGhfSXNyYWVsLE5ZQyxNYW5oYXR0YW4sUCwzMjcsMTUsMC4wNDM1LDAsNzk5DQpNb3VudF9TaW5haV9Ib3NwaXRhbCxOWUMsTWFuaGF0dGFuLFAsNTI3LDI3LDAuMDUyNSwxNCwxMTI3DQpNb3VudF9TaW5haV9TdC5fTHVrZSdzLE5ZQyxNYW5oYXR0YW4sUCwzNzAsMjAsMC4wNTc1LDI4LDUwMQ0KTmV3X1lvcmtfUHJlc2J5dGVyaWFuX0hvc3BpdGFsX0NvbHVtYmlhX1ByZXNieXRlcmlhbixOWUMsTWFuaGF0dGFuLFAsNDg4LDM4LDAuMDY0OCwxOCwxMDIyDQpOZXdfWW9ya19QcmVzYnl0ZXJpYW5fSG9zcGl0YWxfQWxsZW4sTllDLE1hbmhhdHRhbixOLDQwLDYsMC4wOTA4LDYsMTk2DQpOZXdfWW9ya19QcmVzYnl0ZXJpYW5fTllfV2VpbGxfQ29ybmVsbCxOWUMsTWFuaGF0dGFuLFAsNDA1LDIzLDAuMDQ2NywyMCw3NDQNCk5ZVV9Ib3NwaXRhbHNfQ2VudGVyLE5ZQyxNYW5oYXR0YW4sUCwzNjUsMTEsMC4wMzk1LDAsODEzDQpFbG1odXJzdF9Ib3NwaXRhbF9DZW50ZXIsTllDLFF1ZWVucyxQLDU2LDEsMC4wMzA3LDksNTQ1DQpGbHVzaGluZ19Ib3NwaXRhbF9NZWRpY2FsX0NlbnRlcixOWUMsUXVlZW5zLE4sMTAwLDE3LDAuMTQyOSw2LDI5Mw0KRm9yZXN0X0hpbGxzX0hvc3BpdGFsLE5ZQyxRdWVlbnMsTiwxMTUsMTIsMC4xMTYxLDAsMzEyDQpKYW1haWNhX0hvc3BpdGFsX01lZGljYWxfQ2VudGVyLE5ZQyxRdWVlbnMsUCw1NDYsNTEsMC4wNzQyLDQsMzg0DQpMb25nX0lzbGFuZF9KZXdpc2hfTWVkaWNhbF9DZW50ZXIsTllDLFF1ZWVucyxQLDQxMiwyMiwwLjA2NTIsMTAsMTAxNA0KTW91bnRfU2luYWlfSG9zcGl0YWxfLV9Nb3VudF9TaW5haV9Ib3NwaXRhbF9vZl9RdWVlbnMsTllDLFF1ZWVucyxOLDk5LDE0LDAuMDk3MiwwLDIyOA0KTllQX1F1ZWVucyxOWUMsUXVlZW5zLFAsMzk4LDI5LDAuMDU4LDAsNTM1DQpRdWVlbnNfSG9zcGl0YWxfQ2VudGVyLE5ZQyxRdWVlbnMsTiw1MSwzLDAuMTY2NiwwLDI2OQ0KU3RfSm9obnNfRXBpc2NvcGFsX0hvc3BpdGFsX1NvX1Nob3JlLE5ZQyxRdWVlbnMsTiwyNywzLDAuMTA2MSw4LDI1Mg0KUmljaG1vbmRfVW5pdmVyc2l0eV9NZWRpY2FsX0NlbnRlcixOWUMsU3RhdGVuX0lzbGFuZCxQLDE4OSwxMSwwLjA0NTIsMTAsNDQ4DQpTdGF0ZW5fSXNsYW5kX1VuaXZlcnNpdHlfSG9zcGl0YWxfLV9Ob3J0aCxOWUMsU3RhdGVuX0lzbGFuZCxQLDM5MSwyMCwwLjA1NTYsMzIsNDg3DQpCcm9ueC1MZWJhbm9uX0hvc3BpdGFsX0NlbnRlcixOWUMsVGhlX0Jyb254LFAsMjY1LDE0LDAuMDU0NSwxMSw0MTUNCkphY29iaV9NZWRpY2FsX0NlbnRlcixOWUMsVGhlX0Jyb254LE4sNTMsMiwwLjAzNDEsMTIsNDU3DQpMaW5jb2xuX01lZGljYWxfJl9NZW50YWxfSGVhbHRoX0NlbnRlcixOWUMsVGhlX0Jyb254LE4sNTMsNSwwLjE0MDQsNywzNjINCk1vbnRlZmlvcmVfTW9zZXMsTllDLFRoZV9Ccm9ueCxQLDQ0MCwyOSwwLjA2MzksMTIsODE2DQpNb250ZWZpb3JlX1dha2VmaWVsZCxOWUMsVGhlX0Jyb254LE4sMzMsNCwwLjA2NCwwLDMyMQ0KTW9udGVmaW9yZV9NZWRfQ2VudGVyX1dlaWxlcixOWUMsVGhlX0Jyb254LFAsMzk1LDMxLDAuMDY4NywxMCw0MjENClN0X0Jhcm5hYmFzX0hvc3BpdGFsLE5ZQyxUaGVfQnJvbngsUCwxMzQsMTAsMC4wNTAxLDAsNDIyDQpHbGVuX0NvdmVfSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLE4sNjgsOCwwLjA4MzYsNywxOTINCkh1bnRpbmd0b25fSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLFAsMjg5LDIwLDAuMDUzNiwxNCwzNDgNCkpvaG5fVF9NYXRoZXJfTWVtb3JpYWxfSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLE4sMTc0LDE1LDAuMDg1MSw4LDI0OQ0KTmFzc2F1X1VuaXZlcnNpdHlfTWVkaWNhbF9DZW50ZXIsTmFzc2F1LVN1ZmZvbGssLE4sOTMsNSwwLjA2OTUsMTEsNTMwDQpOb3J0aF9TaG9yZV9Vbml2ZXJzaXR5X0hvc3BpdGFsLE5hc3NhdS1TdWZmb2xrLCxQLDcwMCw0MCwwLjA2MzMsMTUsODA2DQpQbGFpbnZpZXdfSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLE4sMTMyLDcsMC4wNDUxLDEzLDIwNA0KU291dGhhbXB0b25fSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLFAsNjEsNCwwLjA4ODQsNiwxMjANClN0Q2F0aGVyaW5lX29mX1NpZW5hX0hvc3BpdGFsLE5hc3NhdS1TdWZmb2xrLCxQLDE1MiwxMSwwLjA2MTUsMTEsMjY1DQpTdENoYXJsZXNfSG9zcGl0YWwsTmFzc2F1LVN1ZmZvbGssLE4sNDMsMSwwLjAyNDMsOCwyNTMNClN0RnJhbmNpc19Ib3NwaXRhbCxOYXNzYXUtU3VmZm9saywsUCw1NDAsMzQsMC4wNjIsNDAsMzY0DQpTdEpvc2VwaF9Ib3NwaXRhbCxOYXNzYXUtU3VmZm9saywsTiwxOTEsMjAsMC4xMTM3LDIwLDIwMw0KVW5pdmVyc2l0eV9Ib3NwaXRhbCxOYXNzYXUtU3VmZm9saywsUCw1NjIsMzYsMC4wNTk4LDEwLDYyOA0KQm9uX1NlY291cnNfQ29tbXVuaXR5X0hvc3BpdGFsLE1pZC1IdWRzb24sLE4sNTgsMiwwLjA0NDksMCw4Ng0KQ2F0c2tpbGxfUmVnaW9uYWxfTWVkaWNhbF9DZW50ZXIsTWlkLUh1ZHNvbiwsTiwxMDQsNywwLjA5MiwxMCwxNTQNCkdvb2RfU2FtYXJpdGFuX0hvc3BpdGFsX01lZGljYWxfQ2VudGVyLE1pZC1IdWRzb24sLFAsMzQyLDE5LDAuMDc4MiwyNiwyODYNCk1vbnRlZmlvcmVfTW91bnRfVmVybm9uX0hvc3BpdGFsLE1pZC1IdWRzb24sLE4sMzgsMiwwLjA1NzksOCwxMjENCk1vbnRlZmlvcmVfTmV3X1JvY2hlbGxlX0hvc3BpdGFsLE1pZC1IdWRzb24sLE4sNzUsNiwwLjA3OTYsOCwyMjMNCk5ld19Zb3JrX1ByZXNieXRlcmlhbl9IdWRzb25fVmFsbGV5LE1pZC1IdWRzb24sLE4sMTUzLDEwLDAuMTAyMiwwLDEyOA0KTm9ydGhlcm5fRHV0Y2hlc3NfSG9zcGl0YWwsTWlkLUh1ZHNvbiwsTiw3NiwyLDAuMDM3OCwwLDg0DQpOb3J0aGVybl9XZXN0Y2hlc3Rlcl9Ib3NwaXRhbCxNaWQtSHVkc29uLCxOLDk2LDgsMC4wODY4LDYsMjMzDQpQdXRuYW1fSG9zcGl0YWxfQ2VudGVyLE1pZC1IdWRzb24sLE4sMTA5LDgsMC4wNjU3LDEwLDE2NA0KU3RfQW50aG9ueV9Db21tdW5pdHlfSG9zcGl0YWwsTWlkLUh1ZHNvbiwsTiwzNywyLDAuMDgyLDQsNjANClN0Sm9zZXBoc19NZWRpY2FsX0NlbnRlcixNaWQtSHVkc29uLCxOLDMxLDMsMC4wODUsNiwxOTENClN0THVrZXNfQ29ybndhbGxfSG9zcGl0YWwsTWlkLUh1ZHNvbiwsUCwyNTAsMTgsMC4wNjczLDgsMjQyDQpWYXNzYXJfQnJvdGhlcnNfTWVkaWNhbF9DZW50ZXIsTWlkLUh1ZHNvbiwsUCw2MDYsNDMsMC4wNzI0LDEwLDM0OQ0KV2hpdGVfUGxhaW5zX0hvc3BpdGFsX0NlbnRlcixNaWQtSHVkc29uLCxQLDI1NywyMiwwLjA2ODksOCwyOTI=').then(res => res.blob()).then(blob => {
+      const downloadURL = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = downloadURL;
+      a.download = 'heart_attacks_ny.csv'; a.click();
+      window.URL.revokeObjectURL(downloadURL);
+      document.body.removeChild(a);
+        });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> heart_attacks_ny </button></a></p></li>
+</ul>
+<section id="presentation" class="level4">
+<h4 class="anchored" data-anchor-id="presentation"><strong>Presentation</strong></h4>
+<ul>
+<li>Each group will give a brief 10 minute presentation of their work to the class on 12/03. Presentation order will be randomized.</li>
+</ul>
+</section>
+</section>
 <section id="case-study-2" class="level2">
 <h2 class="anchored" data-anchor-id="case-study-2">Case study 2</h2>
 <p>Your second case study will once again be performed in pairs of Becky’s choosing! Each group will submit 1 report in the form of both a <code>.Rmd</code> (or <code>.qmd</code>) and a knitted/rendered PDF. These will be submitted to Canvas (not in-person) by Wednesday, 11/12 at 11:59pm.</p>
@@ -169,8 +193,8 @@ ul.task-list li input[type="checkbox"] {
       document.body.removeChild(a);
         });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> caseStudy2 </button></a></p></li>
 </ul>
-<section id="presentation" class="level4">
-<h4 class="anchored" data-anchor-id="presentation"><strong>Presentation</strong></h4>
+<section id="presentation-1" class="level4">
+<h4 class="anchored" data-anchor-id="presentation-1"><strong>Presentation</strong></h4>
 <ul>
 <li><p>Each group will give a brief 5 minute presentation of their work to the class on 11/12. Presentation order will be randomized.</p></li>
 <li><p>Your presentation should be accompanied by a <em>brief</em> set of slides. As we are all aware of the data and the sampling model, these slides should focus mostly on your approach to answering the research question, as well as results (with interpretation).</p>
@@ -230,8 +254,8 @@ ul.task-list li input[type="checkbox"] {
       document.body.removeChild(a);
         });"><button class="btn btn-default downloadthis  " id="mtcars-btn"><i class="bi bi-download"></i> caseStudy1 </button></a></p></li>
 </ul>
-<section id="presentation-1" class="level4">
-<h4 class="anchored" data-anchor-id="presentation-1"><strong>Presentation</strong></h4>
+<section id="presentation-2" class="level4">
+<h4 class="anchored" data-anchor-id="presentation-2"><strong>Presentation</strong></h4>
 <ul>
 <li><p>Each group will give a brief 5 minute presentation of their work to the class on 10/15. Presentation order will be randomized.</p></li>
 <li><p>Your presentation should be accompanied by a <em>brief</em> set of slides. As we are all aware of the data, these slides should focus mostly on describing your statistical model and how you arrived at it, as well as results (with interpretation).</p>
