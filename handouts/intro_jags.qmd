@@ -116,12 +116,13 @@ All MCMC algorithms needs to be initialized. You can specify intitial values if 
 
 ## Let JAGS determine MCMC algorithm
 
-Now that the model and data have been defined, we are ready for MCMC. We will also made it such that the code is reproducible by setting a seed within JAGS.
+Now that the model and data have been defined, we are ready for MCMC. We will also made it such that the code is reproducible by setting a seed within JAGS. For every chain, we need to specify a different seed.
 
 ```{r eval = F}
 # set seed
-inits_ls <- list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412)
 n_chain <- 2
+inits_ls <- list(list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412),
+               list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 410))  
 jm <- jags.model("normal_mod.R",
                  data = data_ls,
                  n.chains = n_chain,
@@ -192,8 +193,9 @@ n_y <- length(y)
 data_ls <- list("y" = y, "N" = n_y, 
                  "mu0" = 100, "phi0" = 0.04,
                  "a" = 25, "b" = 1)
-inits_ls <- list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412)
 n_chain <- 2
+inits_ls <- list(list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412),
+               list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 410))  
 jm <- jags.model("normal_mod.R", data = data_ls, n.chains = n_chain,
                  inits = inits_ls)
 B <- 5000
