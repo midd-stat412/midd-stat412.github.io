@@ -7,7 +7,7 @@ format: pdf
 
 *This document draws heavily from* \url{https://nthobbs50.github.io/BayesNSF/content/lectures/JAGSPrimerMCMCVis.pdf}
 
-In the following, you will most just read the code and accompanying text. Then, whenever you see a section header with \color{purple}{this color}, you should copy/paste or write/run code into your own `.Rmd` or `.qmd` file as practice.
+In the following, you will most just read the code and accompanying text. Then, whenever you see a section header with $\color{purple}{\text{this color}}$, you should copy/paste or write/run code into your own `.Rmd` or `.qmd` file as practice.
 
 **Solutions to checks and practice are found at the end of the document!**
 
@@ -116,13 +116,16 @@ All MCMC algorithms needs to be initialized. You can specify intitial values if 
 
 ## Let JAGS determine MCMC algorithm
 
-Now that the model and data have been defined, we are ready for MCMC.
+Now that the model and data have been defined, we are ready for MCMC. We will also made it such that the code is reproducible by setting a seed within JAGS.
 
 ```{r eval = F}
+# set seed
+inits_ls <- list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412)
 n_chain <- 2
 jm <- jags.model("normal_mod.R",
                  data = data_ls,
-                 n.chains = n_chain)
+                 n.chains = n_chain,
+                 inits = inits_ls)
 ```
 
 The `jm <- jags.model...` statement sets up the MCMC chain. Its first argument is the name of the file containing the JAGS code. *Note that my file resides in the current working directory in this example. Otherwise, you would need to specify the full path name.* The next two expressions specify where the data come from (i.e. `data_ls` which we created) and how many chains `n.chains` to create (i.e., how many independent samplers we should run). We have thus far been running a single chain for convenience. Specifying more than one chain is typically good, because each chain gets initialized at a different value so we have more opportunities to explore the parameter space (and ensure that we reach convergence).
@@ -189,8 +192,10 @@ n_y <- length(y)
 data_ls <- list("y" = y, "N" = n_y, 
                  "mu0" = 100, "phi0" = 0.04,
                  "a" = 25, "b" = 1)
+inits_ls <- list(".RNG.name" = "base::Wichmann-Hill", ".RNG.seed" = 412)
 n_chain <- 2
-jm <- jags.model("normal_mod.R", data = data_ls, n.chains = n_chain)
+jm <- jags.model("normal_mod.R", data = data_ls, n.chains = n_chain,
+                 inits = inits_ls)
 B <- 5000
 update(jm, n.iter = B)
 jags_out <- coda.samples(jm,
