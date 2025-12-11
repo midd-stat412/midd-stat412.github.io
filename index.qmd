@@ -6,6 +6,10 @@ Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this we
 
 ## Announcements
 
+-   Final project will be Friday, 12/10 in our classroom starting at **9:05am**. Plan for 8-10 minute presentations accompanied by slides. Be prepared to take questions.
+    -   Remember: most likely no one else will have seen your model or data before. So please do go slow. Practice!
+    -   Slides are due by 9am that morning!
+    -   Bring something to write with to provide feedback.
 -   No office hours this Friday 12/05. Instead, you can sign up for 1:1 meetings [here](https://calendly.com/beckytang/1-1-with-prof-tang) (feel free to book back-to-back or multiple meetings if needed!)
 
 ## Course details
