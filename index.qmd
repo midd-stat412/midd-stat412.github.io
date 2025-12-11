@@ -6,7 +6,7 @@ Welcome to the website for Middlebury College’s Fall 2025 STAT 412. On this we
 
 ## Announcements
 
--   Final project will be Friday, 12/10 in our classroom starting at **9:05am**. Plan for 8-10 minute presentations accompanied by slides. Be prepared to take questions.
+-   Final project will be Friday, 12/10 in our classroom starting at **9:30am**. Plan for 8-10 minute presentations accompanied by slides. Be prepared to take questions.
     -   Remember: most likely no one else will have seen your model or data before. So please do go slow. Practice!
     -   Slides are due by 9am that morning!
     -   Bring something to write with to provide feedback.
